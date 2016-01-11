@@ -10,6 +10,8 @@
 
 
 #include <string>
+#include <cstring>
+#include <stdexcept>
 #include "database.h"
 
 
