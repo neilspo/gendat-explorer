@@ -1,3 +1,10 @@
+//
+// This program tests a simple wxWidgets GUI that uses the database access code.
+//
+// Usage: ./test_db_with_wxWidgets Host, User, Password
+//
+
+
 #include <wx/wxprec.h>
 
 #ifndef WX_PRECOMP
@@ -9,6 +16,7 @@
 #include <wx/colour.h>
 #include <string>
 #include <sstream>
+#include <iostream>
 #include "database.h"
 #include "db_row_set_w.h"
 
@@ -144,7 +152,6 @@ TopFrame::TopFrame(const wxString& title, const wxPoint& pos, const wxSize& size
 	sizer->Add(new wxStaticText(main_panel, wxID_ANY, wxT("Label2")), 0, wxALL, 5);
 
 	main_panel->SetSizer(sizer);
-	std::cout << "test";
 }
 
 
@@ -170,10 +177,16 @@ void TopFrame::OnAbout(wxCommandEvent& event)
 
 void TopFrame::OnConnect(wxCommandEvent& event)
 {
-	std::string host    = "127.0.0.1";
-	std::string user    = "test_RO";
-	std::string passwd  = "1234";
-	std::string db_name = "zzz";
+	if (wxGetApp().argc!=4)
+	{
+		std::cerr << "Usage: " << wxGetApp().argv[0] << " Host, User, Password" << std::endl;
+		return;
+	}
+
+	std::string host    = std::string(wxGetApp().argv[1]);
+	std::string user    = std::string(wxGetApp().argv[2]);
+	std::string passwd  = std::string(wxGetApp().argv[3]);
+	std::string db_name = "gendat";
 	
 	try
 	{
@@ -225,9 +238,9 @@ void TopFrame::On_1871_Census(wxCommandEvent& event)
 	unsigned int num_rows;
 	unsigned int num_cols;
 	
-	std::string query = "SELECT id, t_int, t_int + 2 from zzz";
+	//std::string query = "SELECT id, t_int, t_int + 2 from zzz";
 	//std::string query = "SELECT * FROM zzz";
-	//std::string query = "SELECT * FROM 1871_census_data WHERE (district_id=197 AND sub_district_id='l' AND page=1)";
+	std::string query = "SELECT * FROM 1871_census_data WHERE (district_id=197 AND sub_district_id='l' AND page=1)";
 	//std::string query = "DESCRIBE 1871_census_data";
 
 	try
@@ -334,5 +347,5 @@ void TopFrame::OnCellValueChanged(wxGridEvent& ev)
 
 void TopFrame::OnGridButton_Save(wxCommandEvent& ev)
 {
-	wxLogMessage("Save button pressed");
+	wxLogMessage("Save button pressed (this program does not actually change the database)");
 }
