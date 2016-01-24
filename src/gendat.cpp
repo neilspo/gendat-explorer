@@ -162,11 +162,16 @@ void TopFrame::OnAbout(wxCommandEvent& event)
 
 void TopFrame::OnConnect(wxCommandEvent& event)
 {
-	std::string host    = "127.0.0.1";
-	//std::string host = "server";
-	std::string user    = "test_RW";
-	std::string passwd  = "1234";
-	std::string db_name = "zzz";
+	if (wxGetApp().argc!=4)
+	{
+		std::cerr << "Usage: " << wxGetApp().argv[0] << " Host, User, Password" << std::endl;
+		return;
+	}
+
+	std::string host    = std::string(wxGetApp().argv[1]);
+	std::string user    = std::string(wxGetApp().argv[2]);
+	std::string passwd  = std::string(wxGetApp().argv[3]);
+	std::string db_name = "gendat";
 	
 	try
 	{
