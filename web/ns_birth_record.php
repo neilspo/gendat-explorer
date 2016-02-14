@@ -4,6 +4,7 @@
 *
 * @brief Edit one NS birth record
 *
+* @date 14 February 2016
 *
 * This page produces an HTML form that allows users to view and edit
 * data transcribed from one Nova Scotia birth record.
@@ -18,7 +19,7 @@ include_once ('config.php');
 
 html_header ('NS Birth Record', 'ns_birth_record.css');
 
-// Get the primary key, BirthID, which must be a positive integer.
+// Get BirthID, the primary key for database access, which must be a positive integer.
 //
 // On the first call to this page, the value of BirthID is obtained from
 // a URL parameter. If the page is then reentered, as a result of the
@@ -60,6 +61,7 @@ else
 	die('BirthID ' . $id . ' is not in the database.<br>');
 }
 
+// Define the data field names.
 
 $field[0] = 'name';
 $field[1] = 'birth_date';
