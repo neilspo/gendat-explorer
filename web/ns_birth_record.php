@@ -4,6 +4,7 @@
 *
 * @brief Edit one NS birth record
 *
+*
 * This page produces an HTML form that allows users to view and edit
 * data transcribed from one Nova Scotia birth record.
 *
