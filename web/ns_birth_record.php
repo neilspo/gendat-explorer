@@ -1,10 +1,9 @@
 <?php
 /**
-* @file
 *
-* @brief Edit one NS birth record
+* Edit one NS birth record
 *
-* @date 14 February 2016
+* 16 February 2016
 *
 * This page produces an HTML form that allows users to view and edit
 * data transcribed from one Nova Scotia birth record.
@@ -100,6 +99,7 @@ if(isset($_POST['submit']))
 		$query = "INSERT INTO ns_births_data (BirthID) VALUES ($BirthID)";
 		if (!$db->query($query)) die($db->error);
 	}
+	$new_record = 'false';
 
 	// Store the new data from the HTML form in the database. 
 

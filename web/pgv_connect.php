@@ -3,24 +3,24 @@
 /**
 * @file
 *
-* @brief Connect to a PgpGedView database.
-* @date 13 February 2016
+* @brief Connect to a PhpGedView database.
+*
+* @date 16 February 2016
 *
 */
-
-
-// ******************************************************************
-// I need to change the function names pgv_indi_url, pgv_individual
-// and pgv_ind to something that is less confusing.
-// ******************************************************************
-
 
 include_once ('misc_functions.php');
 include_once ('config.php');
 
+
+
 /**
 *
-* Generate the URL for an PGV individual.
+* @brief Generate the URL for a PhpGedView individual.
+*
+* @param[in]   $n_id   PhpGedView ID for the person
+*
+* @returns   This function returns a string with the URL.
 *
 */
 
@@ -39,14 +39,17 @@ function pgv_indi_url($n_id)
 
 
 
-
 /**
 * 
-* Generate a link to a PGV individual.
+* @brief Generate the HTML link to a PhpGedView individual.
+*
+* @param[in]   $n_id   PhpGedView ID for the person
+*
+* @returns   This function returns a string with the HTML link.
 *
 */
 
-function pgv_individual($n_id)
+function pgv_indi_link($n_id)
 {
 	$url = pgv_indi_url($n_id);
 	return html_link($n_id,$url);
@@ -56,14 +59,18 @@ function pgv_individual($n_id)
 *
 * @brief Get the name of an individual.
 *
+* @param[in,out]  $db     MySQLi database object
+* @param[in]      $n_id   PhpGedView ID for the person
+*
+* @returns    This function returns a string with the person's name.
+*
 */
 
 function pgv_get_name($db, $n_id)
 {
 	global $pgv_prefix;
 	$query = "SELECT n_list FROM {$pgv_prefix}pgv_name WHERE n_id='$n_id'";
-	$result = $db->query($query);
-	if (!$result) die($db->error);
+	if (!($result=$db->query($query))) die($db->error);
 	if ($data = $result->fetch_object())
 	{
 		$name = $data->n_list;
@@ -79,6 +86,12 @@ function pgv_get_name($db, $n_id)
 		return null;
 	}
 }
+
+/**
+*
+* @brief Handle the information about a PhpGedView individual.
+*
+*/
 
 class pgv_ind
 {
@@ -96,6 +109,14 @@ class pgv_ind
 	public $mother_name;
 	public $mother_link;
 	
+	/**
+	*
+	* @brief Constructor.
+	*
+	* @param[in,out]  $db     MySQLi database object
+	* @param[in]      $n_id   PhpGedView ID for the person
+	*
+	*/
 	function __construct($db, $n_id)
 	{
 		global $pgv_prefix;
@@ -115,8 +136,8 @@ class pgv_ind
 		
 		// Load the date of birth.
 		
-	$query = "SELECT DoB FROM {$pgv_prefix}births_1 WHERE i_id='$n_id'";
-		$result = $db->query($query);
+		$query = "SELECT DoB FROM {$pgv_prefix}births_1 WHERE i_id='$n_id'";
+		if (!($result=$db->query($query))) die($db->error);
 		if ($data = $result->fetch_object())
 		{
 			$this->birth_date = $data->DoB;
@@ -129,7 +150,7 @@ class pgv_ind
 		// Load the place of birth.
 		
 		$query = "SELECT PoB FROM {$pgv_prefix}births_2 WHERE i_id='$n_id'";
-		$result = $db->query($query);
+		if (!($result=$db->query($query))) die($db->error);
 		if ($data = $result->fetch_object())
 		{
 			$this->birth_place = $data->PoB;
@@ -142,7 +163,7 @@ class pgv_ind
 		// Load the date of death.
 		
 		$query = "SELECT DoD FROM {$pgv_prefix}deaths_1 WHERE i_id='$n_id'";
-		$result = $db->query($query);
+		if (!($result=$db->query($query))) die($db->error);
 		if ($data = $result->fetch_object())
 		{
 			$this->death_date = $data->DoD;
@@ -155,7 +176,7 @@ class pgv_ind
 		// Load the place of death.
 		
 		$query = "SELECT PoD FROM {$pgv_prefix}deaths_2 WHERE i_id='$n_id'";
-		$result = $db->query($query);
+		if (!($result=$db->query($query))) die($db->error);
 		if ($data = $result->fetch_object())
 		{
 			$this->death_place = $data->PoD;
@@ -168,7 +189,7 @@ class pgv_ind
 		// Load information about the parents.
 		
 		$query = "SELECT * FROM {$pgv_prefix}parents WHERE i_id='$n_id'";
-		$result = $db->query($query);
+		if (!($result=$db->query($query))) die($db->error);
 		if ($data = $result->fetch_object())
 		{
 			// Father
