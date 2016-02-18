@@ -16,7 +16,7 @@ include_once ('config.php');
 
 // Generate the HTML page header.
 
-html_header ('NS Birth Record', 'ns_birth_record.css');
+html_header ('NS Birth Record', 'gendat.css');
 
 // Get BirthID, the primary key for database access, which must be a positive integer.
 //

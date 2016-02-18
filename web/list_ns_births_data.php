@@ -48,7 +48,7 @@ while ($row = $result->fetch_object())
 	$cell[3] = $row->Year;
 	$cell[4] = $row->name;
 	$cell[5] = html_link('Source', $url);
-	$cell[6] = html_link($row->BirthID, "ns_birth_record.php?id=$row->BirthID");
+	$cell[6] = html_link($row->BirthID, "edit_ns_births_data.php?id=$row->BirthID");
 	table_row($cell);
 }
 table_end();
