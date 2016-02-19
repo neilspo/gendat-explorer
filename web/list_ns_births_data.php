@@ -1,5 +1,11 @@
 <?php
 
+/**
+*
+* Produce a summary listing of the database table "ns_births_data".
+*
+*/
+
 include_once ('misc_functions.php');
 include_once ('config.php');
 
@@ -27,13 +33,13 @@ table_start();
 // Create the column headers.
 
 
-$cell[0] = 'Last Name';
-$cell[1] = 'First Name';
-$cell[2] = 'Place';
-$cell[3] = 'Year';
-$cell[4] = 'Name';
-$cell[5] = 'URL';
-$cell[6] = null;
+$cell[0] = 'Birth ID';
+$cell[1] = 'Last Name';
+$cell[2] = 'First Name';
+$cell[3] = 'Place';
+$cell[4] = 'Year';
+$cell[5] = 'Name';
+$cell[6] = 'URL';
 table_row_header($cell);
 
 // Output the data records.
@@ -42,13 +48,13 @@ while ($row = $result->fetch_object())
 {
 	$url = 'https://www.novascotiagenealogy.com/ItemView.aspx?ImageFile=' . $row->RegBook . '-' . $row->RegPage . '&Event=birth&ID=' . $row->BirthID;
 
-	$cell[0] = $row->LastName;
-	$cell[1] = $row->FirstName;
-	$cell[2] = $row->Place;
-	$cell[3] = $row->Year;
-	$cell[4] = $row->name;
-	$cell[5] = html_link('Source', $url);
-	$cell[6] = html_link($row->BirthID, "edit_ns_births_data.php?id=$row->BirthID");
+	$cell[0] = html_link($row->BirthID, "edit_ns_births_data.php?id=$row->BirthID");
+	$cell[1] = $row->LastName;
+	$cell[2] = $row->FirstName;
+	$cell[3] = $row->Place;
+	$cell[4] = $row->Year;
+	$cell[5] = $row->name;
+	$cell[6] = html_link('Source', $url);
 	table_row($cell);
 }
 table_end();

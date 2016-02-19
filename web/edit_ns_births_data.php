@@ -3,7 +3,7 @@
 *
 * Edit one NS birth record
 *
-* 16 February 2016
+* 18 February 2016
 *
 * This page produces an HTML form that allows users to view and edit
 * data transcribed from one Nova Scotia birth record.
@@ -77,12 +77,13 @@ $field[11] = 'n_id_m';
 
 // Get or update the data.
 
-
 if(isset($_POST['submit']))
 {
-	//***************************************************************
-	// Process new data obtained after the HTML form was submitted.
-	//***************************************************************
+	//*************************************************************************
+	// The submit button on the HTML form has been pressed.
+	//
+	// Read the HTML form input fields and store these data in the database.
+	//*************************************************************************
 	
 	// Get the new field values from the HTML form input fields.
 	
@@ -91,7 +92,7 @@ if(isset($_POST['submit']))
 	// Change blank fields to null.
 	
 	for ($i=0; $i<count($field); $i++) if (${$field[$i]} == "") ${$field[$i]} = null;
-		
+	
 	// If this record is not already in the database, then create it.
 		
 	if ($_POST['new_record'] == 'true')
@@ -101,16 +102,22 @@ if(isset($_POST['submit']))
 	}
 	$new_record = 'false';
 
-	// Store the new data from the HTML form in the database. 
+	// Store the new data from the HTML form in the database. The following
+	// code does this using prepared SQL statements. This ensures that all
+	// data in the database has been properly escaped and eliminates any
+	// possibility of SQL malicious code injection.
 
-	// *** Set up a prepared SQL statement.
+	// --- Create the template SQL query for the prepared statement.
 
 	$query = "UPDATE ns_births_data SET $field[0]=?";
 	for ($i=1; $i<count($field); $i++) $query = $query . ", $field[$i]=?";
 	$query = $query . " WHERE BirthID=$BirthID";
+	
+	// --- Have the database prepare the statement.
+	
 	if (!($stmt=$db->prepare($query))) die($db->error);
 	
-	// *** Bind the variables.
+	// --- Bind the variables.
 	
 	$types       = '';
 	$arg_list[0] = &$types;
@@ -122,19 +129,27 @@ if(isset($_POST['submit']))
 	if (!call_user_func_array(array($stmt, "bind_param"),$arg_list))
 		die ('Bind failed');
 	
-	// *** Execute the prepare statement.
+	// --- Execute the prepare statement.
 	
-	if (!$stmt->execute())
-		die ("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
+	if (!$stmt->execute()) die ("Execute failed");
 	
-	// *** Release the prepared statement.
+	// --- Release the prepared statement.
 	
 	$stmt->close();
 }
   else
 {
+	//*************************************************************************
+	// Prepare to show the HTML form for the first time.
+	//*************************************************************************
+	
+	// Get the data from the database.
+	
 	$query = "SELECT * FROM ns_births_data WHERE BirthID = $BirthID";
 	if (!($result=$db->query($query))) die($db->error);
+	
+	// Prepare the data values that will be shown in the HTML form.
+	
 	if ($row = $result->fetch_object())
 	{
 		// This record already exists in the database.
@@ -151,7 +166,7 @@ if(isset($_POST['submit']))
 		
 		$new_record = 'true';
 		
-		// The field values are all null.
+		// Set the field values to null.
 		
 		for ($i=0; $i<count($field); $i++) ${$field[$i]} = null;
 	}
@@ -163,10 +178,14 @@ $pgv_ind   = new pgv_ind($db, $n_id);
 $pgv_ind_f = new pgv_ind($db, $n_id_f);
 $pgv_ind_m = new pgv_ind($db, $n_id_m);
 
+// Before generating the form, convert any characters in the strings that have special
+// significance in HTML to the correct HTML entities
+
+for ($i=0; $i<count($field); $i++) ${$field[$i]} = htmlspecialchars(${$field[$i]});
 
 // Generate the form.
 
-echo '<form action="ns_birth_record.php" method="post">' . PHP_EOL;
+echo '<form action="edit_ns_births_data.php" method="post">' . PHP_EOL;
 
 table_start();
 
