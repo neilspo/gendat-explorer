@@ -29,7 +29,7 @@ JOIN ns_marriages_data b USING (MarriageID)
 ORDER BY a.GroomLastName, a.Year, a.BrideLastName, a.MarriageID
 EOT;
 
-$result = $db->query($query);
+if (!($result=$db->query($query))) die($db->error);
 
 // Create a table from the rows of data.
 

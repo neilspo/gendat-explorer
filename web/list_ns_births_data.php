@@ -22,9 +22,14 @@ if($db->connect_errno > 0){
 
 // Issue an SQL query.
 
-$query = "SELECT a.*, b.name FROM ns_births a JOIN ns_births_data b USING (BirthID) ORDER BY a.LastName, a.Year, a.FirstName, a.BirthID";
-//$query = "SELECT a.*, b.name FROM ns_births a JOIN ns_births_data b USING (BirthID)";
-$result = $db->query($query);
+$query = <<<EOT
+SELECT a.*, b.name
+FROM ns_births a
+JOIN ns_births_data b USING (BirthID)
+ORDER BY a.LastName, a.Year, a.FirstName, a.BirthID
+EOT;
+
+if (!($result=$db->query($query))) die($db->error);
 
 // Create a table from the rows of data.
 
