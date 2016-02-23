@@ -3,7 +3,7 @@
 *
 * Edit one NS birth record
 *
-* 18 February 2016
+* 23 February 2016
 *
 * This page produces an HTML form that allows users to view and edit
 * data transcribed from one Nova Scotia birth record.
@@ -47,13 +47,29 @@ if($db->connect_errno > 0){
 // Get the NSHVS infromation about this record.
 
 $query = "SELECT * FROM ns_births WHERE BirthID = $BirthID";
-$result = $db->query($query);
-if (!$result) die($db->error);
+if (!($result=$db->query($query))) die($db->error);
+
 if ($row = $result->fetch_object())
 {
+	// Create the URL of this record at Nova Scotia Historical Vital Statistics
+	
 	$url = 'https://www.novascotiagenealogy.com/ItemView.aspx?ImageFile=' . $row->RegBook . '-' . $row->RegPage . '&Event=birth&ID=' . $row->BirthID;
+	
+	// Some dates have month and day set, others don't.
+	
+	$date = $row->Year;
+	if ($row->Month <> null)
+	{
+		$date = date('F', mktime(0, 0, 0, $row->Month)) . ' ' . $date;
+		if ($row->Day <> null) $date = $row->Day . ' ' . $date;
+	}
+	
+	// Display the results
+	
 	echo html_link('NSHVS Record', $url) . '<br><br>' . PHP_EOL;
-	echo $row->FirstName . ' ' . $row->LastName . ', born ' . $row->Year . ' in ' . $row->Place . ', ' . $row->County . ' County<br><br>';
+	echo $row->FirstName . ' ' . $row->LastName . ', born ' . $date . ' in ';
+	if ($row->Place <> null) echo $row->Place . ', ';
+	echo $row->County . ' County<br><br>';
 }
 else
 {
@@ -85,13 +101,20 @@ if(isset($_POST['submit']))
 	// Read the HTML form input fields and store these data in the database.
 	//*************************************************************************
 	
-	// Get the new field values from the HTML form input fields.
-	
-	for ($i=0; $i<count($field); $i++) ${$field[$i]} = $_POST[$field[$i]];
-	
-	// Change blank fields to null.
-	
-	for ($i=0; $i<count($field); $i++) if (${$field[$i]} == "") ${$field[$i]} = null;
+	for ($i=0; $i<count($field); $i++)
+	{
+		// Make sure the needed HTML input form fields were set. If not, then this is a bug.
+		
+		if (!isset($_POST[$field[$i]])) die("Bug: field '$field[$i]' was not set.");
+		
+		// Get the new field values from the HTML form input fields.
+		
+		${$field[$i]} = $_POST[$field[$i]];
+		
+		// Change blank fields to null.
+		
+		if (${$field[$i]} == "") ${$field[$i]} = null;
+	}
 	
 	// If this record is not already in the database, then create it.
 		

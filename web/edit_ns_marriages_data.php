@@ -3,7 +3,7 @@
 *
 * Edit one NS marriage record
 *
-* 18 February 2016
+* 23 February 2016
 *
 * This page produces an HTML form that allows users to view and edit
 * data transcribed from one Nova Scotia marriage record.
@@ -60,14 +60,28 @@ if($db->connect_errno > 0){
 // Get the NSHVS infromation about this record.
 
 $query = "SELECT * FROM ns_marriages WHERE MarriageID = $MarriageID";
-$result = $db->query($query);
-if (!$result) die($db->error);
+if (!($result=$db->query($query))) die($db->error);
+
 if ($row = $result->fetch_object())
 {
+	// Create the URL of this record at Nova Scotia Historical Vital Statistics
+	
 	$url = 'https://www.novascotiagenealogy.com/ItemView.aspx?ImageFile=' . $row->RegBook . '-' . $row->RegPage . '&Event=marriage&ID=' . $row->MarriageID;
+	
+	// Some dates have month and day set, others don't.
+	
+	$date = $row->Year;
+	if ($row->Month <> null)
+	{
+		$date = date('F', mktime(0, 0, 0, $row->Month)) . ' ' . $date;
+		if ($row->Day <> null) $date = $row->Day . ' ' . $date;
+	}
+	
+	// Display the results
+	
 	echo html_link('NSHVS Record', $url) . '<br><br>' . PHP_EOL;
 	echo $row->BrideFirstName . ' ' . $row->BrideLastName . ' and ';
-	echo $row->GroomFirstName . ' ' . $row->GroomLastName . ', married ' . $row->Year . ' in ';
+	echo $row->GroomFirstName . ' ' . $row->GroomLastName . ', married ' . $date . ' in ';
 	if ($row->Place <> null) echo $row->Place . ', ';
 	echo $row->County . ' County<br><br>';
 }
@@ -129,7 +143,7 @@ if(isset($_POST['submit']))
 		
 		if (${$field[$i]} == "") ${$field[$i]} = null;
 	}
-			
+	
 	// If this record is not already in the database, then create it.
 		
 	if ($_POST['new_record'] == 'true')
@@ -235,11 +249,11 @@ echo <<<EOT
 		<br>
 		<span style="white-space: nowrap">
 			<label for="n_id_g">Groom n_id</label>
-			<input type="text" name="n_id_g" id="n_id_g" value="$n_id_g"  style="width:100px;">
+			<input type="text" name="n_id_g" id="n_id_g" value="$n_id_g"  style="width:100px; min-width: 0;" >
 		</span>
 		<span style="white-space: nowrap">
 			<label for="n_id_b">Bride n_id</label>
-			<input type="text" name="n_id_b" id="n_id_b" value="$n_id_b"  style="width:100px;">
+			<input type="text" name="n_id_b" id="n_id_b" value="$n_id_b"  style="width:100px; min-width: 0; ">
 		</span>
 	</div>
 </div>
