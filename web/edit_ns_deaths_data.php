@@ -3,7 +3,7 @@
 *
 * Edit one NS death record
 *
-* 23 February 2016
+* 24 February 2016
 *
 * This page produces an HTML form that allows users to view and edit
 * data transcribed from one Nova Scotia death record.
@@ -32,7 +32,7 @@ include_once ('config.php');
 
 // Generate the HTML page header.
 
-html_header ('NS Birth Record', 'gendat.css');
+html_header ('NS Death Record', 'gendat.css');
 
 // Get Deathid, the primary key for database access, which must be a positive integer.
 //
@@ -69,7 +69,7 @@ if ($row = $result->fetch_object())
 {
 	// Create the URL of this record at Nova Scotia Historical Vital Statistics
 	
-	$url = 'https://www.novascotiagenealogy.com/ItemView.aspx?ImageFile=' . $row->RegBook . '-' . $row->RegPage . '&Event=birth&ID=' . $row->Deathid;
+	$url = 'https://www.novascotiagenealogy.com/ItemView.aspx?ImageFile=' . $row->RegBook . '-' . $row->RegPage . '&Event=death&ID=' . $row->Deathid;
 	
 	// Some dates have month and day set, others don't.
 	
@@ -83,7 +83,7 @@ if ($row = $result->fetch_object())
 	// Display the results
 	
 	echo html_link('NSHVS Record', $url) . '<br><br>' . PHP_EOL;
-	echo $row->FirstName . ' ' . $row->LastName . ', born ' . $date . ' in ';
+	echo $row->FirstName . ' ' . $row->LastName . ', died ' . $date . ' in ';
 	if ($row->Place <> null) echo $row->Place . ', ';
 	echo $row->County . ' County<br><br>';
 }
@@ -215,7 +215,7 @@ if(isset($_POST['submit']))
 	}
 }
 
-// Get the PGV data on this person, the father and the mother.
+// Get the PGV data on this person.
 
 $pgv_ind   = new pgv_ind($db, $n_id);
 
