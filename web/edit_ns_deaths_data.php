@@ -3,7 +3,7 @@
 *
 * Edit one NS death record
 *
-* 24 February 2016
+* 9 March 2016
 *
 * This page produces an HTML form that allows users to view and edit
 * data transcribed from one Nova Scotia death record.
@@ -127,9 +127,10 @@ if(isset($_POST['submit']))
 		
 		if (!isset($_POST[$field[$i]])) die("Bug: field '$field[$i]' was not set.");
 		
-		// Get the new field values from the HTML form input fields.
+		// Get the new field values from the HTML form input fields (with leading
+		// and trailing white space trimmed).
 		
-		${$field[$i]} = $_POST[$field[$i]];
+		${$field[$i]} = trim($_POST[$field[$i]]);
 		
 		// Change blank fields to null.
 		
