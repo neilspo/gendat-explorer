@@ -3,7 +3,7 @@
 *
 * Edit one NS death record
 *
-* 9 March 2016
+* 13 March 2016
 *
 * This page produces an HTML form that allows users to view and edit
 * data transcribed from one Nova Scotia death record.
@@ -22,7 +22,7 @@
 function form_input ($my_field_name)
 {
 	global ${$my_field_name};
-	return "<input type='text' name='$my_field_name' id='$my_field_name' value='" . ${$my_field_name} . "' >";
+	return "<input type=\"text\" name=\"$my_field_name\" id=\"$my_field_name\" value=\"" . ${$my_field_name} . "\" >";
 }
 
 

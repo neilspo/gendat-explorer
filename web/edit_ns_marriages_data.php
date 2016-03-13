@@ -3,7 +3,7 @@
 *
 * Edit one NS marriage record
 *
-* 9 March 2016
+* 13 March 2016
 *
 * This page produces an HTML form that allows users to view and edit
 * data transcribed from one Nova Scotia marriage record.
@@ -14,12 +14,15 @@
 *
 * Prepare a HTML form <input> element.
 *
+* Note: This function will not work correctly if there is a variable in 
+*       the main program called $my_field_name.
+*
 */
 
-function form_input ($name)
+function form_input ($my_field_name)
 {
-	global ${$name};
-	return "<input type='text' name='$name' id='$name' value='" . ${$name} . "' >";
+	global ${$my_field_name};
+	return "<input type=\"text\" name=\"$my_field_name\" id=\"$my_field_name\" value=\"" . ${$my_field_name} . "\" >";
 }
 
 
