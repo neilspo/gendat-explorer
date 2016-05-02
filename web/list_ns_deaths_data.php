@@ -7,6 +7,7 @@
 */
 
 include_once ('misc_functions.php');
+include_once ('pgv_connect.php');
 include_once ('config.php');
 
 // Generate the page header.
@@ -23,7 +24,7 @@ if($db->connect_errno > 0){
 // Issue an SQL query.
 
 $query = <<<EOT
-SELECT a.*, b.name
+SELECT a.*, b.name, b.n_id
 FROM ns_deaths a
 JOIN ns_deaths_data b USING (Deathid)
 ORDER BY a.LastName, a.Year, a.FirstName, a.Deathid
@@ -39,12 +40,13 @@ table_start();
 
 
 $cell[0] = 'Death ID';
-$cell[1] = 'Last Name';
-$cell[2] = 'First Name';
-$cell[3] = 'Place';
-$cell[4] = 'Year';
-$cell[5] = 'Name';
-$cell[6] = 'URL';
+$cell[1] = 'URL';
+$cell[2] = 'Last Name';
+$cell[3] = 'First Name';
+$cell[4] = 'Place';
+$cell[5] = 'Year';
+$cell[6] = 'Name';
+$cell[7] = null;
 table_row_header($cell);
 
 // Output the data records.
@@ -54,12 +56,13 @@ while ($row = $result->fetch_object())
 	$url = 'https://www.novascotiagenealogy.com/ItemView.aspx?ImageFile=' . $row->RegBook . '-' . $row->RegPage . '&Event=death&ID=' . $row->Deathid;
 
 	$cell[0] = html_link($row->Deathid, "edit_ns_deaths_data.php?id=$row->Deathid");
-	$cell[1] = $row->LastName;
-	$cell[2] = $row->FirstName;
-	$cell[3] = $row->Place;
-	$cell[4] = $row->Year;
-	$cell[5] = $row->name;
-	$cell[6] = html_link('Source', $url);
+	$cell[1] = html_link('Source', $url);
+	$cell[2] = $row->LastName;
+	$cell[3] = $row->FirstName;
+	$cell[4] = $row->Place;
+	$cell[5] = $row->Year;
+	$cell[6] = $row->name;
+	$cell[7] = pgv_indi_link($row->n_id);
 	table_row($cell);
 }
 table_end();

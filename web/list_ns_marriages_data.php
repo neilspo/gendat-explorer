@@ -7,6 +7,7 @@
 */
 
 include_once ('misc_functions.php');
+include_once ('pgv_connect.php');
 include_once ('config.php');
 
 // Generate the page header.
@@ -23,7 +24,7 @@ if($db->connect_errno > 0){
 // Issue an SQL query.
 
 $query = <<<EOT
-SELECT a.*, b.groom, b.bride
+SELECT a.*, b.groom, b.bride, b.n_id_g, b.n_id_b
 FROM ns_marriages a
 JOIN ns_marriages_data b USING (MarriageID)
 ORDER BY a.GroomLastName, a.Year, a.BrideLastName, a.MarriageID
@@ -44,7 +45,9 @@ $cell[2] = 'NSHVS Groom';
 $cell[3] = 'NSHVS Bride';
 $cell[4] = 'NSHVS Year';
 $cell[5] = 'Groom';
-$cell[6] = 'Bride';
+$cell[6] = null;
+$cell[7] = 'Bride';
+$cell[8] = null;
 table_row_header($cell);
 
 // Output the data records.
@@ -59,7 +62,9 @@ while ($row = $result->fetch_object())
 	$cell[3] = $row->BrideLastName . ', ' . $row->BrideFirstName;
 	$cell[4] = $row->Year;
 	$cell[5] = $row->groom;
-	$cell[6] = $row->bride;
+	$cell[6] = pgv_indi_link($row->n_id_g);
+	$cell[7] = $row->bride;
+	$cell[8] = pgv_indi_link($row->n_id_b);
 	table_row($cell);
 }
 table_end();
