@@ -7,6 +7,7 @@
 #include <wx/treectrl.h>
 
 #include <string>
+#include <stdexcept>
 #include "database.h"
 
 
