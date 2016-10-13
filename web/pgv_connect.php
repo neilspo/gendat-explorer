@@ -5,7 +5,7 @@
 *
 * @brief Connect to a PhpGedView database.
 *
-* @date 16 February 2016
+* @date 13 October 2016
 *
 */
 
@@ -54,6 +54,32 @@ function pgv_indi_link($n_id)
 	$url = pgv_indi_url($n_id);
 	return html_link($n_id,$url);
 }
+
+
+
+/**
+*
+* @brief Generate the HTML link to a PhpGedView individual, using the person's name.
+*
+* @param[in,out]  $db     MySQLi database object
+* @param[in]      $n_id   PhpGedView ID for the person
+*
+* @returns   This function returns a string with the HTML link.
+*/
+
+function pgv_indi_name_link($db, $n_id)
+{
+	if (($name = pgv_get_name($db,$n_id)) != null)
+	{
+		return html_link ($name, pgv_indi_url($n_id));
+	}
+	else
+	{
+		return $n_id;
+	}
+}
+
+
 
 /**
 *
