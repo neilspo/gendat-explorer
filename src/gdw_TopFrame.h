@@ -32,10 +32,9 @@ class TopFrame : public wxFrame
 
   void OnConnect      (wxCommandEvent& event);
   void OnDisconnect   (wxCommandEvent& event);
-  void OnShowLogWin   (wxCommandEvent& event);
   void OnEdit         (wxCommandEvent& event);
 
-  wxPanel      *main_panel;
+  wxPanel      *top_panel;
   database     gendat_db;
 
 };

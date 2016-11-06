@@ -13,11 +13,13 @@
 #endif
 
 #include <wx/treectrl.h>
+#include <wx/notebook.h>
 
 #include <string>
 #include <stdexcept>
 #include "database.h"
 #include "gdw_TopFrame.h"
+#include "gdw_panel.h"
 
 
 
@@ -35,57 +37,79 @@ TopFrame::TopFrame(const wxString& title, const wxPoint& pos, const wxSize& size
 {
   std::cout << "TopFrame Constructor Start" << std::endl;
 
+  // Bind the event handler to the IDs used in this class.
+  
   Bind(wxEVT_COMMAND_MENU_SELECTED, &TopFrame::event_handler, this, wxID_EXIT);
   Bind(wxEVT_COMMAND_MENU_SELECTED, &TopFrame::event_handler, this, wxID_ABOUT);
-
   Bind(wxEVT_COMMAND_MENU_SELECTED, &TopFrame::event_handler, this, ID_first, ID_last);
 
+  // Create a menu bar and then attach the menu items
   
-
+  wxMenuBar *menuBar = new wxMenuBar;
   
-
-
-
-  //	File Menu
+  // File Menu
+  //
+  // Note that the & character creates an accelerator key. The character that
+  // follows the & is underlined. This way the menu is accessible via the Alt+F
+  // shortcut, while Alt+F C would get to the "DB Connect" command.
 
   wxMenu *menuFile = new wxMenu;
-  menuFile->Append(ID_Connect, "&DB Connect");
-  menuFile->Append(ID_Disconnect, "&DB Disconnect");
+  menuBar->Append(menuFile, "&File");
+  menuFile->Append(ID_Connect, "DB &Connect");
+  menuFile->Append(ID_Disconnect, "DB &Disconnect");
   menuFile->AppendSeparator();
   menuFile->Append(wxID_EXIT);
 
   // Tools Menu
 
   wxMenu *menuTools = new wxMenu;
+  menuBar->Append(menuTools, "&Tools");
   menuTools->Append(ID_Edit, "&Edit");
 
   // Help Menu
 
   wxMenu *menuHelp = new wxMenu;
+  menuBar->Append(menuHelp, "&Help");
   menuHelp->Append(ID_ShowLogWin, "Show Log Window");
   menuHelp->Append(wxID_ABOUT);
 
+  // Make the menu bar visible.
 
-  wxMenuBar *menuBar = new wxMenuBar;
-  menuBar->Append(menuFile,    "&File");
-  menuBar->Append(menuTools,   "&Tools");
-  menuBar->Append(menuHelp,    "&Help");
   SetMenuBar(menuBar);
 
   // Create the status bar at the bottom
 
   CreateStatusBar();
 
-  // Create the main data display area.
+  // Create a top-level panel to hold all the contents of the frame
+  
+  wxPanel* top_panel = new wxPanel(this, wxID_ANY);
 
-  main_panel = new wxPanel(this);
+  // Create the wxNotebook widget
+  
+  wxNotebook* notebook = new wxNotebook(top_panel, wxID_ANY);
+  
+  // Add 2 pages to the wxNotebook widget
+  
+  gdw_panel* text1 = new gdw_panel(notebook);
+  notebook->AddPage(text1, L"Tab 1");
+  
+  wxTextCtrl* textCtrl2 = new wxTextCtrl(notebook, wxID_ANY, L"Tab 2 Contents");
+  notebook->AddPage(textCtrl2, L"Tab 2");
 
-  // put out a bit is text to test the panel.
+  // Set up the sizer for the panel
+  wxBoxSizer* panelSizer = new wxBoxSizer(wxHORIZONTAL);
+  panelSizer->Add(notebook, 1, wxEXPAND);
+  top_panel->SetSizer(panelSizer);
 
-  wxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
-  sizer->Add(new wxStaticText(main_panel, wxID_ANY, wxT("Startup Window")), 0, wxALL, 5);
-
-  main_panel->SetSizer(sizer);
+  // Set up the sizer for the frame and resize the frame
+  // according to its contents
+  
+  // wxBoxSizer* topSizer = new wxBoxSizer(wxHORIZONTAL);
+  // topSizer->SetMinSize(250, 100);
+  // topSizer->Add(top_panel, 1, wxEXPAND);
+  // SetSizerAndFit(topSizer);
+  
   std::cout << "TopFrame Constructor End" << std::endl;
 }
 
@@ -118,11 +142,15 @@ void TopFrame::event_handler (wxCommandEvent& event)
     case ID_Disconnect:
       std::cout << "ID_Disconnect" << std::endl;
       break;
-    case ID_ShowLogWin:
-      new wxLogWindow(this, wxS("Log messages"), true, false);
-      break;
     case ID_Edit:
       std::cout << "ID_Edit" << std::endl;
+      break;
+
+    case ID_ShowLogWin:
+
+      // Show log messages in a separate window.
+      
+      new wxLogWindow(this, wxS("Log messages"), true, false);
       break;
       
     case wxID_ABOUT:
@@ -196,7 +224,7 @@ void TopFrame::OnDisconnect(wxCommandEvent& event)
 
 void TopFrame::OnEdit(wxCommandEvent& event)
 {
-  wxPanel* parent = main_panel;
+  wxPanel* parent = top_panel;
 	
   // Clear the parent window.
 
