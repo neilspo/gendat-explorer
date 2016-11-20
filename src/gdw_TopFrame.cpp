@@ -13,13 +13,14 @@
 #endif
 
 #include <wx/treectrl.h>
-#include <wx/notebook.h>
+//#include <wx/notebook.h>
+#include <wx/aui/auibook.h>
 
 #include <string>
 #include <stdexcept>
 #include "database.h"
 #include "gdw_TopFrame.h"
-#include "gdw_panel.h"
+#include "gdw_edit.h"
 
 
 
@@ -57,6 +58,7 @@ TopFrame::TopFrame(const wxString& title, const wxPoint& pos, const wxSize& size
   menuBar->Append(menuFile, "&File");
   menuFile->Append(ID_Connect, "DB &Connect");
   menuFile->Append(ID_Disconnect, "DB &Disconnect");
+  menuFile->Append(ID_DeletePage, "Delete Current Page");
   menuFile->AppendSeparator();
   menuFile->Append(wxID_EXIT);
 
@@ -87,17 +89,24 @@ TopFrame::TopFrame(const wxString& title, const wxPoint& pos, const wxSize& size
 
   // Create the wxNotebook widget
   
-  wxNotebook* notebook = new wxNotebook(top_panel, wxID_ANY);
+  notebook = new wxNotebook(top_panel, wxID_ANY);
   
-  // Add 2 pages to the wxNotebook widget
+  // Add some pages to the wxNotebook widget
   
-  gdw_panel* text1 = new gdw_panel(notebook);
-  notebook->AddPage(text1, L"Tab 1");
+  notebook->AddPage(new gdw_edit(notebook), L"Tab 1a");
+
+  notebook->AddPage(new gdw_edit(notebook), L"Tab 1b");
+
+  notebook->AddPage(new gdw_edit(notebook), L"Tab 1c");
+
+  wxTextCtrl* textCtrl1 = new wxTextCtrl(notebook, wxID_ANY, L"Tab 1 Contents");
+  notebook->AddPage(textCtrl1, L"Tab 1");
   
   wxTextCtrl* textCtrl2 = new wxTextCtrl(notebook, wxID_ANY, L"Tab 2 Contents");
   notebook->AddPage(textCtrl2, L"Tab 2");
-
+  
   // Set up the sizer for the panel
+  
   wxBoxSizer* panelSizer = new wxBoxSizer(wxHORIZONTAL);
   panelSizer->Add(notebook, 1, wxEXPAND);
   top_panel->SetSizer(panelSizer);
@@ -142,8 +151,16 @@ void TopFrame::event_handler (wxCommandEvent& event)
     case ID_Disconnect:
       std::cout << "ID_Disconnect" << std::endl;
       break;
+
+    case ID_DeletePage:
+      std::cout << "ID_DeletePage" << std::endl;
+      notebook->DeletePage (notebook->GetSelection());
+      break;
+
+      
     case ID_Edit:
       std::cout << "ID_Edit" << std::endl;
+      notebook->AddPage(new gdw_edit(notebook), L"Tab 1");
       break;
 
     case ID_ShowLogWin:
@@ -215,37 +232,3 @@ void TopFrame::OnDisconnect(wxCommandEvent& event)
 }
 
 
-
-
-
-
-
-// Event handler for menu item - Tools > Edit
-
-void TopFrame::OnEdit(wxCommandEvent& event)
-{
-  wxPanel* parent = top_panel;
-	
-  // Clear the parent window.
-
-  parent->DestroyChildren();
-
-  wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
-
-  wxTreeCtrl *tree = new wxTreeCtrl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize);
-
-  sizer->Add(new wxStaticText(parent, wxID_ANY, wxT("Test Window")), 0, wxALL, 5);
-  sizer->Add(tree, 1, wxEXPAND);
-
-  tree->SetWindowStyle(wxTR_HIDE_ROOT); //hides the real root node to have many roots
-
-  wxTreeItemId root = tree->AddRoot("invisible root");//this root will be invisible
-  wxTreeItemId r1   = tree->AppendItem(root, "1871 Census");
-  wxTreeItemId r2   = tree->AppendItem(root, "1881 Census");
-  tree->AppendItem(r1, "Node1");
-  tree->AppendItem(r1, "Node2");
-  tree->AppendItem(r2, "Node3");
-
-  parent->SetSizer(sizer);
-  SetClientSize(parent->GetBestSize());
-}

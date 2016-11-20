@@ -7,6 +7,8 @@
 #include <wx/wx.h>
 #endif
 
+//#include <wx/notebook.h>
+#include <wx/aui/auibook.h>
 #include "database.h"
 
 #define PROG_VERSION "Genealogical Data Explorer\n\nVersion 0.1"
@@ -24,6 +26,7 @@ class TopFrame : public wxFrame
     ID_Connect = 1,
     ID_Disconnect,
     ID_ShowLogWin,
+    ID_DeletePage,
     ID_Edit,
     ID_first = ID_Connect,
     ID_last  = ID_Edit
@@ -34,8 +37,9 @@ class TopFrame : public wxFrame
   void OnDisconnect   (wxCommandEvent& event);
   void OnEdit         (wxCommandEvent& event);
 
-  wxPanel      *top_panel;
-  database     gendat_db;
+  wxPanel     *top_panel;
+  database    gendat_db;
+  wxNotebook  *notebook;
 
 };
 
