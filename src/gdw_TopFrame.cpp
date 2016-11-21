@@ -13,8 +13,7 @@
 #endif
 
 #include <wx/treectrl.h>
-//#include <wx/notebook.h>
-#include <wx/aui/auibook.h>
+#include <wx/notebook.h>
 
 #include <string>
 #include <stdexcept>
@@ -111,22 +110,10 @@ TopFrame::TopFrame(const wxString& title, const wxPoint& pos, const wxSize& size
   panelSizer->Add(notebook, 1, wxEXPAND);
   top_panel->SetSizer(panelSizer);
 
-  // Set up the sizer for the frame and resize the frame
-  // according to its contents
-  
-  // wxBoxSizer* topSizer = new wxBoxSizer(wxHORIZONTAL);
-  // topSizer->SetMinSize(250, 100);
-  // topSizer->Add(top_panel, 1, wxEXPAND);
-  // SetSizerAndFit(topSizer);
-  
   std::cout << "TopFrame Constructor End" << std::endl;
 }
 
 
-
-// ============================================================================
-// Event handlers
-// ============================================================================
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
@@ -153,13 +140,11 @@ void TopFrame::event_handler (wxCommandEvent& event)
       break;
 
     case ID_DeletePage:
-      std::cout << "ID_DeletePage" << std::endl;
       notebook->DeletePage (notebook->GetSelection());
       break;
 
       
     case ID_Edit:
-      std::cout << "ID_Edit" << std::endl;
       notebook->AddPage(new gdw_edit(notebook), L"Tab 1");
       break;
 
