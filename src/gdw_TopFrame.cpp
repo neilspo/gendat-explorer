@@ -20,6 +20,7 @@
 #include "database.h"
 #include "gdw_TopFrame.h"
 #include "gdw_edit.h"
+#include "gdw_dialog.h"
 
 
 
@@ -133,7 +134,11 @@ void TopFrame::event_handler (wxCommandEvent& event)
   switch (event_id)
     {
     case ID_Connect:
-      std::cout << "ID_Connect" << std::endl;
+      {
+	gdw_db_connect db_connect;
+	db_connect.ShowModal();
+      }
+      
       break;
     case ID_Disconnect:
       std::cout << "ID_Disconnect" << std::endl;

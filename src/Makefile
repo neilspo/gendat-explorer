@@ -4,11 +4,11 @@ CC=g++
 # of the code with calls to the MySQL C API, which requires a different set of flags.
 
 CFLAGS=-c $(shell wx-config --cflags) -I/usr/include/mysql -std=c++11 -pedantic
-SOURCES=gendat.cpp gdw_TopFrame.cpp gdw_panel.cpp gdw_edit.cpp db_row_set.cpp db_row_set_w.cpp
+SOURCES=gendat.cpp gdw_TopFrame.cpp gdw_panel.cpp gdw_edit.cpp gdw_dialog.cpp db_row_set.cpp db_row_set_w.cpp
 
 # Linker flags
 
-LDFLAGS=$(shell wx-config --libs core,base,aui) $(shell mysql_config --libs)
+LDFLAGS=$(shell wx-config --libs) $(shell mysql_config --libs)
 OBJECTS=$(SOURCES:.cpp=.o) database.o
 EXECUTABLE=gendat
 
