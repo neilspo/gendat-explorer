@@ -12,6 +12,9 @@
 #include <wx/wx.h>
 #endif
 
+#include <string>
+#include <stdexcept>
+
 #include "gdw_dialog.h"
 
 
@@ -26,8 +29,12 @@
 
 
 
-gdw_db_connect::gdw_db_connect() : wxDialog(NULL, wxID_ANY, "Database Connect")
+gdw_db_connect::gdw_db_connect(database* db) : wxDialog(NULL, wxID_ANY, "Database Connect")
 {
+  // Keep a pointer to the database object.
+
+  my_db = db;
+
   // Put everything in a panel.
   
   wxPanel *panel = new wxPanel(this, wxID_ANY);
@@ -77,17 +84,25 @@ gdw_db_connect::~gdw_db_connect()
 
 void gdw_db_connect::event_handler (wxCommandEvent& event)
 {
-  std::cout << "TopFrame::event_handler: Start" << std::endl;
+  std::cout << "db_connect::event_handler: Start" << std::endl;
 
-  std::string hostname(wx_hostname->GetValue());
-  std::string username(wx_username->GetValue());
-  std::string password(wx_password->GetValue());
-  
-  std::cout << "/" << hostname << "/" << std::endl;
-  std::cout << "/" << username << "/" << std::endl;
-  std::cout << "/" << password << "/" << std::endl;
+  std::string host(wx_hostname->GetValue());
+  std::string user(wx_username->GetValue());
+  std::string passwd(wx_password->GetValue());
+  std::string db_name("gendat");
 
+  // Try to connect to the database. If it worked, then kill the dialog window.
+  // Otherwise, report the error and leave the dialog window open.
 
+  try
+    {
+      my_db->connect(host, user, passwd, db_name);
+      EndModal(1);
+    }
+  catch (std::runtime_error& exception)
+    {
+      wxLogMessage(exception.what());
+    }
 }
 
 

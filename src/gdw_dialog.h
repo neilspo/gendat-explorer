@@ -9,10 +9,12 @@
 
 #include <wx/dialog.h>
 
+#include "database.h"
+
 class gdw_db_connect : public wxDialog
 {
 public:
-  gdw_db_connect();
+  gdw_db_connect(database* db);
   ~gdw_db_connect();
   
 private:
@@ -24,6 +26,7 @@ private:
   wxTextCtrl* wx_hostname;
   wxTextCtrl* wx_username;
   wxTextCtrl* wx_password;
+  database*   my_db;
 };
 
 #endif

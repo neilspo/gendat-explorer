@@ -135,8 +135,9 @@ void TopFrame::event_handler (wxCommandEvent& event)
     {
     case ID_Connect:
       {
-	gdw_db_connect db_connect;
-	db_connect.ShowModal();
+	gdw_db_connect db_connect(&gendat_db);
+	int return_code = db_connect.ShowModal();
+	if (return_code==1) SetStatusText("Connected to database");
       }
       
       break;
