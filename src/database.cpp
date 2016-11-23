@@ -132,7 +132,7 @@ void database::execute(std::string query, std::vector <std::vector <std::string>
 
 	execute_1 (query, result_set, nullptr, num_rows, num_cols, mysql_result);
 
-	// This version of of this member function does not require any more information.
+	// This version of this member function does not require any more information.
 	// Clean up.
 
 	if (mysql_result != nullptr) mysql_free_result(mysql_result);

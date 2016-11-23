@@ -109,7 +109,7 @@ bool db_row_set_w::unlock(unsigned int col)
 ///
 /// \return `true` if successful
 ///
-/// \exception std::out_of_range thrown if the column number is out of range
+/// \exception std::out_of_range thrown if the row or column number is out of range
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -237,7 +237,7 @@ bool db_row_set_w::save_data(unsigned int row, unsigned int col, std::string dat
 ///
 /// \return `true` if successful, `false` if this field cannot be NULL
 ///
-/// \exception std::out_of_range thrown if the column number is out of range
+/// \exception std::out_of_range thrown if the row or column number is out of range
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
