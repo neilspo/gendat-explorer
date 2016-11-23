@@ -1,9 +1,12 @@
 ///
 /// \class TopFrame gdw_TopFrame.h
 ///
-/// \brief Provides ...
+/// \brief The top wxWidgets frame in the GenDat Explorer application
 ///
-/// This class handles ...
+/// This class creates the wxWidgets frame at the top of the display hierarchy, places the main
+/// menu on that frame, and handles all display events produced when a user clicks on one
+/// of these menu items. The top frame also holds all of the other display elements used in
+/// the rest of the program.
 /// 
 
 #include <wx/wxprec.h>
@@ -12,11 +15,8 @@
 #include <wx/wx.h>
 #endif
 
-#include <wx/treectrl.h>
 #include <wx/notebook.h>
 
-#include <string>
-#include <stdexcept>
 #include "database.h"
 #include "gdw_TopFrame.h"
 #include "gdw_edit.h"
@@ -28,7 +28,8 @@
 ///
 /// \brief Constructor
 ///
-/// The constructor creates the top frame which does ...
+/// The constructor creates the top frame, populates main menu, and binds the event handler
+/// to appropriate menu items
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -139,16 +140,16 @@ void TopFrame::event_handler (wxCommandEvent& event)
 	int return_code = db_connect.ShowModal();
 	if (return_code==1) SetStatusText("Connected to database");
       }
-      
       break;
+      
     case ID_Disconnect:
-      std::cout << "ID_Disconnect" << std::endl;
+      gendat_db.disconnect();
+      SetStatusText("No database connection");
       break;
 
     case ID_DeletePage:
       notebook->DeletePage (notebook->GetSelection());
       break;
-
       
     case ID_Edit:
       notebook->AddPage(new gdw_edit(notebook), L"Tab 1");
@@ -175,51 +176,6 @@ void TopFrame::event_handler (wxCommandEvent& event)
       Close(true);
       break;
     }
-}
-
-
-
-
-
-// Connect to database.
-
-void TopFrame::OnConnect(wxCommandEvent& event)
-{
-  // if (wxGetApp().argc!=4)
-  //   {
-  //     std::cerr << "Usage: " << wxGetApp().argv[0] << " Host, User, Password" << std::endl;
-  //     return;
-  //   }
-
-  // std::string host    = std::string(wxGetApp().argv[1]);
-  // std::string user    = std::string(wxGetApp().argv[2]);
-  // std::string passwd  = std::string(wxGetApp().argv[3]);
-  // std::string db_name = "gendat";
-	
-  // try
-  //   {
-  //     // Connect to the database.
-
-  //     gendat_db.connect(host, user, passwd, db_name);
-
-  //     // Change the window status message.
-
-  //     SetStatusText("Connected to database");
-  //   }
-  // catch (std::runtime_error& exception)
-  //   {
-  //     wxLogMessage(exception.what());
-  //   }
-}
-
-
-
-// Disconnect from database.
-
-void TopFrame::OnDisconnect(wxCommandEvent& event)
-{
-  gendat_db.disconnect();
-  SetStatusText("No database connection");
 }
 
 

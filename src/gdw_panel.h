@@ -1,3 +1,9 @@
+///
+/// \file
+///
+
+
+
 #ifndef GDW_PANEL_H
 #define GDW_PANEL_H
 

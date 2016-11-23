@@ -1,7 +1,7 @@
 ///
 /// \class gdw_db_connect gdw_dialog.h
 ///
-/// \brief Popup window that obtains database login information
+/// \brief Popup window that obtains database login information from the user
 ///
 /// This class handles ...
 /// 

@@ -1,3 +1,9 @@
+///
+/// \file
+///
+
+
+
 #include <wx/wxprec.h>
 
 #ifndef WX_PRECOMP
@@ -15,8 +21,9 @@ public:
 };
 
 
-// OnInit() serves as the main procedure for wxWidgets programs.
-
+///
+/// OnInit() serves as the main procedure for wxWidgets programs.
+///
 
 wxIMPLEMENT_APP(MyApp);
 

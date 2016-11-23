@@ -1,5 +1,12 @@
+///
+/// \file gdw_TopFrame.h
+///
+
+
 #ifndef TOPFRAME_H
 #define TOPFRAME_H
+
+#define PROG_VERSION "Genealogical Data Explorer\n\nVersion 0.1"
 
 #include <wx/wxprec.h>
 
@@ -9,8 +16,6 @@
 
 #include <wx/notebook.h>
 #include "database.h"
-
-#define PROG_VERSION "Genealogical Data Explorer\n\nVersion 0.1"
 
 class TopFrame : public wxFrame
 {
@@ -30,16 +35,9 @@ private:
       ID_first = ID_Connect,
       ID_last  = ID_Edit
     };
-
-
-  void OnConnect      (wxCommandEvent& event);
-  void OnDisconnect   (wxCommandEvent& event);
-  void OnEdit         (wxCommandEvent& event);
-
+  
   wxPanel     *top_panel;
   wxNotebook  *notebook;
   database    gendat_db;
-
 };
-
 #endif
