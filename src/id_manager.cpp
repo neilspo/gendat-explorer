@@ -28,7 +28,7 @@ std::map <unsigned int, unsigned int> id_manager::id_pool;
 ///
 /// The constructor reserves block of sequential identifiers for this object.
 ///
-/// \param[in]   number of identifiers required
+/// \param[in] num_required   number of identifiers required
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -160,6 +160,8 @@ unsigned int id_manager::last_id() const
 /// The first allowed identifier normally is set to one. If that is not acceptable, then this
 /// member function can be used to changed it to any non-zero positive integer, as long the
 /// change is made before any instance of the id_manager class is created.
+///
+/// \param[in] id   new value for the first allowed identifier
 ///
 /// \return   true if the first allowed identifier was successfully changed, false otherwise
 ///
