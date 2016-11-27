@@ -26,6 +26,10 @@ std::map <unsigned int, unsigned int> id_manager::id_pool;
 ///
 /// \brief Constructor
 ///
+/// The constructor reserves block of sequential identifiers for this object.
+///
+/// \param[in]   number of identifiers required
+///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 id_manager::id_manager (unsigned int num_required)
@@ -93,13 +97,13 @@ id_manager::~id_manager ()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
-/// \brief Get the next reserved identifier
+/// \brief Allocate the next reserved identifier
 ///
 /// \return   next reserved identifier, otherwise set to zero if not enough reserved identifiers 
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-unsigned int id_manager::get_id()
+unsigned int id_manager::alloc_id()
 {
   if (my_num_used < my_num_reserved)
     {
@@ -113,6 +117,41 @@ unsigned int id_manager::get_id()
 
 
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// \brief Get first reserved identifier
+///
+/// This member function returns the value of the first identifier in the block
+/// of sequential identifiers reserved for this object.
+///
+/// \return   first reserved identifier
+///
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+unsigned int id_manager::first_id() const
+{
+  return my_first_id;
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// \brief Get last reserved identifier
+///
+/// This member function returns the value of the last identifier in the block
+/// of sequential identifiers reserved for this object.
+///
+/// \return   last reserved identifier
+///
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+unsigned int id_manager::last_id() const
+{
+  return my_first_id + my_num_reserved - 1;
+}
+
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
@@ -120,7 +159,7 @@ unsigned int id_manager::get_id()
 ///
 /// The first allowed identifier normally is set to one. If that is not acceptable, then this
 /// member function can be used to changed it to any non-zero positive integer, as long the
-/// change is made before 
+/// change is made before any instance of the id_manager class is created.
 ///
 /// \return   true if the first allowed identifier was successfully changed, false otherwise
 ///

@@ -13,7 +13,10 @@ public:
   id_manager(unsigned int num_required);
   ~id_manager();
 
-  unsigned int get_id();
+  unsigned int alloc_id();
+  unsigned int first_id() const;
+  unsigned int  last_id() const;
+  
   static bool set_first_allowed_id(unsigned int id);
   
 private:
