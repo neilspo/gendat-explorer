@@ -13,20 +13,27 @@
 #include <wx/wx.h>
 #endif
 
+#include <wx/grid.h>
+
+
+#include "database.h"
+#include "db_row_set_w.h"
 #include "gdw_panel.h"
 
-//class database;
 
 class gdw_edit : public gdw_panel
 {
 public:
-  gdw_edit (wxWindow* parent);
-  //  gdw_edit (wxWindow* parent, database& db);
-  ~gdw_edit();
+        gdw_edit (wxWindow* parent, database* db);
+        ~gdw_edit();
+
 
 private:
-  // wxWindow* my_parent;
-  // database* my_db;
+        void process_window_draw ();
+        
+        database*    my_db;
+        db_row_set_w row_set;
+        wxGrid*      grid;
 };
 
 #endif

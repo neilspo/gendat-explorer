@@ -31,38 +31,60 @@
 
 gdw_panel::gdw_panel(wxWindow *parent) : wxPanel(parent)
 {
-  std::cout << "gdw_panel Constructor: Start" << std::endl;
+        std::cout << "gdw_panel Constructor: Start" << std::endl;
 
-  // wxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
-  // sizer->Add(new wxStaticText(this, wxID_ANY, wxT("Startup Window")), 0, wxALL, 5);
-  // this->SetSizer(sizer);
-
-
-  wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
-
-  wxTreeCtrl *tree = new wxTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
-
-  sizer->Add(new wxStaticText(this, wxID_ANY, wxT("Test Window")), 0, wxALL, 5);
-  sizer->Add(tree, 1, wxEXPAND);
-
-  // tree->SetWindowStyle(wxTR_HIDE_ROOT); //hides the real root node to have many roots
-
-  wxTreeItemId root = tree->AddRoot("Sources");
-  wxTreeItemId r1   = tree->AppendItem(root, "1871 Census");
-  wxTreeItemId r2   = tree->AppendItem(root, "1881 Census");
-  tree->AppendItem(r1, "Node1");
-  tree->AppendItem(r1, "Node2");
-  tree->AppendItem(r2, "Node3");
-
-  this->SetSizer(sizer);
-
-  std::cout << "gdw_panel Constructor End" << std::endl;
+        CallAfter (&gdw_panel::delayed_start);
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// \brief Run derived class startup method
+///
+/// The member function ...
+///
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+void gdw_panel::delayed_start()
+{
+        try
+        {
+                process_window_draw();
+        }
+	catch (std::runtime_error& exception)
+	{
+                // A runtime error has occurred. Report the error message in a popup window
+                // (a modal dialogue), but it should be safe to carry on.
+                
+                wxString error_msg = exception.what();
+                wxMessageDialog* msg_dia = new wxMessageDialog(NULL, error_msg, "Runtime Error");
+                msg_dia->ShowModal();
+                
+	}
+	catch (std::logic_error& exception)
+	{
+                // A program logic error has occurred. Report the error message in a popup window
+                // (a modal dialogue).
+                
+                wxString error_msg = exception.what();
+                wxMessageDialog* msg_dia = new wxMessageDialog(NULL, error_msg, "Program Logic Error");
+                msg_dia->ShowModal();
+
+                // After the user closes the error window, safely close out the program.
+
+                wxApp*    my_wxApp = wxTheApp;
+                wxWindow* my_TopWindow = my_wxApp->GetTopWindow();
+                my_TopWindow->Close();
+	}
+}
+
+
+
 
 
 gdw_panel::~gdw_panel()
 {
-  std::cout << "gdw_panel Destructor Start" << std::endl;
+        std::cout << "gdw_panel Destructor Start" << std::endl;
 }
 
 
@@ -77,8 +99,8 @@ gdw_panel::~gdw_panel()
 
 void gdw_panel::event_handler (wxCommandEvent& event)
 {
-  std::cout << "TopFrame::event_handler: Start" << std::endl;
+        std::cout << "TopFrame::event_handler: Start" << std::endl;
 
-  int event_id = event.GetId();
+        int event_id = event.GetId();
 
 }

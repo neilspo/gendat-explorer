@@ -86,10 +86,10 @@ void gdw_db_connect::event_handler (wxCommandEvent& event)
 {
   std::cout << "db_connect::event_handler: Start" << std::endl;
 
-  std::string host(wx_hostname->GetValue());
-  std::string user(wx_username->GetValue());
-  std::string passwd(wx_password->GetValue());
-  std::string db_name("gendat");
+  std::string host   (wx_hostname->GetValue());
+  std::string user   (wx_username->GetValue());
+  std::string passwd (wx_password->GetValue());
+  std::string db_name("zzz");
 
   // Try to connect to the database. If it worked, then kill the dialog window.
   // Otherwise, report the error and leave the dialog window open.

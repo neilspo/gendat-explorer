@@ -94,12 +94,6 @@ TopFrame::TopFrame(const wxString& title, const wxPoint& pos, const wxSize& size
   
   // Add some pages to the wxNotebook widget
   
-  notebook->AddPage(new gdw_edit(notebook), L"Tab 1a");
-
-  notebook->AddPage(new gdw_edit(notebook), L"Tab 1b");
-
-  notebook->AddPage(new gdw_edit(notebook), L"Tab 1c");
-
   wxTextCtrl* textCtrl1 = new wxTextCtrl(notebook, wxID_ANY, L"Tab 1 Contents");
   notebook->AddPage(textCtrl1, L"Tab 1");
   
@@ -152,7 +146,7 @@ void TopFrame::event_handler (wxCommandEvent& event)
       break;
       
     case ID_Edit:
-      notebook->AddPage(new gdw_edit(notebook), L"Tab 1");
+      notebook->AddPage(new gdw_edit(notebook, &gendat_db), L"Tab 1");
       break;
 
     case ID_ShowLogWin:
