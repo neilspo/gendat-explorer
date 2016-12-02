@@ -24,9 +24,27 @@ std::map <unsigned int, unsigned int> id_manager::id_pool;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
+/// \brief Default constructor
+///
+/// This constructor simply initializes the object.  Member function id_manager::reserve must
+/// later be called to actually reserve the block of sequential identifiers.
+///
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+id_manager::id_manager ()
+{
+  my_first_id     = 0;
+  my_num_reserved = 0;
+  my_num_used     = 0;
+}  
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///
 /// \brief Constructor
 ///
-/// The constructor reserves block of sequential identifiers for this object.
+/// This constructor initializes the object and reserves a block of sequential identifiers.
 ///
 /// \param[in] num_required   number of identifiers required
 ///
@@ -34,48 +52,7 @@ std::map <unsigned int, unsigned int> id_manager::id_pool;
 
 id_manager::id_manager (unsigned int num_required)
 {
-  if (id_pool.empty())
-    {
-    
-      // If the ID pool is empty, then just insert the new ID requirement.
-    
-      my_first_id = first_allowed_id;
-    }
-  else
-    {
-    
-      // If there is room at the beginning of the ID pool, then add the new requirement
-      // ahead of whatever is currently in the pool.
-    
-      auto i = id_pool.begin();
-      if ((i->first - first_allowed_id) >= num_required)
-        {
-          my_first_id = first_allowed_id;
-        }
-      else
-        {
-      
-          // Search the ID pool for a gap of the required size. If there is a suitable
-          // gap, then insert the new requirement there. Otherwise, insert it at the
-          // end of the pool.
-      
-          my_first_id = i->first + i->second;
-          while (++i != id_pool.end())
-            {
-              if ((i->first - my_first_id) >= num_required) break;
-              my_first_id = i->first + i->second;
-            }
-        }
-    }
-
-  // Add the new ID requirement to the ID pool.
-  
-  id_pool[my_first_id] = num_required;
-
-  // Initialize the other private variables.
-  
-  my_num_reserved = num_required;
-  my_num_used     = 0;
+  do_reserve (num_required);
 }
 
 
@@ -91,6 +68,34 @@ id_manager::id_manager (unsigned int num_required)
 id_manager::~id_manager ()
 {
   id_pool.erase (my_first_id);
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// \brief Reserve identifiers
+///
+/// This member function reserves a block of sequential identifiers. It must be use only if
+/// the default constructor was used, and then only called once.
+///
+/// \param[in] num_required   number of identifiers required
+///
+/// \return   true if the block of identifiers was successfully reserved, false otherwise
+///
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+bool id_manager::reserve (unsigned int num_required)
+{
+  if (my_num_reserved == 0)
+    {
+      do_reserve (num_required);
+      return true;
+    }
+  else
+    {
+      return false;
+    }
 }
 
 
@@ -178,4 +183,62 @@ bool id_manager::set_first_allowed_id (unsigned int id)
     {
       return false;
     }
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// \brief Reserve identifiers
+///
+/// This private member function reserves a block of sequential identifiers.
+///
+/// \param[in] num_required   number of identifiers required
+///
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void id_manager::do_reserve (unsigned int num_required)
+{
+  if (id_pool.empty())
+    {
+    
+      // If the ID pool is empty, then just insert the new ID requirement.
+    
+      my_first_id = first_allowed_id;
+    }
+  else
+    {
+    
+      // If there is room at the beginning of the ID pool, then add the new requirement
+      // ahead of whatever is currently in the pool.
+    
+      auto i = id_pool.begin();
+      if ((i->first - first_allowed_id) >= num_required)
+        {
+          my_first_id = first_allowed_id;
+        }
+      else
+        {
+      
+          // Search the ID pool for a gap of the required size. If there is a suitable
+          // gap, then insert the new requirement there. Otherwise, insert it at the
+          // end of the pool.
+      
+          my_first_id = i->first + i->second;
+          while (++i != id_pool.end())
+            {
+              if ((i->first - my_first_id) >= num_required) break;
+              my_first_id = i->first + i->second;
+            }
+        }
+    }
+
+  // Add the new ID requirement to the ID pool.
+  
+  id_pool[my_first_id] = num_required;
+
+  // Initialize the other private variables.
+  
+  my_num_reserved = num_required;
+  my_num_used     = 0;
 }
