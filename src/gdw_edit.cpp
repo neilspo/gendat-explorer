@@ -65,9 +65,6 @@ void gdw_edit::process_window_draw()
 
         wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 
-        wxTextCtrl* textCtrl1 = new wxTextCtrl(this, wxID_ANY, L"Test");
-        sizer->Add(this, 1, wxEXPAND, 10);
-
         // Add some buttons below the data display table.
 
         // sizer->Add(new wxButton(this, ID_GridButton_Save, "Save"), 0, 0, 0);
