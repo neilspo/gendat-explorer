@@ -41,9 +41,9 @@ TopFrame::TopFrame(const wxString& title, const wxPoint& pos, const wxSize& size
 
   // Bind the event handler to the IDs used in this class.
   
-  Bind(wxEVT_COMMAND_MENU_SELECTED, &TopFrame::event_handler, this, wxID_EXIT);
-  Bind(wxEVT_COMMAND_MENU_SELECTED, &TopFrame::event_handler, this, wxID_ABOUT);
-  Bind(wxEVT_COMMAND_MENU_SELECTED, &TopFrame::event_handler, this, ID_first, ID_last);
+  Bind(wxEVT_MENU, &TopFrame::event_handler, this, wxID_EXIT);
+  Bind(wxEVT_MENU, &TopFrame::event_handler, this, wxID_ABOUT);
+  Bind(wxEVT_MENU, &TopFrame::event_handler, this, ID_first, ID_last);
 
   // Create a menu bar and then attach the menu items
   
