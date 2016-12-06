@@ -15,11 +15,10 @@
 
 #include <wx/grid.h>
 
-
 #include "database.h"
 #include "db_row_set_w.h"
 #include "gdw_panel.h"
-
+#include "id_manager.h"
 
 class gdw_edit : public gdw_panel
 {
@@ -34,6 +33,11 @@ private:
         database*    my_db;
         db_row_set_w row_set;
         wxGrid*      grid;
+
+        id_manager   id_mgr;
+        unsigned int id_grid_event;
+        unsigned int id_save_event;
+
 };
 
 #endif

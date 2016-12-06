@@ -27,10 +27,18 @@
 
 gdw_edit::gdw_edit(wxWindow* parent, database* db) : gdw_panel(parent)
 {
-        std::cout << "gdw_edit Constructor: Start" << std::endl;
-  
         my_db = db;
 
+        // Get 2 unique event identifiers and bind them to the event handler.
+        
+        id_mgr.reserve(2);
+        
+        id_grid_event = id_mgr.alloc_id();
+        id_save_event = id_mgr.alloc_id();
+
+        Bind (wxEVT_GRID_CELL_CHANGED, &gdw_edit::event_handler, this , id_grid_event);
+
+        std::cout << "gdw_edit Constructor: " << id_mgr.first_id() << ":" << id_mgr.last_id() << std::endl;
 }
 
 gdw_edit::~gdw_edit()
@@ -71,7 +79,7 @@ void gdw_edit::process_window_draw()
 
         // Create the data display table.
 
-        grid = new wxGrid(this, wxID_ANY, wxPoint(-1, -1), this->GetSize());
+        grid = new wxGrid(this, id_grid_event, wxPoint(-1, -1), this->GetSize());
 
         grid->CreateGrid(num_rows, num_cols);
         sizer->Add(grid, 1, wxEXPAND, 10);

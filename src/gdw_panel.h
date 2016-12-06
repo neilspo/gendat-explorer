@@ -13,7 +13,7 @@
 #include <wx/wx.h>
 #endif
 
-#include "id_manager.h"
+#include <stdexcept>
 
 
 class gdw_panel : public wxPanel
@@ -25,15 +25,13 @@ public:
 
 protected:
         unsigned int alloc_id ();
+        void event_handler (wxCommandEvent& event);
   
 private:
         virtual void process_window_draw   () = 0;
         virtual void process_window_events (unsigned int event_id) {};
 
         void delayed_start ();
-        void event_handler (wxCommandEvent& event);
-
-        id_manager* id_mgr;
 };
 
 #endif
