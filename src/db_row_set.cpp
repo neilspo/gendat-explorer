@@ -78,7 +78,7 @@ std::string db_row_set::col_name(unsigned int col) const
 
 bool db_row_set::get_data(unsigned int row, unsigned int col, std::string& data) const
 {
-	if (!(row < my_num_rows) & (col < my_num_cols))
+	if ((row >= my_num_rows) || (col >= my_num_cols))
 		throw std::logic_error("Row or column number out of range in db_row_set::get_data");
 
 	if (null_fields[row][col])
