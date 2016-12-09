@@ -114,3 +114,41 @@ void gdw_edit::process_window_draw()
 
         this->SetSizer(sizer);
 }
+
+
+void gdw_edit::process_window_events (wxEvent* event)
+{
+        unsigned int event_id = event->GetId();
+        
+        std::cout << "process_window_events: " << event_id << std::endl;
+
+
+        if (event_id == id_grid_event)
+        {
+        
+                wxGridEvent* grid_event = (wxGridEvent*)event;
+                int row = grid_event->GetRow();
+                int col = grid_event->GetCol();
+
+                std::string data;
+                std::string error_msg;
+
+                data = grid->GetCellValue(row, col);
+                if (row_set.save_data(row, col, data, error_msg))
+                {
+                        grid->SetCellBackgroundColour(row, col, *wxYELLOW);
+                }
+                else
+                {
+                        wxLogMessage(error_msg.c_str());
+                        grid->SetCellValue(row, col, grid_event->GetString());
+
+                }
+        }
+        else if (event_id == id_save_event)
+        {
+                std::cout << "save event" << std::endl;
+        }
+
+
+}

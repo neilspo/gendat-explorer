@@ -53,28 +53,11 @@ void gdw_panel::delayed_start()
         }
 	catch (std::runtime_error& exception)
 	{
-                // A runtime error has occurred. Report the error message in a popup window
-                // (a modal dialogue), but it should be safe to carry on.
-                
-                wxString error_msg = exception.what();
-                wxMessageDialog* msg_dia = new wxMessageDialog(NULL, error_msg, "Runtime Error");
-                msg_dia->ShowModal();
-                
+                process_runtime_error (exception);
 	}
 	catch (std::logic_error& exception)
 	{
-                // A program logic error has occurred. Report the error message in a popup window
-                // (a modal dialogue).
-                
-                wxString error_msg = exception.what();
-                wxMessageDialog* msg_dia = new wxMessageDialog(NULL, error_msg, "Program Logic Error");
-                msg_dia->ShowModal();
-
-                // After the user closes the error window, safely close out the program.
-
-                wxApp*    my_wxApp = wxTheApp;
-                wxWindow* my_TopWindow = my_wxApp->GetTopWindow();
-                my_TopWindow->Close();
+                process_logic_error (exception);
 	}
 }
 
@@ -97,10 +80,59 @@ gdw_panel::~gdw_panel()
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-void gdw_panel::event_handler (wxCommandEvent& event)
+void gdw_panel::event_handler (wxEvent& event)
 {
-        std::cout << "TopFrame::event_handler: Start" << std::endl;
+        try
+        {
+                process_window_events (&event);
+        }
+	catch (std::runtime_error& exception)
+	{
+                process_runtime_error (exception);
+	}
+	catch (std::logic_error& exception)
+	{
+                process_logic_error (exception);
+	}
 
-        int event_id = event.GetId();
+}
 
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Process a runtime error. Report the error message in a popup window
+// (a modal dialogue), but it should be safe to carry on.
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void gdw_panel::process_runtime_error (std::runtime_error& exception)
+{
+        wxString error_msg = exception.what();
+        wxMessageDialog* msg_dia = new wxMessageDialog(NULL, error_msg, "Runtime Error");
+        msg_dia->ShowModal();
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Process a program logic error (a bug). Report the error message in a popup window
+// (a modal dialogue) and then terminate the program.
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void gdw_panel::process_logic_error (std::logic_error& exception)
+{
+        // Generate a popup window (a modal dialogue) with the error message.
+                
+        wxString error_msg = exception.what();
+        wxMessageDialog* msg_dia = new wxMessageDialog(NULL, error_msg, "Program Logic Error");
+        msg_dia->ShowModal();
+
+        // After the user closes the error window, safely close out the program.
+
+        wxApp*    my_wxApp = wxTheApp;
+        wxWindow* my_TopWindow = my_wxApp->GetTopWindow();
+        my_TopWindow->Close();
 }

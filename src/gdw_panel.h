@@ -25,13 +25,15 @@ public:
 
 protected:
         unsigned int alloc_id ();
-        void event_handler (wxCommandEvent& event);
+        void event_handler (wxEvent& event);
   
 private:
         virtual void process_window_draw   () = 0;
-        virtual void process_window_events (unsigned int event_id) {};
+        virtual void process_window_events (wxEvent* event) = 0;
 
         void delayed_start ();
+        void process_runtime_error (std::runtime_error& exception);
+        void process_logic_error   (std::logic_error&   exception);
 };
 
 #endif

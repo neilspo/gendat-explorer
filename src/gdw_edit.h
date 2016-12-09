@@ -29,6 +29,7 @@ public:
 
 private:
         void process_window_draw ();
+        void process_window_events (wxEvent* event);
         
         database*    my_db;
         db_row_set_w row_set;
