@@ -4,8 +4,8 @@
 
 
 
-#ifndef GDW_PANEL_H
-#define GDW_PANEL_H
+#ifndef GDW_NAVIGATOR_H
+#define GDW_NAVIGATOR_H
 
 #include <wx/wxprec.h>
 
@@ -17,8 +17,8 @@
 class gdw_panel : public wxPanel
 {
  public:
-  gdw_panel(wxWindow *parent);
-  ~gdw_panel();
+  gdw_navigator(wxWindow *parent);
+  ~gdw_navigator();
   
  private:
   void event_handler  (wxCommandEvent& event);

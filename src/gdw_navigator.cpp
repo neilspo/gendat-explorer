@@ -1,5 +1,5 @@
 ///
-/// \class gdw_panel gdw_panel.h
+/// \class gdw_navigator gdw_navigator.h
 ///
 /// \brief Provides ...
 ///
@@ -15,7 +15,7 @@
 #include <wx/treectrl.h>
 
 #include <string>
-#include "gdw_panel.h"
+#include "gdw_navigator.h"
 
 
 
@@ -29,9 +29,9 @@
 
 
 
-gdw_panel::gdw_panel(wxWindow *parent) : wxPanel(parent)
+gdw_navigator::gdw_navigator(wxWindow *parent) : wxPanel(parent)
 {
-  std::cout << "gdw_panel Constructor: Start" << std::endl;
+  std::cout << "gdw_navigator Constructor: Start" << std::endl;
 
   // wxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
   // sizer->Add(new wxStaticText(this, wxID_ANY, wxT("Startup Window")), 0, wxALL, 5);
@@ -56,13 +56,13 @@ gdw_panel::gdw_panel(wxWindow *parent) : wxPanel(parent)
 
   this->SetSizer(sizer);
 
-  std::cout << "gdw_panel Constructor End" << std::endl;
+  std::cout << "gdw_navigator Constructor End" << std::endl;
 }
 
 
-gdw_panel::~gdw_panel()
+gdw_navigator::~gdw_navigator()
 {
-  std::cout << "gdw_panel Destructor Start" << std::endl;
+  std::cout << "gdw_navigator Destructor Start" << std::endl;
 }
 
 
@@ -75,7 +75,7 @@ gdw_panel::~gdw_panel()
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-void gdw_panel::event_handler (wxCommandEvent& event)
+void gdw_navigator::event_handler (wxCommandEvent& event)
 {
   std::cout << "TopFrame::event_handler: Start" << std::endl;
 
