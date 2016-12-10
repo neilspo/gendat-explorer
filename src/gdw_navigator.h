@@ -14,7 +14,7 @@
 #endif
 
 
-class gdw_panel : public wxPanel
+class gdw_navigator : public gdw_panel
 {
  public:
   gdw_navigator(wxWindow *parent);
