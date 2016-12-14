@@ -12,8 +12,6 @@
 #include <wx/wx.h>
 #endif
 
-//#include <wx/sizer.h>
-//#include <wx/colour.h>
 #include <string>
 
 
@@ -27,7 +25,7 @@
 
 gdw_edit::gdw_edit(wxWindow* parent, database* db) : gdw_panel(parent)
 {
-        my_db            = db;
+        my_db             = db;
         unsaved_data_flag = false;
 
         // Get 2 unique event identifiers and bind them to the event handler.
@@ -66,17 +64,9 @@ void gdw_edit::process_window_draw()
         num_rows = row_set.num_rows();
         num_cols = row_set.num_cols();
 
-        // Clear the main data display panel.
-
-        this->DestroyChildren();
-
         // Create a sizer to hold the data table.
 
         wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
-
-        // Add some buttons below the data display table.
-
-        // sizer->Add(new wxButton(this, ID_GridButton_Save, "Save"), 0, 0, 0);
 
         // Create the data display table.
 

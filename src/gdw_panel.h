@@ -32,7 +32,7 @@ protected:
         void event_handler (wxEvent& event);
   
 private:
-        virtual void process_window_draw   () = 0;
+        virtual void process_window_draw() = 0;
         virtual void process_window_events (wxEvent* event) = 0;
 
         void delayed_start ();

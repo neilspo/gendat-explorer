@@ -1,9 +1,11 @@
 ///
 /// \class gdw_panel gdw_panel.h
 ///
-/// \brief Provides ...
+/// \brief Base class for GenDat display pages
 ///
-/// This class handles ...
+/// This abstract base class provides a consistent interface for all of the GenDat display pages.
+/// It also handles exceptions thrown during execution of the derived clauses, each of which
+/// generates and manages one page.
 /// 
 
 #include <wx/wxprec.h>
@@ -12,9 +14,6 @@
 #include <wx/wx.h>
 #endif
 
-#include <wx/treectrl.h>
-
-#include <string>
 #include "gdw_panel.h"
 
 
@@ -23,7 +22,10 @@
 ///
 /// \brief Constructor
 ///
-/// The constructor ...
+/// The constructor creates a wxPanel and requests that gdw_panel::delayed_start() be run
+/// after the derived constructor(s) have completed.
+///
+/// \param [in]   parent   pointer to the parent window
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -31,16 +33,15 @@
 
 gdw_panel::gdw_panel(wxWindow *parent) : wxPanel(parent)
 {
-        std::cout << "gdw_panel Constructor: Start" << std::endl;
-
         CallAfter (&gdw_panel::delayed_start);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
-/// \brief Run derived class startup method
+/// \brief Run the derived class process_window_draw() method
 ///
-/// The member function ...
+/// This member function will run after the constructors of the base class and derived classe(s)
+/// have been completed.
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -74,16 +75,33 @@ gdw_panel::~gdw_panel()
 ///
 /// \brief Reload page
 ///
-/// This virtual member function ...
-///
-/// \return true if ...
+/// This member function ...
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void gdw_panel::page_reload()
 {
         if (ok_to_delete())
-                process_window_draw();
+        {
+                // Clear the main data display panel.
+
+                DestroyChildren();
+
+                // Have the derived class redraw the GenDat display page.
+
+                try
+                {
+                        process_window_draw();
+                }
+                catch (std::runtime_error& exception)
+                {
+                        process_runtime_error (exception);
+                }
+                catch (std::logic_error& exception)
+                {
+                        process_logic_error (exception);
+                }
+        }
 }
 
 
