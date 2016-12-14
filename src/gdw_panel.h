@@ -21,10 +21,14 @@ class gdw_panel : public wxPanel
 public:
         gdw_panel(wxWindow* parent);
         ~gdw_panel();
-  
 
+        void page_reload();
+        
+        virtual bool page_save();
+        virtual bool has_unsaved_data();
+        virtual bool ok_to_delete();
+        
 protected:
-        unsigned int alloc_id ();
         void event_handler (wxEvent& event);
   
 private:

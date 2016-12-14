@@ -16,6 +16,7 @@
 #endif
 
 #include <wx/notebook.h>
+#include <wx/artprov.h>
 
 #include "database.h"
 #include "gdw_TopFrame.h"
@@ -84,21 +85,32 @@ TopFrame::TopFrame(const wxString& title, const wxPoint& pos, const wxSize& size
 
   CreateStatusBar();
 
-  // Create a top-level panel to hold all the contents of the frame
+  //****************************************************************************
+  //
+  // Create a tool bar and then attach the menu items
+  
+  wxToolBar *toolBar = CreateToolBar();
+
+  wxBitmap icon_page_save   = wxArtProvider::GetBitmap(wxART_GO_FORWARD,wxART_TOOLBAR);
+  wxBitmap icon_page_delete = wxArtProvider::GetBitmap(wxART_CROSS_MARK,wxART_TOOLBAR);
+  wxBitmap icon_page_reload = wxArtProvider::GetBitmap(wxART_UNDO,wxART_TOOLBAR);
+
+  toolBar->AddTool(ID_DeletePage, "Delete", icon_page_delete, "Delete Current Page");
+  toolBar->AddTool(ID_SavePage  , "Save",   icon_page_save,   "Save Changes to Database");
+  toolBar->AddTool(ID_ReloadPage, "Reload", icon_page_reload, "Reload Current Page");
+  
+  toolBar->Realize();
+
+
+
+
+// Create a top-level panel to hold all the contents of the frame
   
   wxPanel* top_panel = new wxPanel(this, wxID_ANY);
 
   // Create the wxNotebook widget
   
   notebook = new wxNotebook(top_panel, wxID_ANY);
-  
-  // Add some pages to the wxNotebook widget
-  
-  wxTextCtrl* textCtrl1 = new wxTextCtrl(notebook, wxID_ANY, L"Tab 1 Contents");
-  notebook->AddPage(textCtrl1, L"Tab 1");
-  
-  wxTextCtrl* textCtrl2 = new wxTextCtrl(notebook, wxID_ANY, L"Tab 2 Contents");
-  notebook->AddPage(textCtrl2, L"Tab 2");
   
   // Set up the sizer for the panel
   
@@ -144,7 +156,14 @@ void TopFrame::event_handler (wxCommandEvent& event)
     case ID_DeletePage:
       notebook->DeletePage (notebook->GetSelection());
       break;
-      
+
+    case ID_ReloadPage:
+    {
+            gdw_panel* p_notebook_page = (gdw_panel*) notebook->GetCurrentPage();
+            if (p_notebook_page != nullptr)
+                    p_notebook_page->page_reload();
+            break;
+    }
     case ID_Edit:
       notebook->AddPage(new gdw_edit(notebook, &gendat_db), L"Tab 1");
       break;

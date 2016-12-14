@@ -27,7 +27,8 @@
 
 gdw_edit::gdw_edit(wxWindow* parent, database* db) : gdw_panel(parent)
 {
-        my_db = db;
+        my_db            = db;
+        unsaved_data_flag = false;
 
         // Get 2 unique event identifiers and bind them to the event handler.
         
@@ -113,6 +114,10 @@ void gdw_edit::process_window_draw()
         // Finish the panel.
 
         this->SetSizer(sizer);
+
+        // Indicate that there is currently no unsaved user input data.
+
+        unsaved_data_flag = false;
 }
 
 
@@ -137,6 +142,7 @@ void gdw_edit::process_window_events (wxEvent* event)
                 if (row_set.save_data(row, col, data, error_msg))
                 {
                         grid->SetCellBackgroundColour(row, col, *wxYELLOW);
+                        unsaved_data_flag = true;
                 }
                 else
                 {
@@ -151,4 +157,10 @@ void gdw_edit::process_window_events (wxEvent* event)
         }
 
 
+}
+
+
+bool gdw_edit::has_unsaved_data()
+{
+        return unsaved_data_flag;
 }

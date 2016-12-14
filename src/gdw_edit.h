@@ -29,11 +29,14 @@ public:
 
 private:
         void process_window_draw ();
-        void process_window_events (wxEvent* event);
+        bool has_unsaved_data() ;
         
+        void process_window_events (wxEvent* event);
+
         database*    my_db;
         db_row_set_w row_set;
         wxGrid*      grid;
+        bool         unsaved_data_flag;
 
         id_manager   id_mgr;
         unsigned int id_grid_event;

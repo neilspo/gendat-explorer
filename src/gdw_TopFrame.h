@@ -31,6 +31,8 @@ private:
       ID_Disconnect,
       ID_ShowLogWin,
       ID_DeletePage,
+      ID_SavePage,
+      ID_ReloadPage,
       ID_Edit,
       ID_first = ID_Connect,
       ID_last  = ID_Edit

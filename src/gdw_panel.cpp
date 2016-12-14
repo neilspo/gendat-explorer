@@ -63,12 +63,103 @@ void gdw_panel::delayed_start()
 
 
 
-
-
 gdw_panel::~gdw_panel()
 {
         std::cout << "gdw_panel Destructor Start" << std::endl;
 }
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// \brief Reload page
+///
+/// This virtual member function ...
+///
+/// \return true if ...
+///
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void gdw_panel::page_reload()
+{
+        if (ok_to_delete())
+                process_window_draw();
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// \brief Save page
+///
+/// This virtual member function ...
+///
+/// \return true if ...
+///
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+bool gdw_panel::page_save()
+{
+        return true;
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// \brief Determine if page can be deleted
+///
+/// This virtual member function ...
+///
+/// \return true if ...
+///
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+bool gdw_panel::ok_to_delete()
+{
+        if (has_unsaved_data())
+        {
+                wxString message = "This page contains usaved data.";
+                wxMessageDialog* msg_dia = new wxMessageDialog(NULL, message, "Warning", wxYES|wxNO|wxCENTRE);
+                if (msg_dia->ShowModal() == wxID_NO)
+                {
+                        return false;
+                }
+        }
+        return true;
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// \brief Determine if page has unsaved data
+///
+/// This virtual member function determines if the page holds data that have not been saved in
+/// the database. Deletion of the page would cause these data be lost.
+///
+/// \return   true if the page contains unsaved data, false otherwise
+///
+/// \note
+/// This version of the function always returns false. Derived classes should override it
+/// whenever user input could be lost.
+///
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+bool gdw_panel::has_unsaved_data()
+{
+        return false;
+}
+
+
+
+
+
+
+
+
+
+
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
