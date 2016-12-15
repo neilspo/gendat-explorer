@@ -36,17 +36,20 @@
 
 
 
-TopFrame::TopFrame(const wxString& title, const wxPoint& pos, const wxSize& size) : wxFrame(NULL, wxID_ANY, title, pos, size)
+TopFrame::TopFrame(const wxString& title, const wxPoint& pos, const wxSize& size): wxFrame(NULL, wxID_ANY, title, pos, size)
 {
-  std::cout << "TopFrame Constructor Start" << std::endl;
 
+  //****************************************************************************
   // Bind the event handler to the IDs used in this class.
+  //****************************************************************************
   
   Bind(wxEVT_MENU, &TopFrame::event_handler, this, wxID_EXIT);
   Bind(wxEVT_MENU, &TopFrame::event_handler, this, wxID_ABOUT);
   Bind(wxEVT_MENU, &TopFrame::event_handler, this, ID_first, ID_last);
 
+  //****************************************************************************
   // Create a menu bar and then attach the menu items
+  //****************************************************************************
   
   wxMenuBar *menuBar = new wxMenuBar;
   
@@ -81,13 +84,15 @@ TopFrame::TopFrame(const wxString& title, const wxPoint& pos, const wxSize& size
 
   SetMenuBar(menuBar);
 
+  //****************************************************************************
   // Create the status bar at the bottom
+  //****************************************************************************
 
   CreateStatusBar();
 
   //****************************************************************************
-  //
   // Create a tool bar and then attach the menu items
+  //****************************************************************************
   
   wxToolBar *toolBar = CreateToolBar();
 
@@ -101,10 +106,9 @@ TopFrame::TopFrame(const wxString& title, const wxPoint& pos, const wxSize& size
   
   toolBar->Realize();
 
-
-
-
-// Create a top-level panel to hold all the contents of the frame
+  //****************************************************************************
+  // Create a top-level panel to hold the notebook and its contents
+  //****************************************************************************
   
   wxPanel* top_panel = new wxPanel(this, wxID_ANY);
 
@@ -117,8 +121,6 @@ TopFrame::TopFrame(const wxString& title, const wxPoint& pos, const wxSize& size
   wxBoxSizer* panelSizer = new wxBoxSizer(wxHORIZONTAL);
   panelSizer->Add(notebook, 1, wxEXPAND);
   top_panel->SetSizer(panelSizer);
-
-  std::cout << "TopFrame Constructor End" << std::endl;
 }
 
 
@@ -154,18 +156,22 @@ void TopFrame::event_handler (wxCommandEvent& event)
       break;
 
     case ID_DeletePage:
-      notebook->DeletePage (notebook->GetSelection());
+      {
+        int selected_page = notebook->GetSelection();
+        if (selected_page != wxNOT_FOUND)
+          notebook->DeletePage(selected_page);
+      }
       break;
 
     case ID_ReloadPage:
-    {
-            gdw_panel* p_notebook_page = (gdw_panel*) notebook->GetCurrentPage();
-            if (p_notebook_page != nullptr)
-                    p_notebook_page->page_reload();
-            break;
-    }
+      {
+        gdw_panel* p_notebook_page = (gdw_panel*) notebook->GetCurrentPage();
+        if (p_notebook_page != nullptr)
+          p_notebook_page->page_reload();
+        break;
+      }
     case ID_Edit:
-      notebook->AddPage(new gdw_edit(notebook, &gendat_db), L"Tab 1");
+      notebook->AddPage(new gdw_edit(notebook, &gendat_db), L"Edit", true);
       break;
 
     case ID_ShowLogWin:
