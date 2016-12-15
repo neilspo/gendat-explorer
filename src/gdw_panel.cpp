@@ -22,8 +22,8 @@
 ///
 /// \brief Constructor
 ///
-/// The constructor creates a wxPanel and requests that gdw_panel::delayed_start() be run
-/// after the derived constructor(s) have completed.
+/// The constructor creates a wxPanel and requests that process_window_draw(), in the derived
+/// class, be run after the derived constructor(s) have completed.
 ///
 /// \param [in]   parent   pointer to the parent window
 ///
@@ -52,14 +52,14 @@ void gdw_panel::delayed_start()
         {
                 process_window_draw();
         }
-	catch (std::runtime_error& exception)
-	{
+        catch (std::runtime_error& exception)
+        {
                 process_runtime_error (exception);
-	}
-	catch (std::logic_error& exception)
-	{
+        }
+        catch (std::logic_error& exception)
+        {
                 process_logic_error (exception);
-	}
+        }
 }
 
 
@@ -195,14 +195,14 @@ void gdw_panel::event_handler (wxEvent& event)
         {
                 process_window_events (&event);
         }
-	catch (std::runtime_error& exception)
-	{
+        catch (std::runtime_error& exception)
+        {
                 process_runtime_error (exception);
-	}
-	catch (std::logic_error& exception)
-	{
+        }
+        catch (std::logic_error& exception)
+        {
                 process_logic_error (exception);
-	}
+        }
 
 }
 
