@@ -154,3 +154,16 @@ bool gdw_edit::has_unsaved_data()
 {
         return unsaved_data_flag;
 }
+
+
+void gdw_edit::process_execute()
+{
+        // Save any data changes in the database.
+        
+        row_set.write_to_db(*my_db);
+
+        // Reload the page.
+
+        process_window_draw();
+
+}

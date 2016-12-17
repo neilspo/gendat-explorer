@@ -96,13 +96,13 @@ TopFrame::TopFrame(const wxString& title, const wxPoint& pos, const wxSize& size
   
   wxToolBar *toolBar = CreateToolBar();
 
-  wxBitmap icon_page_save   = wxArtProvider::GetBitmap(wxART_GO_FORWARD,wxART_TOOLBAR);
+  wxBitmap icon_execute     = wxArtProvider::GetBitmap(wxART_GO_FORWARD,wxART_TOOLBAR);
   wxBitmap icon_page_delete = wxArtProvider::GetBitmap(wxART_CROSS_MARK,wxART_TOOLBAR);
   wxBitmap icon_page_reload = wxArtProvider::GetBitmap(wxART_UNDO,wxART_TOOLBAR);
 
-  toolBar->AddTool(ID_DeletePage, "Delete", icon_page_delete, "Delete Current Page");
-  toolBar->AddTool(ID_SavePage  , "Save",   icon_page_save,   "Save Changes to Database");
-  toolBar->AddTool(ID_ReloadPage, "Reload", icon_page_reload, "Reload Current Page");
+  toolBar->AddTool(ID_DeletePage, "Delete",  icon_page_delete, "Delete Current Page");
+  toolBar->AddTool(ID_ReloadPage, "Reload",  icon_page_reload, "Reload Current Page");
+  toolBar->AddTool(ID_Execute,    "Execute", icon_execute,     "Execute Task");
   
   toolBar->Realize();
 
@@ -170,6 +170,15 @@ void TopFrame::event_handler (wxCommandEvent& event)
           p_notebook_page->page_reload();
         break;
       }
+
+    case ID_Execute:
+      {
+        gdw_panel* p_notebook_page = (gdw_panel*) notebook->GetCurrentPage();
+        if (p_notebook_page != nullptr)
+          p_notebook_page->page_execute();
+        break;
+      }
+
     case ID_Edit:
       notebook->AddPage(new gdw_edit(notebook, &gendat_db), L"Edit", true);
       break;

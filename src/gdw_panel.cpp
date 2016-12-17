@@ -29,12 +29,12 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
 gdw_panel::gdw_panel(wxWindow *parent) : wxPanel(parent)
 {
         CallAfter (&gdw_panel::delayed_start);
 }
+
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
@@ -108,17 +108,27 @@ void gdw_panel::page_reload()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
-/// \brief Save page
+/// \brief Execute page task
 ///
-/// This virtual member function ...
-///
-/// \return true if ...
+/// This member function executes the main task of this display page, after all of the user
+/// input data has been entered.
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool gdw_panel::page_save()
+void gdw_panel::page_execute()
 {
-        return true;
+        try
+        {
+                process_execute();
+        }
+        catch (std::runtime_error& exception)
+        {
+                process_runtime_error (exception);
+        }
+        catch (std::logic_error& exception)
+        {
+                process_logic_error (exception);
+        }
 }
 
 

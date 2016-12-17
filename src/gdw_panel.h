@@ -23,8 +23,8 @@ public:
         ~gdw_panel();
 
         void page_reload();
+        void page_execute();
         
-        virtual bool page_save();
         virtual bool has_unsaved_data();
         virtual bool ok_to_delete();
         
@@ -33,6 +33,7 @@ protected:
   
 private:
         virtual void process_window_draw() = 0;
+        virtual void process_execute    () = 0;
         virtual void process_window_events (wxEvent* event) = 0;
 
         void delayed_start ();

@@ -29,7 +29,8 @@ public:
 
 private:
         void process_window_draw ();
-        bool has_unsaved_data() ;
+        void process_execute     ();
+        bool has_unsaved_data    ();
         
         void process_window_events (wxEvent* event);
 
