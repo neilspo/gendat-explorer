@@ -45,7 +45,6 @@ gdw_panel::gdw_panel(wxWindow *parent) : wxPanel(parent)
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 void gdw_panel::delayed_start()
 {
         try
@@ -60,13 +59,6 @@ void gdw_panel::delayed_start()
         {
                 process_logic_error (exception);
         }
-}
-
-
-
-gdw_panel::~gdw_panel()
-{
-        std::cout << "gdw_panel Destructor Start" << std::endl;
 }
 
 

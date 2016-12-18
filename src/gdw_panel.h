@@ -20,7 +20,7 @@ class gdw_panel : public wxPanel
 {
 public:
         gdw_panel(wxWindow* parent);
-        ~gdw_panel();
+        virtual ~gdw_panel() {};
 
         void page_reload();
         void page_execute();
