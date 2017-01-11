@@ -1,0 +1,28 @@
+.field {
+	padding: 5px;
+}
+
+.field label {
+	display:inline-block;
+	width:120px;
+	margin-left:5px;
+}
+
+.button {
+	padding: 20px;
+	margin-left:115px;
+}
+
+.text-left{
+	float:left;
+	width:250px;
+	overflow:hidden;
+	padding:5px;
+	background:silver;
+}
+
+.text-right{
+	min-height: 50px;
+	overflow:hidden;
+	padding:5px;
+} 
