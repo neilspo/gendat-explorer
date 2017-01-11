@@ -3,7 +3,7 @@
 *
 * Search Nova Scotia place names
 *
-* 10 January 2017
+* 11 January 2017
 *
 * This PHP script produces a HTML form that allows users to search for place names
 * in the official Nova Scotia geoNAMES database.
@@ -88,7 +88,7 @@ echo <<<EOT
 				<option $selected[16] value="16"> $county[16]</option>
 				<option $selected[17] value="17"> $county[17]</option>
 				<option $selected[18] value="18"> $county[18]</option>
-		</select>
+			</select>
 		</div>
 		<div class="button">
 			<input type="submit" name="submit" value="Submit" >
@@ -122,7 +122,7 @@ $max_rows = 20;
 
 // Create the template SQL statement.
 
-$query = 'SELECT  SQL_CALC_FOUND_ROWS OBJECTID, GEONAME, LOCN_NARR, COUNTY FROM ns_geonames WHERE GEONAME';
+$query = 'SELECT SQL_CALC_FOUND_ROWS OBJECTID, GEONAME, LOCN_NARR, COUNTY FROM ns_geonames WHERE GEONAME';
 if (preg_match ('/[*%]/', $PlaceName))
 {
 	$query .= ' LIKE ?';
@@ -154,7 +154,7 @@ if (!($stmt=$db->prepare($query))) die($db->error);
 
 if (!($stmt->bind_param('s', $PlaceName))) die($db->error);
 
-// Execute the prepare statement.
+// Execute the prepared statement.
 
 if (!($stmt->execute())) die($db->error);
 
@@ -168,7 +168,7 @@ $num_rows = $stmt->num_rows;
 
 if ($num_rows == 0)
 {
-	echo 'No matches found' . PHP_EOL;
+	echo '<p>No matches found</p>' . PHP_EOL;
 	echo '</body>' . PHP_EOL . '</html>' . PHP_EOL;
 	exit();
 }
@@ -219,6 +219,5 @@ $stmt->close();
 // Close out the HTML page.
 
 echo PHP_EOL . '</body>' . PHP_EOL . '</html>' . PHP_EOL;
-
 
 ?>

@@ -3,7 +3,7 @@
 *
 * Show information about a particular Nova Scotia place name
 *
-* 10 January 2017
+* 11 January 2017
 *
 * This PHP script produces a page that shows information from one record
 * in the official Nova Scotia geoNAMES database.
@@ -55,7 +55,7 @@ $feature_type = '<a href="http://geogratis.gc.ca/services/geoname/en/codes/gener
 $url = 'http://www4.rncan.gc.ca/search-place-names/unique?id=' . $row->CGNDB_KEY;
 $cgndb_link = '<a href="' . htmlspecialchars($url) . '">record</a>';
 
-// Header tags for the HTML page.
+// Produce the HTML page.
 
 echo <<<EOT
 <!DOCTYPE html>
@@ -137,7 +137,8 @@ echo <<<EOT
 		$row->ORIG_NARR
 	</div>
 	<p>
-	For more information, see this $cgndb_link in the Canadian Geographical Names Data Base (CGNDB).
+		For more information, see this $cgndb_link in the Canadian Geographical Names Data Base (CGNDB).
+	</p>
 EOT;
 
 ?>
