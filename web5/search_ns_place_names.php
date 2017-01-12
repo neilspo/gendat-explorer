@@ -46,6 +46,7 @@ if(isset($_POST['submit']))
 else
 {
 	$do_search   = false;
+	$PlaceName   = null;
 	$selected[0] = 'selected';
 }
 
