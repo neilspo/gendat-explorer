@@ -25,4 +25,17 @@
 	min-height: 50px;
 	overflow:hidden;
 	padding:5px;
-} 
+}
+
+fieldset{
+	display: inline;
+	border:1px solid #999;
+	border-radius:8px;
+	box-shadow:0 0 10px #999;
+}
+
+legend{
+	background:#fff;
+	font-weight:bold;
+	font-size:larger;
+}

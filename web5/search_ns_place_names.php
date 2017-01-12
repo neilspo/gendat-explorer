@@ -3,7 +3,7 @@
 *
 * Search Nova Scotia place names
 *
-* 11 January 2017
+* 12 January 2017
 *
 * This PHP script produces a HTML form that allows users to search for place names
 * in the official Nova Scotia geoNAMES database.
@@ -61,7 +61,17 @@ echo <<<EOT
 </head>
 <body>
 	<h1>Nova Scotia Place Names</h1>
+	<p>
+		This page searches the 
+		<a href="https://geonova.novascotia.ca/place-names">Nova Scotia GeoNAMES dataset</a>,
+		which contains all current approved and offical geographic names for the Province of
+		Nova Scotia. The named features in the dataset include Populated Places,
+		Administrative Areas, Water and Terrain Features, Vegetation Areas,
+		some Manmade Features, and Undersea Features.
+	</p>
 	<form method="post" action="search_ns_place_names.php" name="search">
+		<fieldset>
+		<legend>Search</legend>
 		<div class="field">
 			<label for="PlaceName">Place Name</label>
 			<input type="text" name="PlaceName" id="PlaceName" value="$PlaceName" required >
@@ -92,7 +102,9 @@ echo <<<EOT
 		</div>
 		<div class="button">
 			<input type="submit" name="submit" value="Submit" >
+			<input type="submit" formnovalidate name="reset"  value="Reset"  >
 		</div>	
+		</fieldset>
 	</form>
 	<p>
 		The search field can contain wildcards. For example, a search for u*musq* would return
