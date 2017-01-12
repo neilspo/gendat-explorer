@@ -135,7 +135,7 @@ $max_rows = 20;
 
 // Create the template SQL statement.
 
-$query = 'SELECT SQL_CALC_FOUND_ROWS OBJECTID, GEONAME, LOCN_NARR, COUNTY FROM ns_geonames WHERE GEONAME';
+$query = 'SELECT SQL_CALC_FOUND_ROWS OBJECTID, GEONAME, LOCN_NARR, COUNTY, GENERIC_TM FROM ns_geonames WHERE GEONAME';
 if (preg_match ('/[*%]/', $PlaceName))
 {
 	$query .= ' LIKE ?';
@@ -208,7 +208,7 @@ if ($num_rows == $max_rows)
 
 // Bind the result variables.
 
-$stmt->bind_result($objectid, $geoname, $locn_narr, $county_name);
+$stmt->bind_result($objectid, $geoname, $locn_narr, $county_name, $generic_tm);
 
 // Print out the results.
 
@@ -219,7 +219,7 @@ while ($stmt->fetch())
 	echo <<<EOT
 	$link
 	<ul>
-		<li>$locn_narr</li>
+		<li>$generic_tm &mdash; $locn_narr</li>
 		<li>County(s) &mdash; $county_name </li>
 	</ul>
 EOT;
