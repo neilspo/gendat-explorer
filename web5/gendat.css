@@ -1,0 +1,41 @@
+.field {
+	padding: 5px;
+}
+
+.field label {
+	display:inline-block;
+	width:120px;
+	margin-left:5px;
+}
+
+.button {
+	padding: 20px;
+	margin-left:115px;
+}
+
+.text-left{
+	float:left;
+	width:200px;
+	overflow:hidden;
+	padding:5px;
+	background:silver;
+}
+
+.text-right{
+	min-height: 50px;
+	overflow:hidden;
+	padding:5px;
+}
+
+fieldset{
+	display: inline;
+	border:1px solid #999;
+	border-radius:8px;
+	box-shadow:0 0 10px #999;
+}
+
+legend{
+	background:#fff;
+	font-weight:bold;
+	font-size:larger;
+}
