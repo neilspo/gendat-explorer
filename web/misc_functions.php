@@ -5,7 +5,7 @@
 *
 * @brief Basic HTML functions.
 *
-* @date 12 February 2016
+* @date 1 March 2017
 *
 */
 
@@ -17,10 +17,11 @@
 *
 * @param[in] $title     web page title
 * @param[in] $css_file  CSS file (optional)
+* @param[in] $icon_lib  icon library to load (optional)
 *
 */
 
-function html_header ($title, $css_file = null)
+function html_header ($title, $css_file = null, $icon_lib = null)
 {
 echo <<<EOT
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -29,7 +30,11 @@ echo <<<EOT
 <meta content="text/html; charset=ISO-8859-1"
 http-equiv="content-type">
 <title>$title</title>
+
 EOT;
+
+if ($icon_lib == 'Google')
+	echo '<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">' . PHP_EOL;
 
 if (isset($css_file)) 
 {
