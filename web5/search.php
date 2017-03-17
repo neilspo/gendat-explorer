@@ -108,7 +108,6 @@ if ($search->num_matches() > $search->num_rows())
 while($row = $search->fetch_row())
 	echo $row[LastName] . ' ' . $row[FirstName] . ' ' . $row[BirthID] . '<br>';
 
-$search->close();
 
-
+$row = $search->fetch_row()
 ?>

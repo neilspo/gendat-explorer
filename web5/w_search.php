@@ -5,7 +5,7 @@
 *
 * @brief Database search with wildcards
 *
-* @date 16 March 2017
+* @date 17 March 2017
 *
 */
 
@@ -82,11 +82,11 @@ class w_search
 	
 	public function execute_search ($db, $base_query, $max_rows=0)
 	{
-		// If $this->stmt already has a value, then assume that it has already been assigned
-		// to a prepared statement, which would need to be closed first.
+		// If $this->stmt already has a value, then assume that it has already been
+		// assigned to a prepared statement, which needs to be closed.
 		
 		if (isset($this->stmt))
-			die ('Need to call w_search::close() first');
+			$this->stmt->close();
 
 		// Create the template SQL query for the prepared statement.
 		
@@ -140,14 +140,15 @@ class w_search
 		
 		$metadata = $this->stmt->result_metadata();
 		
-		/* Get field information for all columns */
+		// Bind the result set to elements of the array '$this->data_row' with
+		// the array keys set to the query field names.
 	
-		$result_vars = array();
+		$result_vars    = array();
+		$this->data_row = array();
 		while ($field_info = $metadata->fetch_field()) {
 			$this->data_row[$field_info->name] = NULL;
 			$result_vars[] = &$this->data_row[$field_info->name];
 		}
-		
 		if (!call_user_func_array(array($this->stmt, 'bind_result'), $result_vars))
 			die ('Bind failed');
 	}
@@ -177,10 +178,22 @@ class w_search
 	
 	public function fetch_row ()
 	{
+		// Make sure the prepared statement has not already been closed.
+		
+		if (is_null($this->stmt))
+			return FALSE;
+		
+		// Get a new data row. If there are no more rows, then there is no further
+		// need for the prepared statement and it can be safely closed.
+		
 		if ($this->stmt->fetch())
 			return $this->data_row;
 		else
+		{
+			$this->stmt->close();
+			$this->stmt = NULL;
 			return FALSE;
+		}
 	}
 	
 	
@@ -212,21 +225,6 @@ class w_search
 	{
 		return $this->num_matches;
 	}
-	
-	
-	/**
-	*
-	* @brief Close the prepared statement
-	*
-	*/
-	
-	public function close ()
-	{
-		$this->stmt->close();
-		$this->stmt        = NULL;
-		$this->num_rows    = NULL;
-		$this->num_matches = NULL;
-		$this->data_row    = NULL;
-	}
+
 }
 ?>
