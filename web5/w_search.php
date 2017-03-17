@@ -5,7 +5,7 @@
 *
 * @brief Database search with wildcards
 *
-* @date 15 March 2017
+* @date 16 March 2017
 *
 */
 
@@ -15,9 +15,9 @@
 *
 * @brief Provides database search with wildcards
 *
-* This class handles everything required to build and execute complex search queries
-* for MySQL databases. The search patterns can contain any number of wildcards (* or %)
-* anywhere in the patterns.
+* This class handles everything required to build, execute, and extract data from complex
+* search queries for MySQL databases. The search patterns can contain any number of
+* wildcards (* or %) anywhere in the patterns.
 *
 * To eliminate the possibility of SQL injection attacks, this class only communicates
 * with the database using SQL variable binding with prepared statements.
@@ -35,13 +35,14 @@ class w_search
 	private $num_matches;
 	private $data_row;
 	
-
+	
+	
 	/**
 	*
 	* @brief Add a field to the WHERE clause
 	*
 	* @param[in]      $db_field_name    field name in the database
-	* $param[in]      $search_string    string to be used as the search pattern
+	* @param[in]      $search_string    string to be used as the search pattern
 	*
 	*/
 	
@@ -74,11 +75,12 @@ class w_search
 	* @brief Build and execute the search query
 	*
 	* @param [in,out] $db           MySQLi database object
-	* @param [in]     $base_query   base SQL query for search
+	* @param [in]     $base_query   base SQL query for the search
+	* @param [in]     $max_rows     maximum number of rows that will be obtained from the database (optional)
 	*
 	*/
 	
-	public function execute_search (&$db, $base_query, $max_rows=0)
+	public function execute_search ($db, $base_query, $max_rows=0)
 	{
 		// If $this->stmt already has a value, then assume that it has already been assigned
 		// to a prepared statement, which would need to be closed first.
@@ -92,7 +94,7 @@ class w_search
 		if ($max_rows > 0)
 			$query = $query . ' LIMIT ' . $max_rows;
 		
-		// Have the database prepare the statement.
+		// Have the database server prepare the statement.
 		
 		if (!($this->stmt=$db->prepare($query)))
 			die($db->error);
@@ -118,12 +120,25 @@ class w_search
 		// Note: The call to store_result() is only needed here to get the correct number of rows.
 		
 		$this->stmt->store_result();
-		$num_rows = $this->stmt->num_rows;
-
+		$this->num_rows = $this->stmt->num_rows;
+		
+		// If the database query returned the maximum allowed number of rows, then ask
+		// the MySQL server for the total (unlimited) number of matches.
+		
+		if ($this->num_rows == $max_rows)
+		{
+			if (!($result = $db->query("SELECT FOUND_ROWS()"))) die($db->error);
+			$temp_array  = $result->fetch_row();
+			$this->num_matches = $temp_array[0];
+		}
+		else
+		{
+			$this->num_matches = $this->num_rows;
+		}
+		
 		// Get the result set metadata from the prepared statement
 		
 		$metadata = $this->stmt->result_metadata();
-		
 		
 		/* Get field information for all columns */
 	
@@ -138,13 +153,80 @@ class w_search
 	}
 	
 	
-	function fetch_row ()
+	
+	/**
+	*
+	* @brief Get one data row from the result set of a query
+	*
+	* @return Either an array containing the data row or the value `FALSE` if there is no more data
+	*
+	* @note The return array will contain one element for each field in the data row.
+	* The \a keys for the array elements will be the field names that were requested in the SQL query,
+	* and the corresponding array \a values will be the field data values. The following code fragment
+	* shows a typical example of use:
+	*
+	* @code
+	* while ($return_array = $search_obj->fetch_row()) {
+	*     $field1_value = $return_array['field1_name'];
+	*     $field2_value = $return_array['field2_name'];
+	*     ...
+	* }
+	* @endcode
+	*
+	*/
+	
+	public function fetch_row ()
 	{
 		if ($this->stmt->fetch())
 			return $this->data_row;
 		else
 			return FALSE;
 	}
+	
+	
+	
+	/**
+	*
+	* @brief Get the number of data rows obtained from the MySQL server
+	*
+	* @return    Number of data rows
+	*
+	*/
+	
+	public function num_rows ()
+	{
+		return $this->num_rows;
+	}
+	
+	
+	
+	/**
+	*
+	* @brief Get the total (unlimited) number of matches in the database
+	*
+	* @return    Number of matches
+	*
+	*/
+	
+	public function num_matches ()
+	{
+		return $this->num_matches;
+	}
+	
+	
+	/**
+	*
+	* @brief Close the prepared statement
+	*
+	*/
+	
+	public function close ()
+	{
+		$this->stmt->close();
+		$this->stmt        = NULL;
+		$this->num_rows    = NULL;
+		$this->num_matches = NULL;
+		$this->data_row    = NULL;
+	}
 }
-
 ?>

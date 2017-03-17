@@ -91,12 +91,24 @@ if($db->connect_errno > 0){
 
 // Execute the search.
 
-$base_query = 'SELECT BirthID, LastName, FirstName FROM ns_births';
+$base_query = 'SELECT SQL_CALC_FOUND_ROWS BirthID, LastName, FirstName FROM ns_births';
 $max_rows   = 100;
 
 $search->execute_search($db, $base_query, $max_rows);
 
+
+// If the total number of matches exceeded the limit, then report that.
+	
+if ($search->num_matches() > $search->num_rows())
+{
+	echo '<p>Your search matched ' . $search->num_matches() . ' records, but only ';
+	echo $search->num_rows() . ' are shown here. Please refine the search</p>' .PHP_EOL;
+}
+
 while($row = $search->fetch_row())
 	echo $row[LastName] . ' ' . $row[FirstName] . ' ' . $row[BirthID] . '<br>';
+
+$search->close();
+
 
 ?>
