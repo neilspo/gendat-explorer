@@ -5,7 +5,7 @@
 *
 * @brief Database search with wildcards
 *
-* @date 17 March 2017
+* @date 31 March 2017
 *
 */
 
@@ -31,8 +31,8 @@ class w_search
 	private $where_clause;
 	
 	private $stmt;
-	private $num_rows;
-	private $num_matches;
+	private $num_rows = 0;
+	private $num_matches = 0;
 	private $data_row;
 	
 	
@@ -87,6 +87,12 @@ class w_search
 		
 		if (isset($this->stmt))
 			$this->stmt->close();
+		
+		// If execute_search() was called without one or more calls to add_field(),
+		// then don't do the search.
+		
+		if ($this->num_args == 0)
+			return;
 
 		// Create the template SQL query for the prepared statement.
 		
@@ -140,7 +146,7 @@ class w_search
 		
 		$metadata = $this->stmt->result_metadata();
 		
-		// Bind the result set to elements of the array '$this->data_row' with
+		// Bind the result set to elements of the array $this->data_row with
 		// the array keys set to the query field names.
 	
 		$result_vars    = array();
@@ -168,8 +174,8 @@ class w_search
 	*
 	* @code
 	* while ($return_array = $search_obj->fetch_row()) {
-	*     $field1_value = $return_array['field1_name'];
-	*     $field2_value = $return_array['field2_name'];
+	*     $field1_value = $return_array[field1_name];
+	*     $field2_value = $return_array[field2_name];
 	*     ...
 	* }
 	* @endcode
