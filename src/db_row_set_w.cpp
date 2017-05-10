@@ -53,7 +53,7 @@ void db_row_set_w::lock_perm(unsigned int col)
 {
 	if (!(col < num_cols()))
 		throw std::out_of_range("Bad column number in db_row_set_w::lock_perm");
-	
+
 	col_locks[col] = DB_LOCKED_PERM;
 }
 
@@ -105,7 +105,7 @@ bool db_row_set_w::unlock(unsigned int col)
 /// \param[in]  col         column number
 /// \param[in]  data        new value for the data field
 /// \param[out] error_msg   error message
-/// 
+///
 ///
 /// \return `true` if successful
 ///
@@ -140,7 +140,7 @@ bool db_row_set_w::save_data(unsigned int row, unsigned int col, std::string dat
 		error_msg = "This data column is locked";
 		return false;
 	}
-	
+
 	// Validate the data using the appropriate regular expression for that data type.
 
 	switch (col_desc(col)->type())
@@ -183,6 +183,8 @@ bool db_row_set_w::save_data(unsigned int row, unsigned int col, std::string dat
 			return false;
 		}
 		break;
+    default:
+        break;
 	}
 
 	// Find this row in the list of altered rows. If it's not already in the
@@ -336,7 +338,7 @@ void db_row_set_w::setup_child_phase_2()
 		// Resize the list of column locks, with default state unlocked.
 
 		col_locks.resize(num_cols(), DB_UNLOCKED);
-		
+
 		// Collect information about database tables, columns and primary keys.
 
 		init_db_info();
@@ -357,7 +359,7 @@ void db_row_set_w::setup_child_phase_2()
 			{
 				my_tables[i].is_writable = true;
 				row_set_is_writable      = true;
-			}				
+			}
 		}
 	}
 }
@@ -366,7 +368,7 @@ void db_row_set_w::setup_child_phase_2()
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Collect information about database tables, columns and primary keys that are 
+// Collect information about database tables, columns and primary keys that are
 // referenced in the row set.
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -503,7 +505,7 @@ void db_row_set_w::update_altered_row(unsigned int row, row_map_element *p_alt_r
 				}
 
 				// Execute the query.
-				
+
 				unsigned int affected_rows = db.execute(query);
 
 				// If the query succeeded, then mark the fields as not needing update.
