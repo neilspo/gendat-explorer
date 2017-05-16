@@ -5,7 +5,7 @@ CC=g++
 
 CFLAGS=-c $(shell wx-config --cflags) -I/usr/include/mysql -std=c++11 -pedantic -Wall
 SOURCES=gendat.cpp gdw_TopFrame.cpp gdw_panel.cpp gdw_edit.cpp gdw_dialog.cpp \
-	gdw_form_input.cpp id_manager.cpp db_row_set.cpp db_row_set_w.cpp
+	gdw_field_group.cpp id_manager.cpp db_row_set.cpp db_row_set_w.cpp
 
 # Linker flags
 

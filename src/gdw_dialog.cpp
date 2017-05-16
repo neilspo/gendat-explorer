@@ -16,7 +16,7 @@
 #include <stdexcept>
 
 #include "gdw_dialog.h"
-#include "gdw_form_input.h"
+#include "gdw_field_group.h"
 
 
 
@@ -46,9 +46,11 @@ gdw_db_connect::gdw_db_connect(database* db) : wxDialog(NULL, wxID_ANY, "Databas
 
   // Add the user input fields.
 
-  wx_hostname = gdw_form_input (panel, vbox, "Host Name", "apollo");
-  wx_username = gdw_form_input (panel, vbox, "User Name", "test_RO");
-  wx_password = gdw_form_input (panel, vbox, "Password", "");
+  gdw_field_group field_group(panel, vbox, wxID_ANY, 100, 50);
+
+  wx_hostname = field_group.add_field ("Host Name", "apollo");
+  wx_username = field_group.add_field ("User Name", "test_RO");
+  wx_password = field_group.add_field ("Password",  "");
 
   // Add "Cancel" and "Apply" buttons.
 
