@@ -21,10 +21,10 @@ class TopFrame : public wxFrame
 {
 public:
   TopFrame(const wxString& title, const wxPoint& pos, const wxSize& size);
-  
+
 private:
   void event_handler  (wxCommandEvent& event);
-  
+
   enum
     {
       ID_Connect = 1,
@@ -34,10 +34,11 @@ private:
       ID_ReloadPage,
       ID_Execute,
       ID_Edit,
+      ID_Search,
       ID_first = ID_Connect,
-      ID_last  = ID_Edit
+      ID_last  = ID_Search
     };
-  
+
   wxPanel     *top_panel;
   wxNotebook  *notebook;
   database    gendat_db;

@@ -15,9 +15,6 @@
 
 #include <string>
 
-wxTextCtrl* gdw_form_input (wxWindow *parent, wxBoxSizer *vbox,
-                            const std::string label, const std::string default_value);
-
 class gdw_field_group
 {
 public:
@@ -31,6 +28,5 @@ private:
     int         my_label_width;
     int         my_field_width;
 };
-
 
 #endif

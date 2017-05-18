@@ -42,7 +42,7 @@ gdw_field_group::gdw_field_group (wxWindow *parent, wxBoxSizer *vbox,
 /// \param[in] label         input field label
 /// \param[in] default_value input field default value
 ///
-/// \return    pointer to the wxTextCtrl that will contain the user input
+/// \return    pointer to the wxTextCtrl object that will contain the user input
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -63,7 +63,7 @@ wxTextCtrl* gdw_field_group::add_field(const std::string label, const std::strin
 
     wxTextCtrl* my_data = new wxTextCtrl(my_parent, my_id, default_value, wxDefaultPosition,
                                          wxSize(my_field_width, -1));
-    hbox->Add(my_data, 1);
+    hbox->Add(my_data, 0);
 
     // Add everything to the vertical box sizer.
 

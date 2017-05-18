@@ -46,7 +46,7 @@ gdw_db_connect::gdw_db_connect(database* db) : wxDialog(NULL, wxID_ANY, "Databas
 
   // Add the user input fields.
 
-  gdw_field_group field_group(panel, vbox, wxID_ANY, 100, 50);
+  gdw_field_group field_group(panel, vbox, wxID_ANY, 100, -1);
 
   wx_hostname = field_group.add_field ("Host Name", "apollo");
   wx_username = field_group.add_field ("User Name", "test_RO");

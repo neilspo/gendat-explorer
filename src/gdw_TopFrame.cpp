@@ -7,7 +7,7 @@
 /// menu on that frame, and handles all display events produced when a user clicks on one
 /// of these menu items. The top frame also holds all of the other display elements used in
 /// the rest of the program.
-/// 
+///
 
 #include <wx/wxprec.h>
 
@@ -21,6 +21,7 @@
 #include "database.h"
 #include "gdw_TopFrame.h"
 #include "gdw_edit.h"
+#include "gdw_search.h"
 #include "gdw_dialog.h"
 
 
@@ -42,7 +43,7 @@ TopFrame::TopFrame(const wxString& title, const wxPoint& pos, const wxSize& size
   //****************************************************************************
   // Bind the event handler to the IDs used in this class.
   //****************************************************************************
-  
+
   Bind(wxEVT_MENU, &TopFrame::event_handler, this, wxID_EXIT);
   Bind(wxEVT_MENU, &TopFrame::event_handler, this, wxID_ABOUT);
   Bind(wxEVT_MENU, &TopFrame::event_handler, this, ID_first, ID_last);
@@ -50,9 +51,9 @@ TopFrame::TopFrame(const wxString& title, const wxPoint& pos, const wxSize& size
   //****************************************************************************
   // Create a menu bar and then attach the menu items
   //****************************************************************************
-  
+
   wxMenuBar *menuBar = new wxMenuBar;
-  
+
   // File Menu
   //
   // Note that the & character creates an accelerator key. The character that
@@ -72,6 +73,7 @@ TopFrame::TopFrame(const wxString& title, const wxPoint& pos, const wxSize& size
   wxMenu *menuTools = new wxMenu;
   menuBar->Append(menuTools, "&Tools");
   menuTools->Append(ID_Edit, "&Edit");
+  menuTools->Append(ID_Search, "Search");
 
   // Help Menu
 
@@ -93,7 +95,7 @@ TopFrame::TopFrame(const wxString& title, const wxPoint& pos, const wxSize& size
   //****************************************************************************
   // Create a tool bar and then attach the menu items
   //****************************************************************************
-  
+
   wxToolBar *toolBar = CreateToolBar();
 
   wxBitmap icon_execute     = wxArtProvider::GetBitmap(wxART_GO_FORWARD,wxART_TOOLBAR);
@@ -103,21 +105,21 @@ TopFrame::TopFrame(const wxString& title, const wxPoint& pos, const wxSize& size
   toolBar->AddTool(ID_DeletePage, "Delete",  icon_page_delete, "Delete Current Page");
   toolBar->AddTool(ID_ReloadPage, "Reload",  icon_page_reload, "Reload Current Page");
   toolBar->AddTool(ID_Execute,    "Execute", icon_execute,     "Execute Task");
-  
+
   toolBar->Realize();
 
   //****************************************************************************
   // Create a top-level panel to hold the notebook and its contents
   //****************************************************************************
-  
+
   wxPanel* top_panel = new wxPanel(this, wxID_ANY);
 
   // Create the wxNotebook widget
-  
+
   notebook = new wxNotebook(top_panel, wxID_ANY);
-  
+
   // Set up the sizer for the panel
-  
+
   wxBoxSizer* panelSizer = new wxBoxSizer(wxHORIZONTAL);
   panelSizer->Add(notebook, 1, wxEXPAND);
   top_panel->SetSizer(panelSizer);
@@ -149,7 +151,7 @@ void TopFrame::event_handler (wxCommandEvent& event)
 	if (return_code==1) SetStatusText("Connected to database");
       }
       break;
-      
+
     case ID_Disconnect:
       gendat_db.disconnect();
       SetStatusText("No database connection");
@@ -183,24 +185,28 @@ void TopFrame::event_handler (wxCommandEvent& event)
       notebook->AddPage(new gdw_edit(notebook, &gendat_db), L"Edit", true);
       break;
 
+    case ID_Search:
+        notebook->AddPage(new gdw_search(notebook, &gendat_db), L"Search", true);
+        break;
+
     case ID_ShowLogWin:
 
       // Show log messages in a separate window.
-      
+
       new wxLogWindow(this, wxS("Log messages"), true, false);
       break;
-      
+
     case wxID_ABOUT:
 
       // Show the "About" page.
-      
+
       wxMessageBox(PROG_VERSION, "About GenDat Explorer", wxOK | wxICON_INFORMATION);
       break;
-      
+
     case wxID_EXIT:
 
       // Exit the program.
-      
+
       Close(true);
       break;
     }
