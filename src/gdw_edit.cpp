@@ -28,10 +28,14 @@ gdw_edit::gdw_edit(wxWindow* parent, database* db) : gdw_panel(parent)
         my_db             = db;
         unsaved_data_flag = false;
 
+        // Enable SQL NULL substitution.
+
+        row_set.set_null_subst_on();
+
         // Get 2 unique event identifiers and bind them to the event handler.
-        
+
         id_mgr.reserve(2);
-        
+
         id_grid_event = id_mgr.alloc_id();
         id_save_event = id_mgr.alloc_id();
 
@@ -43,7 +47,7 @@ gdw_edit::gdw_edit(wxWindow* parent, database* db) : gdw_panel(parent)
 gdw_edit::~gdw_edit()
 {
         std::cout << "gdw_edit Destructor: Start" << std::endl;
-  
+
 }
 
 void gdw_edit::process_window_draw()
@@ -74,7 +78,7 @@ void gdw_edit::process_window_draw()
 
         grid->CreateGrid(num_rows, num_cols);
         sizer->Add(grid, 1, wxEXPAND, 10);
-        
+
         // Fill in the display table.
 
         std::string data;
@@ -114,13 +118,13 @@ void gdw_edit::process_window_draw()
 void gdw_edit::process_window_events (wxEvent* event)
 {
         unsigned int event_id = event->GetId();
-        
+
         std::cout << "process_window_events: " << event_id << std::endl;
 
 
         if (event_id == id_grid_event)
         {
-        
+
                 wxGridEvent* grid_event = (wxGridEvent*)event;
                 int row = grid_event->GetRow();
                 int col = grid_event->GetCol();
@@ -159,7 +163,7 @@ bool gdw_edit::has_unsaved_data()
 void gdw_edit::process_execute()
 {
         // Save any data changes in the database.
-        
+
         row_set.write_to_db(*my_db);
 
         // Reload the page.
