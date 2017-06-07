@@ -20,10 +20,11 @@ public:
     bool unlock      (unsigned int col);
     bool save_data   (unsigned int row, unsigned int col, std::string data, std::string& error_msg);
     bool save_null   (unsigned int row, unsigned int col, std::string& error_msg);
+    bool insert_row  (unsigned int row, std::string& error_msg);
+    bool delete_row  (unsigned int row, std::string& error_msg);
     void write_to_db (database& db);
     void set_null_subst_on  ();
     void set_null_subst_off ();
-
 
 private:
 
@@ -46,6 +47,7 @@ private:
     };
 
     bool row_set_is_writable = false;
+    bool row_ins_del_allowed = false;
 
 
     // List of column locks

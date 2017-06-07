@@ -300,6 +300,66 @@ bool db_row_set_w::save_null(unsigned int row, unsigned int col, std::string& er
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
+/// \brief Insert row
+///
+/// This member function ...
+///
+/// \param[in] row   row number
+///
+/// \exception std::out_of_range thrown if the row number is out of range
+///
+////////////////////////////////////////////////////////////////////////////////
+
+bool db_row_set_w::insert_row(unsigned int row, std::string& error_msg)
+{
+    if (!(row < num_rows()))
+        throw std::out_of_range("Bad row number in db_row_set_w::insert_row");
+
+
+    // Make sure rows can be inserted into this row set.
+
+    if (!row_ins_del_allowed)
+    {
+        error_msg = "Rows cannot be inserted into this row set";
+        return false;
+    }
+
+
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+///
+/// \brief Delete row
+///
+/// This member function ...
+///
+/// \param[in] row   row number
+///
+/// \exception std::out_of_range thrown if the row number is out of range
+///
+////////////////////////////////////////////////////////////////////////////////
+
+bool db_row_set_w::delete_row(unsigned int row, std::string& error_msg)
+{
+    if (!(row < num_rows()))
+        throw std::out_of_range("Bad row number in db_row_set_w::lock");
+
+    // Make sure rows can be deleted from this row set.
+
+    if (!row_ins_del_allowed)
+    {
+        error_msg = "Rows cannot be deleted from this row set";
+        return false;
+    }
+
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+///
 /// \brief Write cached data to database
 ///
 /// This member function attempts to make all of the changes to the database
@@ -440,6 +500,15 @@ void db_row_set_w::setup_child_phase_2()
                 row_set_is_writable      = true;
             }
         }
+
+        // If this row set references more than one table, then it must be the
+        // result of a SQL JOIN. In that case disallow row insertion or deletion.
+
+        if (my_tables.size() == 1)
+            row_ins_del_allowed = true;
+        else
+            row_ins_del_allowed = false;
+
     }
 }
 
