@@ -16,6 +16,7 @@
 
 #include <wx/notebook.h>
 #include "database.h"
+#include "gde_source.h"
 
 class TopFrame : public wxFrame
 {
@@ -33,14 +34,16 @@ private:
       ID_DeletePage,
       ID_ReloadPage,
       ID_Execute,
+      ID_ShowSourceInfo,
       ID_Edit,
       ID_Search,
       ID_first = ID_Connect,
       ID_last  = ID_Search
     };
 
-  wxPanel     *top_panel;
-  wxNotebook  *notebook;
-  database    gendat_db;
+  wxPanel            *top_panel;
+  wxNotebook         *notebook;
+  database            gendat_db;
+  gendat_source_list  gendat_sources;
 };
 #endif

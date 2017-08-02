@@ -19,10 +19,12 @@
 #include <wx/artprov.h>
 
 #include "database.h"
+#include "gde_source.h"
 #include "gdw_TopFrame.h"
 #include "gdw_edit.h"
 #include "gdw_search.h"
 #include "gdw_dialog.h"
+#include "gdw_show_src_info.h"
 
 
 
@@ -73,6 +75,7 @@ TopFrame::TopFrame(const wxString& title, const wxPoint& pos, const wxSize& size
   wxMenu *menuTools = new wxMenu;
   menuBar->Append(menuTools, "&Tools");
   menuTools->Append(ID_Edit, "&Edit");
+  menuTools->Append(ID_ShowSourceInfo, "Show Source Info");
   menuTools->Append(ID_Search, "Search");
 
   // Help Menu
@@ -145,12 +148,16 @@ void TopFrame::event_handler (wxCommandEvent& event)
   switch (event_id)
     {
     case ID_Connect:
-      {
-	gdw_db_connect db_connect(&gendat_db);
-	int return_code = db_connect.ShowModal();
-	if (return_code==1) SetStatusText("Connected to database");
-      }
-      break;
+        {
+            gdw_db_connect db_connect(&gendat_db);
+            int return_code = db_connect.ShowModal();
+            if (return_code==1)
+            {
+                SetStatusText("Connected to database");
+                gendat_sources.load_defs(gendat_db);
+            }
+        }
+        break;
 
     case ID_Disconnect:
       gendat_db.disconnect();
@@ -183,6 +190,10 @@ void TopFrame::event_handler (wxCommandEvent& event)
 
     case ID_Edit:
       notebook->AddPage(new gdw_edit(notebook, &gendat_db), L"Edit", true);
+      break;
+
+    case ID_ShowSourceInfo:
+      notebook->AddPage(new gdw_show_src_info(notebook, &gendat_db), L"GenDat Source Info", true);
       break;
 
     case ID_Search:
