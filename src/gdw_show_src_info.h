@@ -14,6 +14,7 @@
 #endif
 
 #include <wx/grid.h>
+#include <wx/treectrl.h>
 
 #include "database.h"
 #include "gdw_panel.h"
@@ -27,18 +28,22 @@ public:
 
 
 private:
-    void process_window_draw ();
-    void process_execute     ();
-    bool has_unsaved_data    ();
 
+    // Override the pure virtual functions in the base class.
+
+    void process_window_draw   ();
+    void process_execute       ();
     void process_window_events (wxEvent* event);
 
-    database*    my_db;
-    bool         unsaved_data_flag;
-    id_manager   id_mgr;
-    unsigned int id_text_event;
-    wxTextCtrl*  wx_surname;
-    wxTextCtrl*  wx_given_name;
+    // Private variables.
+
+    database*     my_db;
+    id_manager    id_mgr;
+    unsigned int  tree_id;
+    wxTreeCtrl   *tree;
+
+    void draw_left_panel (wxPanel *parent);
+
 };
 
 #endif
