@@ -103,8 +103,22 @@ void gdw_show_src_info::process_window_events (wxEvent* event)
 
     if (event_type == wxEVT_TREE_SEL_CHANGED)
     {
+        // Get the ID of the newly selected node.
+
         wxTreeItemId selected_node = tree->GetSelection();
-        std::cout << "wxEVT_TREE_SEL_CHANGED " << tree->GetItemText(selected_node) << std::endl;
+
+        // Try to get a pointer to the data transfer object.
+
+        ItemData *p_node_data = (ItemData*)tree->GetItemData(selected_node);
+
+        // If there was data transfered, then process it.
+
+        if(p_node_data)
+        {
+            int node_data = p_node_data->GetData();
+
+            std::cout << "wxEVT_TREE_SEL_CHANGED " << node_data << std::endl;
+        }
     }
 }
 
@@ -128,11 +142,11 @@ void gdw_show_src_info::draw_left_panel(wxPanel *parent)
     sizer1->Add(tree, 1, wxEXPAND);
 
     wxTreeItemId root = tree->AddRoot("Sources");
-    wxTreeItemId r1   = tree->AppendItem(root, "1871 Census");
-    wxTreeItemId r2   = tree->AppendItem(root, "1881 Census");
-    tree->AppendItem(r1, "Node1");
-    tree->AppendItem(r1, "Node2");
-    tree->AppendItem(r2, "Node3");
+    wxTreeItemId r1   = tree->AppendItem(root, "1871 Census", -1, -1, new ItemData(1));
+    wxTreeItemId r2   = tree->AppendItem(root, "1881 Census", -1, -1, new ItemData(2));
+    tree->AppendItem(r1, "Node1", -1, -1, new ItemData(3));
+    tree->AppendItem(r1, "Node2", -1, -1, new ItemData(4));
+    tree->AppendItem(r2, "Node3", -1, -1, new ItemData(5));
 
     parent->SetSizer(sizer1);
 

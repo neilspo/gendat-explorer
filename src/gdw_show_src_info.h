@@ -44,6 +44,17 @@ private:
 
     void draw_left_panel (wxPanel *parent);
 
+    // This class provides a way to attach a data value to the tree nodes.
+
+    class ItemData : public wxTreeItemData
+    {
+    public:
+        ItemData (int data) {my_data = data;};
+        int GetData () {return my_data;};
+    private:
+        int my_data;
+    };
+
 };
 
 #endif
