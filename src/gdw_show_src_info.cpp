@@ -15,8 +15,8 @@
 #include <wx/splitter.h>
 
 #include <string>
+
 #include "gdw_show_src_info.h"
-#include "gdw_field_group.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -25,14 +25,14 @@
 ///
 /// The constructor
 ///
-/// \param [in]   parent   pointer to the parent window
-/// \param [in]   db       pointer to database connection object
+/// \param [in]   parent        pointer to the parent window
+/// \param [in]   source_list   object containing the GenDat source definitions
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-gdw_show_src_info::gdw_show_src_info(wxWindow* parent, database* db) : gdw_panel(parent)
+gdw_show_src_info::gdw_show_src_info(wxWindow* parent, gendat_source_list source_list) : gdw_panel(parent)
 {
-    my_db = db;
+    my_source_list = source_list;
 
     // Get a unique identifier to use when creating the tree control.
 
@@ -117,6 +117,8 @@ void gdw_show_src_info::process_window_events (wxEvent* event)
         {
             int node_data = p_node_data->GetData();
 
+
+
             std::cout << "wxEVT_TREE_SEL_CHANGED " << node_data << std::endl;
         }
     }
@@ -141,12 +143,17 @@ void gdw_show_src_info::draw_left_panel(wxPanel *parent)
     wxBoxSizer *sizer1 = new wxBoxSizer(wxVERTICAL);
     sizer1->Add(tree, 1, wxEXPAND);
 
+    // Add the tree root
+
     wxTreeItemId root = tree->AddRoot("Sources");
-    wxTreeItemId r1   = tree->AppendItem(root, "1871 Census", -1, -1, new ItemData(1));
-    wxTreeItemId r2   = tree->AppendItem(root, "1881 Census", -1, -1, new ItemData(2));
-    tree->AppendItem(r1, "Node1", -1, -1, new ItemData(3));
-    tree->AppendItem(r1, "Node2", -1, -1, new ItemData(4));
-    tree->AppendItem(r2, "Node3", -1, -1, new ItemData(5));
+
+    int num_sources = my_source_list.num_sources();
+    for (int i=0; i<num_sources; i++)
+    {
+        std::string source_name = my_source_list.get_name(i);
+        wxTreeItemId r1   = tree->AppendItem(root, source_name, -1, -1, new ItemData(i));
+    }
+
 
     parent->SetSizer(sizer1);
 

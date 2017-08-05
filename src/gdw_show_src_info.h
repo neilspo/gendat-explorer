@@ -16,14 +16,14 @@
 #include <wx/grid.h>
 #include <wx/treectrl.h>
 
-#include "database.h"
+#include "gde_source.h"
 #include "gdw_panel.h"
 #include "id_manager.h"
 
 class gdw_show_src_info : public gdw_panel
 {
 public:
-    gdw_show_src_info (wxWindow* parent, database* db);
+    gdw_show_src_info (wxWindow* parent, gendat_source_list source_list);
     ~gdw_show_src_info();
 
 
@@ -37,10 +37,10 @@ private:
 
     // Private variables.
 
-    database*     my_db;
-    id_manager    id_mgr;
-    unsigned int  tree_id;
-    wxTreeCtrl   *tree;
+    gendat_source_list  my_source_list;
+    id_manager          id_mgr;
+    unsigned int        tree_id;
+    wxTreeCtrl         *tree;
 
     void draw_left_panel (wxPanel *parent);
 

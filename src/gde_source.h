@@ -21,10 +21,20 @@ enum src_type
     DEAT
 };
 
+
+
+
+
+
+
 class gendat_source_list
 {
 public:
-    bool load_defs (database &db);
+    bool           load_defs   (database &db);
+    int            num_sources () const;
+
+    std::string get_name        (int source_num);
+    std::string get_description (int source_num);
 
 private:
 
@@ -36,12 +46,14 @@ private:
         src_type      type;
         std::string   table;
         bool          writable;
+
+        std::vector<int> my_chlidren;
     };
 
     std::vector<gendat_source> source_list;
+
+    void test_source_num (int source_num);
 };
-
-
 
 #endif
 
