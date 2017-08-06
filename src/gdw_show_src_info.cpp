@@ -150,8 +150,20 @@ void gdw_show_src_info::draw_left_panel(wxPanel *parent)
     int num_sources = my_source_list.num_sources();
     for (int i=0; i<num_sources; i++)
     {
-        std::string source_name = my_source_list.get_name(i);
-        wxTreeItemId r1   = tree->AppendItem(root, source_name, -1, -1, new ItemData(i));
+        std::string derived_from = my_source_list.get_parent_id(i);
+        if (derived_from.empty())
+        {
+            std::string source_name = my_source_list.get_name(i);
+            wxTreeItemId r1   = tree->AppendItem(root, source_name, -1, -1, new ItemData(i));
+
+            std::vector<int> source_children = my_source_list.get_children(i);
+            for (unsigned int j=0; j<source_children.size(); j++)
+            {
+                std::string child_name = my_source_list.get_name(source_children[j]);
+                tree->AppendItem(r1, child_name, -1, -1, new ItemData(source_children[j]));
+            }
+        }
+
     }
 
 

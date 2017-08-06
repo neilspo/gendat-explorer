@@ -36,18 +36,25 @@ public:
     std::string get_name        (int source_num);
     std::string get_description (int source_num);
 
+    std::string      get_parent_id (int source_num);
+    std::vector<int> get_children  (int source_num);
+
 private:
 
     class gendat_source
     {
     public:
+        std::string   id;
         std::string   name;
         std::string   description;
-        src_type      type;
-        std::string   table;
+        std::string   version;
+        std::string   db_table;
+        std::string   repository;
+        std::string   derived_from;
         bool          writable;
+        src_type      type = UNKNOWN;
 
-        std::vector<int> my_chlidren;
+        std::vector<int> my_children;
     };
 
     std::vector<gendat_source> source_list;

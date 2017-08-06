@@ -31,6 +31,7 @@ bool gendat_source_list::load_defs(database &db)
 {
 
     std::string query;
+    std::string fields;
 
     std::vector< std::vector< std::string >> result_set;
     unsigned int num_rows;
@@ -39,7 +40,8 @@ bool gendat_source_list::load_defs(database &db)
     // Try to read the GenDat source definitions from the database.
     // If this fails, then report the error and return false.
 
-    query = "SELECT name, description, type, db_table FROM z_sour";
+    fields = "id, name, description, version, db_table, repository, derived_from, writable, type";
+    query  = "SELECT " + fields + " FROM z_sour";
 
     try
     {
@@ -56,15 +58,42 @@ bool gendat_source_list::load_defs(database &db)
     source_list.resize(num_rows);
     for (unsigned int i=0; i<num_rows; i++)
     {
-        source_list[i].name        = result_set[i][0];
-        source_list[i].description = result_set[i][1];
-        if (result_set[i][2] == "BIRT") source_list[i].type = BIRT;
-        if (result_set[i][2] == "DEAT") source_list[i].type = DEAT;
-        if (result_set[i][2] == "MARR") source_list[i].type = MARR;
+        source_list[i].id           = result_set[i][0];
+        source_list[i].name         = result_set[i][1];
+        source_list[i].description  = result_set[i][2];
+        source_list[i].version      = result_set[i][3];
+        source_list[i].db_table     = result_set[i][4];
+        source_list[i].repository   = result_set[i][5];
+        source_list[i].derived_from = result_set[i][6];
 
+        if (result_set[i][7] == "yes")
+            source_list[i].writable = true;
+        else
+            source_list[i].writable = false;
 
-        std::cout << "source: " << result_set[i][2] << ", " << source_list[i].type << std::endl;
+        if (result_set[i][8] == "BIRT") source_list[i].type = BIRT;
+        if (result_set[i][8] == "DEAT") source_list[i].type = DEAT;
+        if (result_set[i][8] == "MARR") source_list[i].type = MARR;
     }
+
+    // Set up the source hierarchy.
+
+    for (unsigned int i=0; i<num_rows; i++)
+    {
+        if (!source_list[i].derived_from.empty())
+        {
+            for (unsigned int j=0; j<num_rows; j++)
+            {
+                if (source_list[i].derived_from == source_list[j].id)
+                {
+                    source_list[j].my_children.push_back(i);
+                }
+            }
+
+        }
+    }
+
+
 
     return true;
 }
@@ -100,6 +129,44 @@ std::string gendat_source_list::get_name (int source_num)
 {
     test_source_num (source_num);
     return source_list[source_num].name;
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// \brief Get a GenDat source parent
+///
+/// \param[in]  source_num   Source number
+///
+/// \return     source parent
+///
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+std::string gendat_source_list::get_parent_id (int source_num)
+{
+    test_source_num (source_num);
+    return source_list[source_num].derived_from;
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// \brief Get a GenDat source children
+///
+/// \param[in]  source_num   Source number
+///
+/// \return     source children
+///
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+std::vector<int> gendat_source_list::get_children (int source_num)
+{
+    test_source_num (source_num);
+    return source_list[source_num].my_children;
 }
 
 
