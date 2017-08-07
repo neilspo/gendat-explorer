@@ -76,24 +76,22 @@ bool gendat_source_list::load_defs(database &db)
         if (result_set[i][8] == "MARR") source_list[i].type = MARR;
     }
 
-    // Set up the source hierarchy.
+    // Find any GenDat sources that were derived from another source (the parent), and add
+    // them to the list of children for that parent.
 
     for (unsigned int i=0; i<num_rows; i++)
-    {
-        if (!source_list[i].derived_from.empty())
+        if (source_list[i].derived_from.empty())
+            source_list[i].my_parent = -1;
+        else
         {
+            source_list[i].my_parent = i;
             for (unsigned int j=0; j<num_rows; j++)
-            {
                 if (source_list[i].derived_from == source_list[j].id)
                 {
                     source_list[j].my_children.push_back(i);
+                    break;
                 }
-            }
-
         }
-    }
-
-
 
     return true;
 }
@@ -135,21 +133,20 @@ std::string gendat_source_list::get_name (int source_num)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
-/// \brief Get a GenDat source parent
+/// \brief Find the parent of a GenDat source
 ///
 /// \param[in]  source_num   Source number
 ///
-/// \return     source parent
+/// \return     source number of the parent or -1 if there is no parent
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-std::string gendat_source_list::get_parent_id (int source_num)
+int gendat_source_list::get_parent (int source_num)
 {
     test_source_num (source_num);
-    return source_list[source_num].derived_from;
+    return source_list[source_num].my_parent;
 }
-
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

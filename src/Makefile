@@ -21,7 +21,7 @@ $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
 
 database.o : database.cpp
-	$(CC) -c $(shell mysql_config --cflags) -std=c++11 -pedantic database.cpp -o database.o
+	$(CC) -c $(shell mysql_config --cflags) -std=c++11 -pedantic -Wall database.cpp -o database.o
 
 .cpp.o:
 	$(CC) $(CFLAGS) $< -o $@

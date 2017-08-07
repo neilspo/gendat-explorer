@@ -36,7 +36,7 @@ public:
     std::string get_name        (int source_num);
     std::string get_description (int source_num);
 
-    std::string      get_parent_id (int source_num);
+    int              get_parent    (int source_num);
     std::vector<int> get_children  (int source_num);
 
 private:
@@ -54,6 +54,7 @@ private:
         bool          writable;
         src_type      type = UNKNOWN;
 
+        int              my_parent;
         std::vector<int> my_children;
     };
 

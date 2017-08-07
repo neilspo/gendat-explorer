@@ -41,6 +41,7 @@ private:
     id_manager          id_mgr;
     unsigned int        tree_id;
     wxTreeCtrl         *tree;
+    wxPanel            *right_side;
 
     void draw_left_panel (wxPanel *parent);
 

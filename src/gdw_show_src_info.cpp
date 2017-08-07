@@ -79,17 +79,12 @@ void gdw_show_src_info::process_window_draw()
 
     //Right side
 
-    wxPanel *pnl2 = new wxPanel(splittermain, wxID_ANY);
+    right_side = new wxPanel(splittermain, wxID_ANY);
 
 
-    wxBoxSizer *txt2sizer = new wxBoxSizer(wxVERTICAL);
-    wxTextCtrl *txt2 = new wxTextCtrl(pnl2, wxID_ANY, "Right Side");
-    txt2sizer->Add(txt2, 1,wxEXPAND,0);
-    wxTextCtrl *txt3 = new wxTextCtrl(pnl2, wxID_ANY, "Another line");
-    txt2sizer->Add(txt3, 1,wxEXPAND,0);
-    pnl2->SetSizer(txt2sizer);
 
-    splittermain->SplitVertically(pnl1, pnl2);
+
+    splittermain->SplitVertically(pnl1, right_side);
 
     this->SetSizer(sizermain);
     sizermain->SetSizeHints(this);
@@ -112,14 +107,18 @@ void gdw_show_src_info::process_window_events (wxEvent* event)
         ItemData *p_node_data = (ItemData*)tree->GetItemData(selected_node);
 
         // If there was data transfered, then process it.
-
         if(p_node_data)
         {
-            int node_data = p_node_data->GetData();
+            int source = p_node_data->GetData();
 
+            std::string source_name = my_source_list.get_name(source);
 
-
-            std::cout << "wxEVT_TREE_SEL_CHANGED " << node_data << std::endl;
+            wxBoxSizer *txt2sizer = new wxBoxSizer(wxVERTICAL);
+            wxTextCtrl *txt2 = new wxTextCtrl(right_side, wxID_ANY, source_name);
+            txt2sizer->Add(txt2, 1,wxEXPAND,0);
+            wxTextCtrl *txt3 = new wxTextCtrl(right_side, wxID_ANY, "Another line");
+            txt2sizer->Add(txt3, 1,wxEXPAND,0);
+            right_side->SetSizer(txt2sizer);
         }
     }
 }
@@ -130,6 +129,8 @@ void gdw_show_src_info::process_execute()
 {
     std::cout << "****** gdw_show_src_info::process_execute" << std::endl;
 }
+
+
 
 
 void gdw_show_src_info::draw_left_panel(wxPanel *parent)
@@ -149,9 +150,7 @@ void gdw_show_src_info::draw_left_panel(wxPanel *parent)
 
     int num_sources = my_source_list.num_sources();
     for (int i=0; i<num_sources; i++)
-    {
-        std::string derived_from = my_source_list.get_parent_id(i);
-        if (derived_from.empty())
+        if (my_source_list.get_parent(i) < 0)
         {
             std::string source_name = my_source_list.get_name(i);
             wxTreeItemId r1   = tree->AppendItem(root, source_name, -1, -1, new ItemData(i));
@@ -162,9 +161,8 @@ void gdw_show_src_info::draw_left_panel(wxPanel *parent)
                 std::string child_name = my_source_list.get_name(source_children[j]);
                 tree->AppendItem(r1, child_name, -1, -1, new ItemData(source_children[j]));
             }
-        }
 
-    }
+        }
 
 
     parent->SetSizer(sizer1);
