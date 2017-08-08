@@ -111,14 +111,33 @@ void gdw_show_src_info::process_window_events (wxEvent* event)
         {
             int source = p_node_data->GetData();
 
-            std::string source_name = my_source_list.get_name(source);
+            std::string source_name        = my_source_list.get_name(source);
+            std::string source_description = my_source_list.get_description(source);
+
+            // Clear the main data display panel.
+
+            right_side->DestroyChildren();
 
             wxBoxSizer *txt2sizer = new wxBoxSizer(wxVERTICAL);
+
+
+            wxTextCtrl *txt4 = new wxTextCtrl(right_side,wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE);
+            (*txt4)<< "Source Name:     " << source_name << "\n\n";
+            (*txt4)<< "Source Description:     " << source_description << "\n";
+            txt2sizer->Add(txt4, 1,wxEXPAND,0);
+
+
             wxTextCtrl *txt2 = new wxTextCtrl(right_side, wxID_ANY, source_name);
-            txt2sizer->Add(txt2, 1,wxEXPAND,0);
+            txt2sizer->Add(txt2, 0,wxEXPAND,0);
+
+
             wxTextCtrl *txt3 = new wxTextCtrl(right_side, wxID_ANY, "Another line");
-            txt2sizer->Add(txt3, 1,wxEXPAND,0);
+            txt2sizer->Add(txt3, 0,wxEXPAND,0);
+
+
+
             right_side->SetSizer(txt2sizer);
+            right_side->Layout();
         }
     }
 }
