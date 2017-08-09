@@ -105,14 +105,15 @@ bool db_row_set::get_data(unsigned int row, unsigned int col, std::string& data)
 ///
 /// \return pointer to the column descriptor
 ///
-/// \note For greater efficiency, this member function does not check the validity of the
-/// input column number.
+/// \exception std::out_of_range thrown if the column number is out of range
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 db_col_desc const * db_row_set::col_desc(unsigned col) const
 {
-	return &col_desc_list[col];
+    if (col < my_num_cols)
+        return &col_desc_list[col];
+    else
+        throw std::out_of_range("Bad column number in db_row_set::col_desc");
 }
 
 

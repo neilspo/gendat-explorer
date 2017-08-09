@@ -98,7 +98,6 @@ public:
 	std::string   col_name (unsigned int col) const;
 	bool          get_data (unsigned int row, unsigned int col, std::string& data) const;
 
-protected:
 	db_col_desc const * col_desc(unsigned int col) const;
 
 private:
@@ -112,7 +111,7 @@ private:
 	std::vector<db_col_desc>  col_desc_list;              // List of column descriptors
 
 	std::vector <std::vector <bool>>        null_fields;  // True if the data field is NULL
-	std::vector <std::vector <std::string>> result_set;   // Result set from database query	
+	std::vector <std::vector <std::string>> result_set;   // Result set from database query
 };
 
 #endif
