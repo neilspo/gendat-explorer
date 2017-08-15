@@ -13,9 +13,10 @@
 #endif
 
 #include <wx/splitter.h>
+#include <wx/grid.h>
 
 #include <string>
-
+#include "db_row_set.h"
 #include "gdw_show_src_info.h"
 
 
@@ -26,12 +27,15 @@
 /// The constructor
 ///
 /// \param [in]   parent        pointer to the parent window
+/// \param [in]   db            pointer to database connection object
 /// \param [in]   source_list   object containing the GenDat source definitions
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-gdw_show_src_info::gdw_show_src_info(wxWindow* parent, gendat_source_list source_list) : gdw_panel(parent)
+gdw_show_src_info::gdw_show_src_info(wxWindow* parent, database* db,
+                                     gendat_source_list source_list) : gdw_panel(parent)
 {
+    my_db          = db;
     my_source_list = source_list;
 
     // Get a unique identifier to use when creating the tree control.
@@ -68,7 +72,7 @@ void gdw_show_src_info::process_window_draw()
     // Create the splitter window and add it to the sizer.
 
     wxSplitterWindow *splittermain = new wxSplitterWindow(this, wxID_ANY);
-    splittermain->SetSashGravity(0.5);
+    splittermain->SetSashGravity(0.3);
     splittermain->SetMinimumPaneSize(20);
     sizermain->Add(splittermain, 1,wxEXPAND,0);
 
@@ -107,36 +111,107 @@ void gdw_show_src_info::process_window_events (wxEvent* event)
         ItemData *p_node_data = (ItemData*)tree->GetItemData(selected_node);
 
         // If there was data transfered, then process it.
+
         if(p_node_data)
         {
             int source = p_node_data->GetData();
 
             std::string source_name        = my_source_list.get_name(source);
             std::string source_description = my_source_list.get_description(source);
+            std::string source_db_table    = my_source_list.get_db_table(source);
 
             // Clear the main data display panel.
 
             right_side->DestroyChildren();
 
-            wxBoxSizer *txt2sizer = new wxBoxSizer(wxVERTICAL);
+            // Put everything in a vertical box sizer.
+
+            wxBoxSizer *MainSizer = new wxBoxSizer(wxVERTICAL);
+
+            // Add a panel for descriptive text and another one for tabular data
+            // about the GenDat source database fields.
+
+            wxPanel *TextPanel = new wxPanel (right_side, wxID_ANY, wxDefaultPosition, wxSize(-1, 100));
+            wxPanel *DataPanel = new wxPanel (right_side, wxID_ANY);
+
+            MainSizer->Add(TextPanel, 1, wxEXPAND, 0);
+            MainSizer->Add(DataPanel, 1, wxEXPAND, 0);
+
+            // Output text information about the selected GenDat source.
+
+            wxTextCtrl *txt = new wxTextCtrl(TextPanel, wxID_ANY, "", wxDefaultPosition,
+                                             wxDefaultSize, wxTE_MULTILINE|wxTE_READONLY);
+
+            (*txt)<< "Source Name:     " << source_name << "\n\n";
+            (*txt)<< "Source Description:     " << source_description << "\n";
+
+            // Put the text in a sizer and add it to the text panel.
+
+            wxBoxSizer *TextSizer = new wxBoxSizer(wxVERTICAL);
+
+            TextSizer->Add(txt, 1, wxEXPAND, 0);
+            TextPanel->SetSizer(TextSizer);
 
 
-            wxTextCtrl *txt4 = new wxTextCtrl(right_side,wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE);
-            (*txt4)<< "Source Name:     " << source_name << "\n\n";
-            (*txt4)<< "Source Description:     " << source_description << "\n";
-            txt2sizer->Add(txt4, 1,wxEXPAND,0);
 
 
-            wxTextCtrl *txt2 = new wxTextCtrl(right_side, wxID_ANY, source_name);
-            txt2sizer->Add(txt2, 0,wxEXPAND,0);
+            // Ask MySQL to describe the required database table.
+
+            std::string query = "DESCRIBE " + source_db_table;
+            db_row_set  row_set;
+            my_db->execute(query, row_set);
+
+            // Get the number of rows and columns in the row set.
+
+            unsigned int num_rows = row_set.num_rows();
+            unsigned int num_cols = row_set.num_cols();
+
+            // Create the data display table.
+
+            wxGrid* grid = new wxGrid(DataPanel,wxID_ANY);
+            grid->CreateGrid(num_rows, num_cols);
+            grid->EnableEditing(false);
+
+            // Fill in the display table.
+
+            std::string data;
+            for (unsigned int col = 0; col < num_cols; col++)
+            {
+
+                // Set the table column label to the database column name.
+
+                grid->SetColLabelValue(col, row_set.col_name(col));
+
+                // Copy the data elements to the table.
+
+                for (unsigned int row = 0; row < num_rows; row++)
+                {
+                    if (row_set.get_data(row, col, data))
+                    {
+                        grid->SetCellValue(row, col, data);
+                    }
+                    else
+                    {
+                        grid->SetCellValue(row, col, "(NULL)");
+                        grid->SetCellBackgroundColour(row, col, *wxCYAN);
+                    }
+                }
+            }
+            grid->AutoSize();
+
+            wxBoxSizer *DataSizer = new wxBoxSizer(wxHORIZONTAL);
+
+            DataSizer->Add(grid, 5, wxEXPAND, 0);
+            DataPanel->SetSizer(DataSizer);
 
 
-            wxTextCtrl *txt3 = new wxTextCtrl(right_side, wxID_ANY, "Another line");
-            txt2sizer->Add(txt3, 0,wxEXPAND,0);
 
 
 
-            right_side->SetSizer(txt2sizer);
+
+
+
+            right_side->SetSizer(MainSizer);
             right_side->Layout();
         }
     }

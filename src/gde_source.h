@@ -35,6 +35,7 @@ public:
 
     std::string get_name        (int source_num);
     std::string get_description (int source_num);
+    std::string get_db_table    (int source_num);
 
     int              get_parent    (int source_num);
     std::vector<int> get_children  (int source_num);

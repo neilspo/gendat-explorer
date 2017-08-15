@@ -1,9 +1,12 @@
 ///
-/// \class gde_source gde_source.h
+/// \class gendat_source_list gde_source.h
 ///
-/// \brief Encapsulates information about a GenDat source
+/// \brief Encapsulates information about GenDat sources
 ///
-/// This class handles ...
+/// This class obtains definition information from the database about GenDat sources.
+/// Database table z_sour holds general descriptive information about the sources, while
+/// table z_sour_field holds further information about the fields that will be used
+/// in any database table that is linked to a source.
 ///
 
 
@@ -146,6 +149,25 @@ std::string gendat_source_list::get_description (int source_num)
 {
     test_source_num (source_num);
     return source_list[source_num].description;
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// \brief Get database table of a GenDat source
+///
+/// \param[in]  source_num   Source number
+///
+/// \return     database table
+///
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+std::string gendat_source_list::get_db_table (int source_num)
+{
+    test_source_num (source_num);
+    return source_list[source_num].db_table;
 }
 
 

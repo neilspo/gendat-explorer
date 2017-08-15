@@ -193,7 +193,7 @@ void TopFrame::event_handler (wxCommandEvent& event)
       break;
 
     case ID_ShowSourceInfo:
-      notebook->AddPage(new gdw_show_src_info(notebook, gendat_sources), L"GenDat Source Info", true);
+      notebook->AddPage(new gdw_show_src_info(notebook, &gendat_db, gendat_sources), L"GenDat Source Info", true);
       break;
 
     case ID_Search:
