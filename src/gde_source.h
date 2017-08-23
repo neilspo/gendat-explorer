@@ -33,6 +33,10 @@ class gendat_source_field
 {
 public:
 
+    std::string   get_name        () {return name;};         ///< Field name
+    std::string   get_description () {return description;};  ///< Field description
+    std::string   get_db_field    () {return db_field;};     ///< Database field name
+
 private:
     std::string   name;
     std::string   description;
@@ -49,8 +53,8 @@ private:
 class gendat_source_list
 {
 public:
-    bool           load_defs   (database &db);
-    int            num_sources () const;
+    bool             load_defs       (database &db);
+    int              num_sources     () const;
     int              num_fields      (int source_num);
 
     std::string      get_name        (int source_num);
@@ -59,7 +63,7 @@ public:
     int              get_parent      (int source_num);
     std::vector<int> get_children    (int source_num);
 
-    std::vector<gendat_source_field> const * get_fields (int source_num);
+    std::vector<gendat_source_field> get_fields (int source_num);
 
 private:
 

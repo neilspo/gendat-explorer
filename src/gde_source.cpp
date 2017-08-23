@@ -1,12 +1,19 @@
 ///
 /// \class gendat_source_list gde_source.h
 ///
-/// \brief Encapsulates information about GenDat sources
+/// \brief Handles information about GenDat sources
 ///
 /// This class obtains definition information about GenDat sources from the database.
 /// Database table `z_sour` holds general descriptive information about the sources, while
 /// table `z_sour_field` holds further information about the fields that will be used
 /// in any database table that is linked to a source.
+///
+
+
+///
+/// \class gendat_source_field gde_source.h
+///
+/// \brief Handles information about field in a GenDat source
 ///
 
 
@@ -141,6 +148,7 @@ bool gendat_source_list::load_defs(database &db)
 
         new_field.name        = result_set[i][2];
         new_field.description = result_set[i][3];
+        new_field.db_field    = result_set[i][4];
 
         // Add the new field to the source.
 
@@ -261,6 +269,29 @@ std::vector<int> gendat_source_list::get_children (int source_num)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
+/// \brief Get the field descriptions for a GenDat source
+///
+/// This member function provides readonly access to the definitions of the
+/// fields in the database table that is linked to the specified GenDat source.
+///
+/// \param[in]  source_num   Source number
+///
+/// \return a vector of field descriptions
+///
+/// \exception std::logic_error thrown if the source number is out of range
+///
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+std::vector<gendat_source_field> gendat_source_list::get_fields (int source_num)
+{
+    test_source_num (source_num);
+    return source_list[source_num].field_list;
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///
 /// \brief Make sure a GenDat source number is valid
 ///
 /// \param[in]  source_num   Source number
@@ -273,27 +304,4 @@ void gendat_source_list::test_source_num (int source_num)
 {
     if (source_num < 0 || source_num >= num_sources())
         throw std::logic_error("GenDat source number is out of range");
-}
-
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-///
-/// \brief Get the field descriptions for a GenDat source
-///
-/// This member function provides readonly access to the definitions of the
-/// fields in the database table that is linked to the specified GenDat source.
-///
-/// \param[in]  source_num   Source number
-///
-/// \return pointer to a vector of field descriptions
-///
-/// \exception std::logic_error thrown if the source number is out of range
-///
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-std::vector<gendat_source_field> const * gendat_source_list::get_fields (int source_num)
-{
-    test_source_num (source_num);
-    return &source_list[source_num].field_list;
 }

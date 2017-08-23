@@ -114,11 +114,9 @@ void gdw_show_src_info::process_window_events (wxEvent* event)
 
         if(p_node_data)
         {
-            int source = p_node_data->GetData();
+            // Get source number of the GenDat source that the user just selected.
 
-            std::string source_name        = my_source_list.get_name(source);
-            std::string source_description = my_source_list.get_description(source);
-            std::string source_db_table    = my_source_list.get_db_table(source);
+            int source = p_node_data->GetData();
 
             // Clear the main data display panel.
 
@@ -137,7 +135,17 @@ void gdw_show_src_info::process_window_events (wxEvent* event)
             MainSizer->Add(TextPanel, 1, wxEXPAND, 0);
             MainSizer->Add(DataPanel, 1, wxEXPAND, 0);
 
-            // Output text information about the selected GenDat source.
+
+
+            //-----Display descriptive information about the source---------------------------------
+
+            // Get some descriptive information about the selected GenDat source.
+
+            std::string source_name        = my_source_list.get_name(source);
+            std::string source_description = my_source_list.get_description(source);
+            std::string source_db_table    = my_source_list.get_db_table(source);
+
+            // Show the descriptive information in a readonly wxTextCtrl.
 
             wxTextCtrl *txt = new wxTextCtrl(TextPanel, wxID_ANY, "", wxDefaultPosition,
                                              wxDefaultSize, wxTE_MULTILINE|wxTE_READONLY);
@@ -154,6 +162,7 @@ void gdw_show_src_info::process_window_events (wxEvent* event)
 
 
 
+            //-----Display the database field definitions for the source----------------------------
 
             // Ask MySQL to describe the required database table.
 
@@ -165,12 +174,14 @@ void gdw_show_src_info::process_window_events (wxEvent* event)
 
             unsigned int num_rows = row_set.num_rows();
             unsigned int num_cols = row_set.num_cols();
+            unsigned int extra_cols = 2;
 
             // Create the data display table.
 
             wxGrid* grid = new wxGrid(DataPanel,wxID_ANY);
-            grid->CreateGrid(num_rows, num_cols);
+            grid->CreateGrid(num_rows, extra_cols + num_cols);
             grid->EnableEditing(false);
+            grid->HideRowLabels();
 
             // Fill in the display table.
 
@@ -180,7 +191,7 @@ void gdw_show_src_info::process_window_events (wxEvent* event)
 
                 // Set the table column label to the database column name.
 
-                grid->SetColLabelValue(col, row_set.col_name(col));
+                grid->SetColLabelValue(extra_cols+col, row_set.col_name(col));
 
                 // Copy the data elements to the table.
 
@@ -188,28 +199,47 @@ void gdw_show_src_info::process_window_events (wxEvent* event)
                 {
                     if (row_set.get_data(row, col, data))
                     {
-                        grid->SetCellValue(row, col, data);
+                        grid->SetCellValue(row, extra_cols+col, data);
                     }
                     else
                     {
-                        grid->SetCellValue(row, col, "(NULL)");
-                        grid->SetCellBackgroundColour(row, col, *wxCYAN);
+                        grid->SetCellValue(row, extra_cols+col, "(NULL)");
+                        grid->SetCellBackgroundColour(row, extra_cols+col, *wxCYAN);
                     }
                 }
             }
+
+
+
+            //-----Display GenDat field definitions for the source----------------------------------
+
+            // Get the GenDat field definitions.
+
+            std::vector<gendat_source_field> field_list = my_source_list.get_fields(source);
+
+            // Add the GenDat field definitions to the display table.
+
+            grid->SetColLabelValue(0, "GenDat Name");
+            grid->SetColLabelValue(1, "GenDat Type");
+
+            for (unsigned int i=0; i<field_list.size(); i++)
+                for (unsigned int j=0; j<num_rows; j++)
+                {
+                    std::string test_field;
+                    row_set.get_data(j, 0, test_field);
+
+                    if (field_list[i].get_db_field() == test_field)
+                    {
+                        grid->SetCellValue(j, 0, field_list[i].get_name());
+                        break;
+                    }
+                }
+
             grid->AutoSize();
 
             wxBoxSizer *DataSizer = new wxBoxSizer(wxHORIZONTAL);
-
             DataSizer->Add(grid, 5, wxEXPAND, 0);
             DataPanel->SetSizer(DataSizer);
-
-
-
-
-
-
-
 
             right_side->SetSizer(MainSizer);
             right_side->Layout();
