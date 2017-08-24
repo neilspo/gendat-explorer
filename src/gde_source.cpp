@@ -10,13 +10,6 @@
 ///
 
 
-///
-/// \class gendat_source_field gde_source.h
-///
-/// \brief Handles information about field in a GenDat source
-///
-
-
 #include <wx/wxprec.h>
 
 #ifndef WX_PRECOMP
@@ -33,7 +26,12 @@
 ///
 /// \brief Load the source definitions from database
 ///
-/// \param[in]  query   Database query to use to load this level
+/// \param[in]  db   database connection, which must currently be open
+///
+/// \return     `true` if the source definitions were successfully loaded, `false` otherwise
+///
+/// \note
+/// Any errors that are encountered will be reported with the `wxLogMessage` function.
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -177,11 +175,34 @@ int gendat_source_list::num_sources () const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
+/// \brief Get the number of field definitions for a GenDat source
+///
+/// \param[in]  source_num   Source number
+///
+/// \return     number of fields
+///
+/// \exception std::logic_error thrown if the source number is out of range
+///
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+int gendat_source_list::num_fields (int source_num)
+{
+    test_source_num (source_num);
+    return source_list[source_num].field_list.size();
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///
 /// \brief Get a GenDat source name
 ///
 /// \param[in]  source_num   Source number
 ///
 /// \return     source name
+///
+/// \exception std::logic_error thrown if the source number is out of range
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -202,6 +223,8 @@ std::string gendat_source_list::get_name (int source_num)
 ///
 /// \return     source description
 ///
+/// \exception std::logic_error thrown if the source number is out of range
+///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -221,6 +244,8 @@ std::string gendat_source_list::get_description (int source_num)
 ///
 /// \return     database table
 ///
+/// \exception std::logic_error thrown if the source number is out of range
+///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 std::string gendat_source_list::get_db_table (int source_num)
@@ -239,6 +264,8 @@ std::string gendat_source_list::get_db_table (int source_num)
 ///
 /// \return     source number of the parent or -1 if there is no parent
 ///
+/// \exception std::logic_error thrown if the source number is out of range
+///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int gendat_source_list::get_parent (int source_num)
@@ -256,6 +283,8 @@ int gendat_source_list::get_parent (int source_num)
 /// \param[in]  source_num   Source number
 ///
 /// \return     source children
+///
+/// \exception std::logic_error thrown if the source number is out of range
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 

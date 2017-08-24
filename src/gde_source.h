@@ -29,6 +29,14 @@ enum fld_type
     SURN
 };
 
+
+
+///
+/// \class gendat_source_field gde_source.h
+///
+/// \brief Handles information about field in a GenDat source
+///
+
 class gendat_source_field
 {
 public:
