@@ -41,9 +41,9 @@ class gendat_source_field
 {
 public:
 
-    std::string   get_name        () {return name;};         ///< Field name
-    std::string   get_description () {return description;};  ///< Field description
-    std::string   get_db_field    () {return db_field;};     ///< Database field name
+    std::string   get_name        () {return name;       }  ///< Get field name
+    std::string   get_description () {return description;}  ///< Get field description
+    std::string   get_db_field    () {return db_field;   }  ///< Get database field name
 
 private:
     std::string   name;
