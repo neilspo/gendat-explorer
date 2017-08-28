@@ -41,13 +41,13 @@ class gendat_source_field
 {
 public:
 
-    std::string   get_name        () {return name;       }  ///< Get field name
-    std::string   get_description () {return description;}  ///< Get field description
-    std::string   get_db_field    () {return db_field;   }  ///< Get database field name
+    std::string   get_name     () {return name;     }  ///< Get field name
+    std::string   get_code     () {return code;     }  ///< Get GenDat usage code for the field
+    std::string   get_db_field () {return db_field; }  ///< Get database field name
 
 private:
+    std::string   code;
     std::string   name;
-    std::string   description;
     std::string   db_field;
     bool          writable;
     fld_type      type = UNKNOWN_FLD_TYPE;

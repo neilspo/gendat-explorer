@@ -104,7 +104,7 @@ bool gendat_source_list::load_defs(database &db)
     // Try to read the GenDat source field definitions from the database.
     // If this fails, then report the error and return false.
 
-    fields = "id, z_sour, name, description, db_field, writable";
+    fields = "id, z_sour, code, name, db_field, writable";
     query  = "SELECT " + fields + " FROM z_sour_field";
 
     result_set.clear();
@@ -144,9 +144,9 @@ bool gendat_source_list::load_defs(database &db)
 
         gendat_source_field new_field;
 
-        new_field.name        = result_set[i][2];
-        new_field.description = result_set[i][3];
-        new_field.db_field    = result_set[i][4];
+        new_field.code     = result_set[i][2];
+        new_field.name     = result_set[i][3];
+        new_field.db_field = result_set[i][4];
 
         // Add the new field to the source.
 

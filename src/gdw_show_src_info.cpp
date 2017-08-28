@@ -219,8 +219,8 @@ void gdw_show_src_info::process_window_events (wxEvent* event)
 
             // Add the GenDat field definitions to the display table.
 
-            grid->SetColLabelValue(0, "GenDat Name");
-            grid->SetColLabelValue(1, "GenDat Type");
+            grid->SetColLabelValue(0, "GenDat Code");
+            grid->SetColLabelValue(1, "GenDat Name");
 
             for (unsigned int i=0; i<field_list.size(); i++)
                 for (unsigned int j=0; j<num_rows; j++)
@@ -230,7 +230,8 @@ void gdw_show_src_info::process_window_events (wxEvent* event)
 
                     if (field_list[i].get_db_field() == test_field)
                     {
-                        grid->SetCellValue(j, 0, field_list[i].get_name());
+                        grid->SetCellValue(j, 0, field_list[i].get_code());
+                        grid->SetCellValue(j, 1, field_list[i].get_name());
                         break;
                     }
                 }
