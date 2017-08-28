@@ -20,7 +20,7 @@ public:
     bool unlock      (unsigned int col);
     bool save_data   (unsigned int row, unsigned int col, std::string data, std::string& error_msg);
     bool save_null   (unsigned int row, unsigned int col, std::string& error_msg);
-    bool insert_row  (unsigned int row, std::string& error_msg);
+    bool insert_row  (std::string& error_msg);
     bool delete_row  (unsigned int row, std::string& error_msg);
     void write_to_db (database& db);
     void set_null_subst_on  ();

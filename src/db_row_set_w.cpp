@@ -93,7 +93,6 @@ bool db_row_set_w::unlock(unsigned int col)
 
 
 
-
 ////////////////////////////////////////////////////////////////////////////////
 ///
 /// \brief Save data
@@ -298,23 +297,21 @@ bool db_row_set_w::save_null(unsigned int row, unsigned int col, std::string& er
 }
 
 
+
 ////////////////////////////////////////////////////////////////////////////////
 ///
 /// \brief Insert row
 ///
 /// This member function ...
 ///
-/// \param[in] row   row number
+/// \param[out] error_msg   error message
 ///
-/// \exception std::out_of_range thrown if the row number is out of range
+/// \return `true` if successful, `false` if row cannot be inserted
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
-bool db_row_set_w::insert_row(unsigned int row, std::string& error_msg)
+bool db_row_set_w::insert_row(std::string& error_msg)
 {
-    if (!(row < num_rows()))
-        throw std::out_of_range("Bad row number in db_row_set_w::insert_row");
-
 
     // Make sure rows can be inserted into this row set.
 
@@ -329,13 +326,15 @@ bool db_row_set_w::insert_row(unsigned int row, std::string& error_msg)
 }
 
 
+
 ////////////////////////////////////////////////////////////////////////////////
 ///
 /// \brief Delete row
 ///
 /// This member function ...
 ///
-/// \param[in] row   row number
+/// \param[in]  row         row number
+/// \param[out] error_msg   error message
 ///
 /// \exception std::out_of_range thrown if the row number is out of range
 ///
@@ -344,7 +343,7 @@ bool db_row_set_w::insert_row(unsigned int row, std::string& error_msg)
 bool db_row_set_w::delete_row(unsigned int row, std::string& error_msg)
 {
     if (!(row < num_rows()))
-        throw std::out_of_range("Bad row number in db_row_set_w::lock");
+        throw std::out_of_range("Bad row number in db_row_set_w::delete_row");
 
     // Make sure rows can be deleted from this row set.
 
@@ -356,6 +355,7 @@ bool db_row_set_w::delete_row(unsigned int row, std::string& error_msg)
 
     return false;
 }
+
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -406,6 +406,7 @@ void db_row_set_w::set_null_subst_on()
 {
     null_subst_mode = true;
 }
+
 
 
 ////////////////////////////////////////////////////////////////////////////////
