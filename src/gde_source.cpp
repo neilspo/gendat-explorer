@@ -165,7 +165,6 @@ bool gendat_source_list::load_defs(database &db)
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 int gendat_source_list::num_sources () const
 {
     return source_list.size();
@@ -181,14 +180,13 @@ int gendat_source_list::num_sources () const
 ///
 /// \return     number of fields
 ///
-/// \exception std::logic_error thrown if the source number is out of range
+/// \exception std::out_of_range thrown if the source number is out of range
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-int gendat_source_list::num_fields (int source_num)
+int gendat_source_list::num_fields (int source_num) const
 {
-    test_source_num (source_num);
+    test_input (source_num);
     return source_list[source_num].field_list.size();
 }
 
@@ -202,14 +200,13 @@ int gendat_source_list::num_fields (int source_num)
 ///
 /// \return     source name
 ///
-/// \exception std::logic_error thrown if the source number is out of range
+/// \exception std::out_of_range thrown if the source number is out of range
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-std::string gendat_source_list::get_name (int source_num)
+std::string gendat_source_list::get_name (int source_num) const
 {
-    test_source_num (source_num);
+    test_input (source_num);
     return source_list[source_num].name;
 }
 
@@ -223,14 +220,13 @@ std::string gendat_source_list::get_name (int source_num)
 ///
 /// \return     source description
 ///
-/// \exception std::logic_error thrown if the source number is out of range
+/// \exception std::out_of_range thrown if the source number is out of range
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-std::string gendat_source_list::get_description (int source_num)
+std::string gendat_source_list::get_description (int source_num) const
 {
-    test_source_num (source_num);
+    test_input (source_num);
     return source_list[source_num].description;
 }
 
@@ -244,13 +240,13 @@ std::string gendat_source_list::get_description (int source_num)
 ///
 /// \return     database table
 ///
-/// \exception std::logic_error thrown if the source number is out of range
+/// \exception std::out_of_range thrown if the source number is out of range
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-std::string gendat_source_list::get_db_table (int source_num)
+std::string gendat_source_list::get_db_table (int source_num) const
 {
-    test_source_num (source_num);
+    test_input (source_num);
     return source_list[source_num].db_table;
 }
 
@@ -264,13 +260,13 @@ std::string gendat_source_list::get_db_table (int source_num)
 ///
 /// \return     source number of the parent or -1 if there is no parent
 ///
-/// \exception std::logic_error thrown if the source number is out of range
+/// \exception std::out_of_range thrown if the source number is out of range
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-int gendat_source_list::get_parent (int source_num)
+int gendat_source_list::get_parent (int source_num) const
 {
-    test_source_num (source_num);
+    test_input (source_num);
     return source_list[source_num].my_parent;
 }
 
@@ -284,13 +280,13 @@ int gendat_source_list::get_parent (int source_num)
 ///
 /// \return     source children
 ///
-/// \exception std::logic_error thrown if the source number is out of range
+/// \exception std::out_of_range thrown if the source number is out of range
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-std::vector<int> gendat_source_list::get_children (int source_num)
+std::vector<int> gendat_source_list::get_children (int source_num) const
 {
-    test_source_num (source_num);
+    test_input (source_num);
     return source_list[source_num].my_children;
 }
 
@@ -298,23 +294,63 @@ std::vector<int> gendat_source_list::get_children (int source_num)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
-/// \brief Get the field descriptions for a GenDat source
-///
-/// This member function provides readonly access to the definitions of the
-/// fields in the database table that is linked to the specified GenDat source.
+/// \brief Get a GenDat field name
 ///
 /// \param[in]  source_num   Source number
+/// \param[in]  field_num    Field number
 ///
-/// \return a vector of field descriptions
+/// \return     field name
 ///
-/// \exception std::logic_error thrown if the source number is out of range
+/// \exception std::out_of_range thrown if the source number is out of range
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-std::vector<gendat_source_field> gendat_source_list::get_fields (int source_num)
+std::string gendat_source_list::fld_name (int source_num, int field_num) const
 {
-    test_source_num (source_num);
-    return source_list[source_num].field_list;
+    test_inputs (source_num, field_num);
+    return source_list[source_num].field_list[field_num].name;
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// \brief Get a GenDat field code
+///
+/// \param[in]  source_num   Source number
+/// \param[in]  field_num    Field number
+///
+/// \return     field code
+///
+/// \exception std::out_of_range thrown if the source number is out of range
+///
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+std::string gendat_source_list::fld_code (int source_num, int field_num) const
+{
+    test_inputs (source_num, field_num);
+    return source_list[source_num].field_list[field_num].code;
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// \brief Get a database field name
+///
+/// \param[in]  source_num   Source number
+/// \param[in]  field_num    Field number
+///
+/// \return     database field name
+///
+/// \exception std::out_of_range thrown if the source number is out of range
+///
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+std::string gendat_source_list::fld_db_name (int source_num, int field_num) const
+{
+    test_inputs (source_num, field_num);
+    return source_list[source_num].field_list[field_num].db_field;
 }
 
 
@@ -325,12 +361,32 @@ std::vector<gendat_source_field> gendat_source_list::get_fields (int source_num)
 ///
 /// \param[in]  source_num   Source number
 ///
-/// \exception std::logic_error thrown if the source number is out of range
+/// \exception std::out_of_range thrown if the source number is out of range
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void gendat_source_list::test_source_num (int source_num)
+void gendat_source_list::test_input (int source_num) const
 {
     if (source_num < 0 || source_num >= num_sources())
-        throw std::logic_error("GenDat source number is out of range");
+        throw std::out_of_range("GenDat source number is out of range");
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// \brief Make sure a GenDat source and field numbers are valid
+///
+/// \param[in]  source_num   Source number
+/// \param[in]  field_num    Field number
+///
+/// \exception std::out_of_range thrown if the source number is out of range
+///
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void gendat_source_list::test_inputs (int source_num, int field_num) const
+{
+    if (source_num < 0 || source_num >= num_sources() ||
+            (field_num < 0 || field_num >= num_fields(source_num)))
+        throw std::out_of_range("GenDat source or field number is out of range");
 }

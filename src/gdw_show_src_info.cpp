@@ -213,25 +213,19 @@ void gdw_show_src_info::process_window_events (wxEvent* event)
 
             //-----Display GenDat field definitions for the source----------------------------------
 
-            // Get the GenDat field definitions.
-
-            std::vector<gendat_source_field> field_list = my_source_list.get_fields(source);
-
-            // Add the GenDat field definitions to the display table.
-
             grid->SetColLabelValue(0, "GenDat Code");
             grid->SetColLabelValue(1, "GenDat Name");
 
-            for (unsigned int i=0; i<field_list.size(); i++)
+            for (int i=0; i<my_source_list.num_fields(source); i++)
                 for (unsigned int j=0; j<num_rows; j++)
                 {
                     std::string test_field;
                     row_set.get_data(j, 0, test_field);
 
-                    if (field_list[i].get_db_field() == test_field)
+                    if (my_source_list.fld_db_name(source,i) == test_field)
                     {
-                        grid->SetCellValue(j, 0, field_list[i].get_code());
-                        grid->SetCellValue(j, 1, field_list[i].get_name());
+                        grid->SetCellValue(j, 0, my_source_list.fld_code(source,i));
+                        grid->SetCellValue(j, 1, my_source_list.fld_name(source,i));
                         break;
                     }
                 }

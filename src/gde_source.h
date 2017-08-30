@@ -29,52 +29,34 @@ enum fld_type
     SURN
 };
 
-
-
-///
-/// \class gendat_source_field gde_source.h
-///
-/// \brief Handles information about field in a GenDat source
-///
-
-class gendat_source_field
-{
-public:
-
-    std::string   get_name     () {return name;     }  ///< Get field name
-    std::string   get_code     () {return code;     }  ///< Get GenDat usage code for the field
-    std::string   get_db_field () {return db_field; }  ///< Get database field name
-
-private:
-    std::string   code;
-    std::string   name;
-    std::string   db_field;
-    bool          writable;
-    fld_type      type = UNKNOWN_FLD_TYPE;
-
-    friend class gendat_source_list;
-};
-
-
-
-
 class gendat_source_list
 {
 public:
     bool             load_defs       (database &db);
     int              num_sources     () const;
-    int              num_fields      (int source_num);
+    int              num_fields      (int source_num) const;
 
-    std::string      get_name        (int source_num);
-    std::string      get_description (int source_num);
-    std::string      get_db_table    (int source_num);
-    int              get_parent      (int source_num);
-    std::vector<int> get_children    (int source_num);
+    std::string      get_name        (int source_num) const;
+    std::string      get_description (int source_num) const;
+    std::string      get_db_table    (int source_num) const;
+    int              get_parent      (int source_num) const;
+    std::vector<int> get_children    (int source_num) const;
 
-    std::vector<gendat_source_field> get_fields (int source_num);
+    std::string      fld_name        (int source_num, int field_num) const;
+    std::string      fld_code        (int source_num, int field_num) const;
+    std::string      fld_db_name     (int source_num, int field_num) const;
 
 private:
 
+    class gendat_source_field
+    {
+    public:
+        std::string   code;
+        std::string   name;
+        std::string   db_field;
+        bool          writable;
+        fld_type      type = UNKNOWN_FLD_TYPE;
+    };
 
     class gendat_source
     {
@@ -101,7 +83,8 @@ private:
 
     std::vector<gendat_source> source_list;
 
-    void test_source_num (int source_num);
+    void test_input  (int source_num) const;
+    void test_inputs (int source_num, int field_num) const;
 };
 
 #endif
