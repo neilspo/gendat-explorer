@@ -1,11 +1,20 @@
 ///
 /// \class gdw_panel gdw_panel.h
 ///
-/// \brief Base class for GenDat display pages
+/// \brief Base class for generating and managing GenDat display pages
 ///
-/// This abstract base class provides a consistent interface for all of the GenDat display pages.
-/// It also handles exceptions thrown during execution of the derived clauses, each of which
-/// generates and manages one page.
+/// This abstract base class provides a consistent interface for all of the GenDat display pages
+/// and catches any exceptions thrown during execution of the derived classes.
+/// Each of these derived classes handles one display page and must override the
+/// following three pure virtual functions:
+///
+/// - process_window_draw
+/// - process_execute
+/// - process_window_events
+///
+/// If required, some derived classes may also need to override the following virtual funcion:
+///
+/// - has_unsaved_data
 /// 
 
 #include <wx/wxprec.h>
@@ -67,7 +76,8 @@ void gdw_panel::delayed_start()
 ///
 /// \brief Reload page
 ///
-/// This member function ...
+/// This member function deletes the contents of the current GenDat display page and then
+/// calls `process_window_draw()` to reload the page.
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
