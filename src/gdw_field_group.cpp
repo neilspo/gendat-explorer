@@ -1,5 +1,5 @@
 ///
-/// \class gdw_field_group gdw_form_input.h
+/// \class gdw_field_group gdw_field_group.h
 ///
 /// \brief Create a group of labeled fields
 ///

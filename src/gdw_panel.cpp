@@ -12,10 +12,10 @@
 /// - process_execute
 /// - process_window_events
 ///
-/// If required, some derived classes may also need to override the following virtual funcion:
+/// If required, some derived classes may also need to override the following virtual function:
 ///
 /// - has_unsaved_data
-/// 
+///
 
 #include <wx/wxprec.h>
 
@@ -31,7 +31,7 @@
 ///
 /// \brief Constructor
 ///
-/// The constructor creates a wxPanel and requests that process_window_draw(), in the derived
+/// The constructor creates a wxPanel and requests that `process_window_draw()`, in the derived
 /// class, be run after the derived constructor(s) have completed.
 ///
 /// \param [in]   parent   pointer to the parent window
@@ -40,7 +40,7 @@
 
 gdw_panel::gdw_panel(wxWindow *parent) : wxPanel(parent)
 {
-        CallAfter (&gdw_panel::delayed_start);
+    CallAfter (&gdw_panel::delayed_start);
 }
 
 
@@ -49,25 +49,25 @@ gdw_panel::gdw_panel(wxWindow *parent) : wxPanel(parent)
 ///
 /// \brief Run the derived class process_window_draw() method
 ///
-/// This member function will run after the constructors of the base class and derived classe(s)
-/// have been completed.
+/// This member function will run after the constructors of the base class and derived class
+/// (or classes) have been completed.
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void gdw_panel::delayed_start()
 {
-        try
-        {
-                process_window_draw();
-        }
-        catch (std::runtime_error& exception)
-        {
-                process_runtime_error (exception);
-        }
-        catch (std::logic_error& exception)
-        {
-                process_logic_error (exception);
-        }
+    try
+    {
+        process_window_draw();
+    }
+    catch (std::runtime_error& exception)
+    {
+        process_runtime_error (exception);
+    }
+    catch (std::logic_error& exception)
+    {
+        process_logic_error (exception);
+    }
 }
 
 
@@ -83,27 +83,27 @@ void gdw_panel::delayed_start()
 
 void gdw_panel::page_reload()
 {
-        if (ok_to_delete())
+    if (ok_to_delete())
+    {
+        // Clear the main data display panel.
+
+        DestroyChildren();
+
+        // Have the derived class redraw the GenDat display page.
+
+        try
         {
-                // Clear the main data display panel.
-
-                DestroyChildren();
-
-                // Have the derived class redraw the GenDat display page.
-
-                try
-                {
-                        process_window_draw();
-                }
-                catch (std::runtime_error& exception)
-                {
-                        process_runtime_error (exception);
-                }
-                catch (std::logic_error& exception)
-                {
-                        process_logic_error (exception);
-                }
+            process_window_draw();
         }
+        catch (std::runtime_error& exception)
+        {
+            process_runtime_error (exception);
+        }
+        catch (std::logic_error& exception)
+        {
+            process_logic_error (exception);
+        }
+    }
 }
 
 
@@ -119,18 +119,18 @@ void gdw_panel::page_reload()
 
 void gdw_panel::page_execute()
 {
-        try
-        {
-                process_execute();
-        }
-        catch (std::runtime_error& exception)
-        {
-                process_runtime_error (exception);
-        }
-        catch (std::logic_error& exception)
-        {
-                process_logic_error (exception);
-        }
+    try
+    {
+        process_execute();
+    }
+    catch (std::runtime_error& exception)
+    {
+        process_runtime_error (exception);
+    }
+    catch (std::logic_error& exception)
+    {
+        process_logic_error (exception);
+    }
 }
 
 
@@ -139,24 +139,26 @@ void gdw_panel::page_execute()
 ///
 /// \brief Determine if page can be deleted
 ///
-/// This virtual member function ...
+/// This member function first calls `has_unsaved_data()` to determine if deleting the current
+/// GenDat display page would cause data loss. If so, then the function requests user confirmation
+/// that page deletion should continue.
 ///
-/// \return true if ...
+/// \return `true` if OK to the delete the page, `false` otherwise
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 bool gdw_panel::ok_to_delete()
 {
-        if (has_unsaved_data())
+    if (has_unsaved_data())
+    {
+        wxString message = "This page contains unsaved data.";
+        wxMessageDialog* msg_dia = new wxMessageDialog(NULL, message, "Warning", wxYES|wxNO|wxCENTRE);
+        if (msg_dia->ShowModal() == wxID_NO)
         {
-                wxString message = "This page contains usaved data.";
-                wxMessageDialog* msg_dia = new wxMessageDialog(NULL, message, "Warning", wxYES|wxNO|wxCENTRE);
-                if (msg_dia->ShowModal() == wxID_NO)
-                {
-                        return false;
-                }
+            return false;
         }
-        return true;
+    }
+    return true;
 }
 
 
@@ -178,7 +180,7 @@ bool gdw_panel::ok_to_delete()
 
 bool gdw_panel::has_unsaved_data()
 {
-        return false;
+    return false;
 }
 
 
@@ -203,18 +205,18 @@ bool gdw_panel::has_unsaved_data()
 
 void gdw_panel::event_handler (wxEvent& event)
 {
-        try
-        {
-                process_window_events (&event);
-        }
-        catch (std::runtime_error& exception)
-        {
-                process_runtime_error (exception);
-        }
-        catch (std::logic_error& exception)
-        {
-                process_logic_error (exception);
-        }
+    try
+    {
+        process_window_events (&event);
+    }
+    catch (std::runtime_error& exception)
+    {
+        process_runtime_error (exception);
+    }
+    catch (std::logic_error& exception)
+    {
+        process_logic_error (exception);
+    }
 
 }
 
@@ -229,9 +231,9 @@ void gdw_panel::event_handler (wxEvent& event)
 
 void gdw_panel::process_runtime_error (std::runtime_error& exception)
 {
-        wxString error_msg = exception.what();
-        wxMessageDialog* msg_dia = new wxMessageDialog(NULL, error_msg, "Runtime Error");
-        msg_dia->ShowModal();
+    wxString error_msg = exception.what();
+    wxMessageDialog* msg_dia = new wxMessageDialog(NULL, error_msg, "Runtime Error");
+    msg_dia->ShowModal();
 }
 
 
@@ -245,15 +247,15 @@ void gdw_panel::process_runtime_error (std::runtime_error& exception)
 
 void gdw_panel::process_logic_error (std::logic_error& exception)
 {
-        // Generate a popup window (a modal dialogue) with the error message.
-                
-        wxString error_msg = exception.what();
-        wxMessageDialog* msg_dia = new wxMessageDialog(NULL, error_msg, "Program Logic Error");
-        msg_dia->ShowModal();
+    // Generate a popup window (a modal dialogue) with the error message.
 
-        // After the user closes the error window, safely close out the program.
+    wxString error_msg = exception.what();
+    wxMessageDialog* msg_dia = new wxMessageDialog(NULL, error_msg, "Program Logic Error");
+    msg_dia->ShowModal();
 
-        wxApp*    my_wxApp = wxTheApp;
-        wxWindow* my_TopWindow = my_wxApp->GetTopWindow();
-        my_TopWindow->Close();
+    // After the user closes the error window, safely close out the program.
+
+    wxApp*    my_wxApp = wxTheApp;
+    wxWindow* my_TopWindow = my_wxApp->GetTopWindow();
+    my_TopWindow->Close();
 }
