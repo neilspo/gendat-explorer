@@ -1,12 +1,14 @@
 ///
-/// \class gendat_source_list gde_source.h
+/// \class db_map db_map.h
 ///
-/// \brief Handles information about GenDat sources
+/// \brief Handles information about generalized data sources
 ///
-/// This class obtains definition information about GenDat sources from the database.
-/// Database table `z_sour` holds general descriptive information about the sources, while
-/// table `z_sour_field` holds further information about the fields that will be used
-/// in any database table that is linked to a source.
+/// This class provides a generalized way to search and access an arbitrary
+/// number of data sources, of various types, without need to change any of
+/// the C++ code as data sources are added, modified, or removed.
+///
+/// At its core, this class provides a way to map a set of user-defined <em>use codes</em>
+/// onto the fields in the database tables that will be available to the program.
 ///
 
 
@@ -18,15 +20,17 @@
 
 #include <stdexcept>
 
-#include "gde_source.h"
+#include "db_map.h"
 
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
-/// \brief Load the source definitions from database
+/// \brief Load source and field definitions from database
 ///
-/// \param[in]  db   database connection, which must currently be open
+/// \param[in]  db         database connection, which must currently be open
+/// \param[in]  src_defs   database table with the source definitions
+/// \param[in]  fld_defs   database table with the field definitions
 ///
 /// \return     `true` if the source definitions were successfully loaded, `false` otherwise
 ///
@@ -35,7 +39,7 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool gendat_source_list::load_defs(database &db)
+bool db_map::load_defs(database &db, std::string src_defs, std::string fld_defs)
 {
 
     std::string query;
@@ -48,8 +52,8 @@ bool gendat_source_list::load_defs(database &db)
     // Try to read the GenDat source definitions from the database.
     // If this fails, then report the error and return false.
 
-    fields = "id, name, description, version, db_table, repository, derived_from, writable, type";
-    query  = "SELECT " + fields + " FROM z_sour";
+    fields = "id, name, description, version, db_table, repository, derived_from, writable";
+    query  = "SELECT " + fields + " FROM " + src_defs;
 
     try
     {
@@ -78,10 +82,6 @@ bool gendat_source_list::load_defs(database &db)
             source_list[i].writable = true;
         else
             source_list[i].writable = false;
-
-        if (result_set[i][8] == "BIRT") source_list[i].type = BIRT;
-        if (result_set[i][8] == "DEAT") source_list[i].type = DEAT;
-        if (result_set[i][8] == "MARR") source_list[i].type = MARR;
     }
 
     // Find any GenDat sources that were derived from another source (the parent), and add
@@ -165,7 +165,7 @@ bool gendat_source_list::load_defs(database &db)
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-int gendat_source_list::num_sources () const
+int db_map::num_sources () const
 {
     return source_list.size();
 }
@@ -174,7 +174,7 @@ int gendat_source_list::num_sources () const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
-/// \brief Get the number of field definitions for a GenDat source
+/// \brief Get the number of field definitions for a source
 ///
 /// \param[in]  source_num   Source number
 ///
@@ -184,7 +184,7 @@ int gendat_source_list::num_sources () const
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-int gendat_source_list::num_fields (int source_num) const
+int db_map::num_fields (int source_num) const
 {
     test_input (source_num);
     return source_list[source_num].field_list.size();
@@ -194,7 +194,7 @@ int gendat_source_list::num_fields (int source_num) const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
-/// \brief Get a GenDat source name
+/// \brief Get a source name
 ///
 /// \param[in]  source_num   Source number
 ///
@@ -204,7 +204,7 @@ int gendat_source_list::num_fields (int source_num) const
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-std::string gendat_source_list::get_name (int source_num) const
+std::string db_map::src_name (int source_num) const
 {
     test_input (source_num);
     return source_list[source_num].name;
@@ -214,7 +214,7 @@ std::string gendat_source_list::get_name (int source_num) const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
-/// \brief Get a GenDat source description
+/// \brief Get a source description
 ///
 /// \param[in]  source_num   Source number
 ///
@@ -224,7 +224,7 @@ std::string gendat_source_list::get_name (int source_num) const
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-std::string gendat_source_list::get_description (int source_num) const
+std::string db_map::src_description (int source_num) const
 {
     test_input (source_num);
     return source_list[source_num].description;
@@ -234,7 +234,7 @@ std::string gendat_source_list::get_description (int source_num) const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
-/// \brief Get database table of a GenDat source
+/// \brief Get database table of a source
 ///
 /// \param[in]  source_num   Source number
 ///
@@ -244,7 +244,7 @@ std::string gendat_source_list::get_description (int source_num) const
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-std::string gendat_source_list::get_db_table (int source_num) const
+std::string db_map::src_db_table (int source_num) const
 {
     test_input (source_num);
     return source_list[source_num].db_table;
@@ -254,7 +254,7 @@ std::string gendat_source_list::get_db_table (int source_num) const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
-/// \brief Find the parent of a GenDat source
+/// \brief Find the parent of a source
 ///
 /// \param[in]  source_num   Source number
 ///
@@ -264,7 +264,7 @@ std::string gendat_source_list::get_db_table (int source_num) const
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-int gendat_source_list::get_parent (int source_num) const
+int db_map::src_parent (int source_num) const
 {
     test_input (source_num);
     return source_list[source_num].my_parent;
@@ -274,7 +274,7 @@ int gendat_source_list::get_parent (int source_num) const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
-/// \brief Find the children of a GenDat source
+/// \brief Find the children of a source
 ///
 /// \param[in]  source_num   Source number
 ///
@@ -284,7 +284,7 @@ int gendat_source_list::get_parent (int source_num) const
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-std::vector<int> gendat_source_list::get_children (int source_num) const
+std::vector<int> db_map::src_children (int source_num) const
 {
     test_input (source_num);
     return source_list[source_num].my_children;
@@ -294,7 +294,7 @@ std::vector<int> gendat_source_list::get_children (int source_num) const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
-/// \brief Get a GenDat field name
+/// \brief Get the descriptive name of a field
 ///
 /// \param[in]  source_num   Source number
 /// \param[in]  field_num    Field number
@@ -305,7 +305,7 @@ std::vector<int> gendat_source_list::get_children (int source_num) const
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-std::string gendat_source_list::fld_name (int source_num, int field_num) const
+std::string db_map::fld_name (int source_num, int field_num) const
 {
     test_inputs (source_num, field_num);
     return source_list[source_num].field_list[field_num].name;
@@ -326,7 +326,7 @@ std::string gendat_source_list::fld_name (int source_num, int field_num) const
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-std::string gendat_source_list::fld_code (int source_num, int field_num) const
+std::string db_map::fld_code (int source_num, int field_num) const
 {
     test_inputs (source_num, field_num);
     return source_list[source_num].field_list[field_num].code;
@@ -347,7 +347,7 @@ std::string gendat_source_list::fld_code (int source_num, int field_num) const
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-std::string gendat_source_list::fld_db_name (int source_num, int field_num) const
+std::string db_map::fld_db_name (int source_num, int field_num) const
 {
     test_inputs (source_num, field_num);
     return source_list[source_num].field_list[field_num].db_field;
@@ -365,7 +365,7 @@ std::string gendat_source_list::fld_db_name (int source_num, int field_num) cons
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void gendat_source_list::test_input (int source_num) const
+void db_map::test_input (int source_num) const
 {
     if (source_num < 0 || source_num >= num_sources())
         throw std::out_of_range("GenDat source number is out of range");
@@ -384,7 +384,7 @@ void gendat_source_list::test_input (int source_num) const
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void gendat_source_list::test_inputs (int source_num, int field_num) const
+void db_map::test_inputs (int source_num, int field_num) const
 {
     if (source_num < 0 || source_num >= num_sources() ||
             (field_num < 0 || field_num >= num_fields(source_num)))

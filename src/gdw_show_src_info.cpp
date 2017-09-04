@@ -33,7 +33,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 gdw_show_src_info::gdw_show_src_info(wxWindow* parent, database* db,
-                                     gendat_source_list source_list) : gdw_panel(parent)
+                                     db_map source_list) : gdw_panel(parent)
 {
     my_db          = db;
     my_source_list = source_list;
@@ -141,9 +141,9 @@ void gdw_show_src_info::process_window_events (wxEvent* event)
 
             // Get some descriptive information about the selected GenDat source.
 
-            std::string source_name        = my_source_list.get_name(source);
-            std::string source_description = my_source_list.get_description(source);
-            std::string source_db_table    = my_source_list.get_db_table(source);
+            std::string source_name        = my_source_list.src_name(source);
+            std::string source_description = my_source_list.src_description(source);
+            std::string source_db_table    = my_source_list.src_db_table(source);
 
             // Show the descriptive information in a readonly wxTextCtrl.
 
@@ -269,15 +269,15 @@ void gdw_show_src_info::draw_left_panel(wxPanel *parent)
 
     int num_sources = my_source_list.num_sources();
     for (int i=0; i<num_sources; i++)
-        if (my_source_list.get_parent(i) < 0)
+        if (my_source_list.src_parent(i) < 0)
         {
-            std::string source_name = my_source_list.get_name(i);
+            std::string source_name = my_source_list.src_name(i);
             wxTreeItemId r1   = tree->AppendItem(root, source_name, -1, -1, new ItemData(i));
 
-            std::vector<int> source_children = my_source_list.get_children(i);
+            std::vector<int> source_children = my_source_list.src_children(i);
             for (unsigned int j=0; j<source_children.size(); j++)
             {
-                std::string child_name = my_source_list.get_name(source_children[j]);
+                std::string child_name = my_source_list.src_name(source_children[j]);
                 tree->AppendItem(r1, child_name, -1, -1, new ItemData(source_children[j]));
             }
 

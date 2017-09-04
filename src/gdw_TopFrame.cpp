@@ -19,7 +19,7 @@
 #include <wx/artprov.h>
 
 #include "database.h"
-#include "gde_source.h"
+#include "db_map.h"
 #include "gdw_TopFrame.h"
 #include "gdw_edit.h"
 #include "gdw_search.h"
@@ -154,7 +154,7 @@ void TopFrame::event_handler (wxCommandEvent& event)
             if (return_code==1)
             {
                 SetStatusText("Connected to database");
-                gendat_sources.load_defs(gendat_db);
+                gendat_sources.load_defs(gendat_db, "z_sour", "z_sour_fldsa");
             }
         }
         break;

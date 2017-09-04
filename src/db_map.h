@@ -4,8 +4,8 @@
 
 
 
-#ifndef GDE_SOURCE_H
-#define GDE_SOURCE_H
+#ifndef DB_MAP_H
+#define DB_MAP_H
 
 #include <string>
 #include <vector>
@@ -13,34 +13,18 @@
 #include "database.h"
 
 
-enum src_type
-{
-    UNKNOWN_SRC_TYPE = 0,
-    BIRT,
-    MARR,
-    DEAT
-};
-
-enum fld_type
-{
-    UNKNOWN_FLD_TYPE = 0,
-    NAME,
-    GIVN,
-    SURN
-};
-
-class gendat_source_list
+class db_map
 {
 public:
-    bool             load_defs       (database &db);
+    bool             load_defs       (database &db, std::string src_defs, std::string fld_defs);
     int              num_sources     () const;
     int              num_fields      (int source_num) const;
 
-    std::string      get_name        (int source_num) const;
-    std::string      get_description (int source_num) const;
-    std::string      get_db_table    (int source_num) const;
-    int              get_parent      (int source_num) const;
-    std::vector<int> get_children    (int source_num) const;
+    std::string      src_name        (int source_num) const;
+    std::string      src_description (int source_num) const;
+    std::string      src_db_table    (int source_num) const;
+    int              src_parent      (int source_num) const;
+    std::vector<int> src_children    (int source_num) const;
 
     std::string      fld_name        (int source_num, int field_num) const;
     std::string      fld_code        (int source_num, int field_num) const;
@@ -55,7 +39,6 @@ private:
         std::string   name;
         std::string   db_field;
         bool          writable;
-        fld_type      type = UNKNOWN_FLD_TYPE;
     };
 
     class gendat_source
@@ -69,7 +52,6 @@ private:
         std::string   repository;
         std::string   derived_from;
         bool          writable;
-        src_type      type = UNKNOWN_SRC_TYPE;
 
         // Allow a source hierarchy.
 

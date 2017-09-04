@@ -29,7 +29,7 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-gdw_search::gdw_search(wxWindow* parent, database* db, const gendat_source_list& source_list) :
+gdw_search::gdw_search(wxWindow* parent, database* db, const db_map& source_list) :
     gdw_panel(parent), my_source_list(source_list)
 {
     my_db             = db;

@@ -16,7 +16,7 @@
 
 #include <wx/notebook.h>
 #include "database.h"
-#include "gde_source.h"
+#include "db_map.h"
 
 class TopFrame : public wxFrame
 {
@@ -44,6 +44,6 @@ private:
   wxPanel            *top_panel;
   wxNotebook         *notebook;
   database            gendat_db;
-  gendat_source_list  gendat_sources;
+  db_map  gendat_sources;
 };
 #endif
