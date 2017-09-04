@@ -197,7 +197,7 @@ void TopFrame::event_handler (wxCommandEvent& event)
       break;
 
     case ID_Search:
-        notebook->AddPage(new gdw_search(notebook, &gendat_db), L"Search", true);
+        notebook->AddPage(new gdw_search(notebook, &gendat_db, gendat_sources), L"Search", true);
         break;
 
     case ID_ShowLogWin:

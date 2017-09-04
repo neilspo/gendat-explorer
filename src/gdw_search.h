@@ -18,11 +18,12 @@
 #include "database.h"
 #include "gdw_panel.h"
 #include "id_manager.h"
+#include "gde_source.h"
 
 class gdw_search : public gdw_panel
 {
 public:
-    gdw_search (wxWindow* parent, database* db);
+    gdw_search (wxWindow* parent, database* db, const gendat_source_list& source_list);
     ~gdw_search();
 
 
@@ -33,12 +34,15 @@ private:
 
     void process_window_events (wxEvent* event);
 
-    database*    my_db;
-    bool         unsaved_data_flag;
-    id_manager   id_mgr;
-    unsigned int id_text_event;
-    wxTextCtrl*  wx_surname;
-    wxTextCtrl*  wx_given_name;
+    database*                 my_db;
+    const gendat_source_list& my_source_list;
+    bool                      unsaved_data_flag;
+    id_manager                id_mgr;
+    unsigned int              id_text_event;
+    wxTextCtrl*               wx_surname;
+    wxTextCtrl*               wx_given_name;
+    wxTextCtrl*               wx_community;
+    wxTextCtrl*               wx_county;
 };
 
 #endif

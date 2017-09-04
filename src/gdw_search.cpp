@@ -23,12 +23,14 @@
 ///
 /// The constructor
 ///
-/// \param [in]   parent   pointer to the parent window
-/// \param [in]   db       pointer to database connection object
+/// \param [in]   parent        pointer to the parent window
+/// \param [in]   db            pointer to database connection object
+/// \param [in]   source_list   object containing the GenDat source definitions
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-gdw_search::gdw_search(wxWindow* parent, database* db) : gdw_panel(parent)
+gdw_search::gdw_search(wxWindow* parent, database* db, const gendat_source_list& source_list) :
+    gdw_panel(parent), my_source_list(source_list)
 {
     my_db             = db;
     unsaved_data_flag = false;
@@ -40,8 +42,6 @@ gdw_search::gdw_search(wxWindow* parent, database* db) : gdw_panel(parent)
     id_text_event = id_mgr.alloc_id();
 
     Bind (wxEVT_TEXT, &gdw_search::event_handler, this, id_text_event);
-
-    std::cout << "gdw_search Constructor: " << id_mgr.first_id() << ":" << id_mgr.last_id() << std::endl;
 }
 
 gdw_search::~gdw_search()
@@ -65,6 +65,8 @@ void gdw_search::process_window_draw()
     gdw_field_group field_group(this, vbox, id_text_event, 150, 300);
     wx_surname    = field_group.add_field ("Surname",        "");
     wx_given_name = field_group.add_field ("Given Names(s)", "");
+    wx_community  = field_group.add_field ("Community",      "");
+    wx_county     = field_group.add_field ("County",         "");
 
     // Now display everything.
 
@@ -97,4 +99,24 @@ bool gdw_search::has_unsaved_data()
 void gdw_search::process_execute()
 {
     std::cout << "****** gdw_search::process_execute" << std::endl;
+
+    std::string surname    (wx_surname->GetValue());
+    std::string given_name (wx_given_name->GetValue());
+    std::string community  (wx_community->GetValue());
+    std::string county     (wx_county->GetValue());
+
+    int num_sources = my_source_list.num_sources();
+    for (int i=0; i<num_sources; i++)
+    {
+        std::cout << "Number of fields: " << my_source_list.num_fields(i) << std::endl;
+        int num_fields = my_source_list.num_fields(i);
+        for (int j=0; j<num_fields; j++)
+        {
+            std::cout << "Code: " << my_source_list.fld_code(i,j) << std::endl;
+        }
+    }
+
+
+
+
 }
