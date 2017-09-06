@@ -16,12 +16,6 @@
 ///
 
 
-#include <wx/wxprec.h>
-
-#ifndef WX_PRECOMP
-#include <wx/wx.h>
-#endif
-
 #include <stdexcept>
 
 #include "db_map.h"
@@ -36,14 +30,11 @@
 /// \param[in]  src_defs   database table with the source definitions
 /// \param[in]  fld_defs   database table with the field definitions
 ///
-/// \return     `true` if the source definitions were successfully loaded, `false` otherwise
-///
-/// \note
-/// Any errors that are encountered will be reported with the `wxLogMessage` function.
+/// \exception std::runtime_error thrown if the database server reports an error
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool db_map::load_defs(database &db, std::string src_defs, std::string fld_defs)
+void db_map::load_defs(database &db, std::string src_defs, std::string fld_defs)
 {
 
     std::string query;
@@ -53,23 +44,14 @@ bool db_map::load_defs(database &db, std::string src_defs, std::string fld_defs)
     unsigned int num_rows;
     unsigned int num_cols;
 
-    // Try to read the GenDat source definitions from the database.
-    // If this fails, then report the error and return false.
+    // Read the source definitions from the database.
 
     fields = "id, name, description, version, db_table, repository, derived_from, writable";
     query  = "SELECT " + fields + " FROM " + src_defs;
 
-    try
-    {
-        db.execute (query, result_set, num_rows, num_cols);
-    }
-    catch (std::runtime_error& exception)
-    {
-        wxLogMessage(exception.what());
-        return false;
-    }
+    db.execute (query, result_set, num_rows, num_cols);
 
-    // Set up the GenDat source definitions.
+    // Set up the source definitions.
 
     source_list.resize(num_rows);
     for (unsigned int i=0; i<num_rows; i++)
@@ -88,7 +70,7 @@ bool db_map::load_defs(database &db, std::string src_defs, std::string fld_defs)
             source_list[i].writable = false;
     }
 
-    // Find any GenDat sources that were derived from another source (the parent), and add
+    // Find any sources that were derived from another source (the parent), and add
     // them to the list of children for that parent.
 
     for (unsigned int i=0; i<num_rows; i++)
@@ -105,31 +87,23 @@ bool db_map::load_defs(database &db, std::string src_defs, std::string fld_defs)
                 }
         }
 
-    // Try to read the field definitions from the database. If this fails, then
-    // report the error and return false.
+    // Read the field definitions from the database.
 
     fields = "id, z_sour, code, name, db_field, writable";
     query  = "SELECT " + fields + " FROM " + fld_defs;
 
     result_set.clear();
-    try
-    {
-        db.execute (query, result_set, num_rows, num_cols);
-    }
-    catch (std::runtime_error& exception)
-    {
-        wxLogMessage(exception.what());
-        return false;
-    }
 
-    // Set up the GenDat source field definitions.
+    db.execute (query, result_set, num_rows, num_cols);
+
+    // Set up the source field definitions.
 
      unsigned int num_sources    = source_list.size();
      unsigned int num_field_defs = num_rows;
 
     for (unsigned int i=0; i<num_field_defs; i++)
     {
-        // Find the GenDat source that this field belongs to.
+        // Find the source that this field belongs to.
 
         int source_num = -1;
         for (unsigned int j=0; j<num_sources; j++)
@@ -140,8 +114,7 @@ bool db_map::load_defs(database &db, std::string src_defs, std::string fld_defs)
             }
         if (source_num < 0)
         {
-            wxLogMessage("Field definition for a non-existent source");
-            return false;
+            throw std::runtime_error("Field definition for a non-existent source");
         }
 
         // Save the information about the new field.
@@ -157,15 +130,13 @@ bool db_map::load_defs(database &db, std::string src_defs, std::string fld_defs)
         source_list[source_num].field_list.push_back(new_field);
 
     }
-
-    return true;
 }
 
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
-/// \brief Get the number of sources.
+/// \brief Get the number of sources
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -198,7 +169,7 @@ int db_map::num_fields (int source_num) const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
-/// \brief Get a source name
+/// \brief Get the descriptive name of a source
 ///
 /// \param[in]  source_num   Source number
 ///
@@ -218,7 +189,7 @@ std::string db_map::src_name (int source_num) const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
-/// \brief Get a source description
+/// \brief Get the long description of a source
 ///
 /// \param[in]  source_num   Source number
 ///
@@ -238,7 +209,7 @@ std::string db_map::src_description (int source_num) const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
-/// \brief Get database table of a source
+/// \brief Get the database table name for a source
 ///
 /// \param[in]  source_num   Source number
 ///
@@ -319,7 +290,7 @@ std::string db_map::fld_name (int source_num, int field_num) const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
-/// \brief Get a GenDat field code
+/// \brief Get the field code
 ///
 /// \param[in]  source_num   Source number
 /// \param[in]  field_num    Field number
@@ -361,7 +332,7 @@ std::string db_map::fld_db_name (int source_num, int field_num) const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
-/// \brief Make sure a GenDat source number is valid
+/// \brief Make sure the source number is valid
 ///
 /// \param[in]  source_num   Source number
 ///
@@ -372,14 +343,14 @@ std::string db_map::fld_db_name (int source_num, int field_num) const
 void db_map::test_input (int source_num) const
 {
     if (source_num < 0 || source_num >= num_sources())
-        throw std::out_of_range("GenDat source number is out of range");
+        throw std::out_of_range("Source number in db_map:: is out of range");
 }
 
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
-/// \brief Make sure a GenDat source and field numbers are valid
+/// \brief Make sure the source and field numbers are valid
 ///
 /// \param[in]  source_num   Source number
 /// \param[in]  field_num    Field number
@@ -392,5 +363,5 @@ void db_map::test_inputs (int source_num, int field_num) const
 {
     if (source_num < 0 || source_num >= num_sources() ||
             (field_num < 0 || field_num >= num_fields(source_num)))
-        throw std::out_of_range("GenDat source or field number is out of range");
+        throw std::out_of_range("Source or field number in db_map:: is out of range");
 }

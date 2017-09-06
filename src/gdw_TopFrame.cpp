@@ -154,7 +154,14 @@ void TopFrame::event_handler (wxCommandEvent& event)
             if (return_code==1)
             {
                 SetStatusText("Connected to database");
-                gendat_sources.load_defs(gendat_db, "z_sour", "z_sour_field");
+                try
+                {
+                    gendat_sources.load_defs(gendat_db, "z_sour", "z_sour_field");
+                }
+                catch (std::runtime_error& exception)
+                {
+                    wxLogMessage(exception.what());
+                }
             }
         }
         break;

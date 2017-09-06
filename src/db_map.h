@@ -16,7 +16,7 @@
 class db_map
 {
 public:
-    bool             load_defs       (database &db, std::string src_defs, std::string fld_defs);
+    void             load_defs       (database &db, std::string src_defs, std::string fld_defs);
     int              num_sources     () const;
     int              num_fields      (int source_num) const;
 
