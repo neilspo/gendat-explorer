@@ -154,7 +154,7 @@ void TopFrame::event_handler (wxCommandEvent& event)
             if (return_code==1)
             {
                 SetStatusText("Connected to database");
-                gendat_sources.load_defs(gendat_db, "z_sour", "z_sour_fldsa");
+                gendat_sources.load_defs(gendat_db, "z_sour", "z_sour_field");
             }
         }
         break;

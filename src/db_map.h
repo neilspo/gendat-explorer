@@ -32,7 +32,7 @@ public:
 
 private:
 
-    class gendat_source_field
+    class field_def
     {
     public:
         std::string   code;
@@ -41,7 +41,7 @@ private:
         bool          writable;
     };
 
-    class gendat_source
+    class source_def
     {
     public:
         std::string   id;
@@ -60,10 +60,10 @@ private:
 
         // Define fields from this source that can used within GenDat Explorer.
 
-        std::vector<gendat_source_field> field_list;
+        std::vector<field_def> field_list;
     };
 
-    std::vector<gendat_source> source_list;
+    std::vector<source_def> source_list;
 
     void test_input  (int source_num) const;
     void test_inputs (int source_num, int field_num) const;

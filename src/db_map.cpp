@@ -3,12 +3,16 @@
 ///
 /// \brief Handles information about generalized data sources
 ///
-/// This class provides a generalized way to search and access an arbitrary
-/// number of data sources, of various types, without need to change any of
-/// the C++ code as data sources are added, modified, or removed.
+/// This class provides users with an easy way to search and access a large
+/// number of data sources, of various types, without need to know ahead of time
+/// what the data sources will be, nor how the data will be used.
 ///
-/// At its core, this class provides a way to map a set of user-defined <em>use codes</em>
-/// onto the fields in the database tables that will be available to the program.
+/// At its core, this class manages a database map that allows users to:
+///
+/// - identify a set of fields, from various database tables, that will be available to the program;
+/// - attach user-defined <em>use codes</em> to those fields;
+/// - create complex search queries for specific kinds of information; and
+/// - retrieve the results.
 ///
 
 
@@ -101,11 +105,11 @@ bool db_map::load_defs(database &db, std::string src_defs, std::string fld_defs)
                 }
         }
 
-    // Try to read the GenDat source field definitions from the database.
-    // If this fails, then report the error and return false.
+    // Try to read the field definitions from the database. If this fails, then
+    // report the error and return false.
 
     fields = "id, z_sour, code, name, db_field, writable";
-    query  = "SELECT " + fields + " FROM z_sour_field";
+    query  = "SELECT " + fields + " FROM " + fld_defs;
 
     result_set.clear();
     try
@@ -142,7 +146,7 @@ bool db_map::load_defs(database &db, std::string src_defs, std::string fld_defs)
 
         // Save the information about the new field.
 
-        gendat_source_field new_field;
+        field_def new_field;
 
         new_field.code     = result_set[i][2];
         new_field.name     = result_set[i][3];
