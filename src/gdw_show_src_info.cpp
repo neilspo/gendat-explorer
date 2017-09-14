@@ -18,6 +18,7 @@
 #include <string>
 #include "db_row_set.h"
 #include "gdw_show_src_info.h"
+#include "gde_source_map.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -174,7 +175,7 @@ void gdw_show_src_info::process_window_events (wxEvent* event)
 
             unsigned int num_rows = row_set.num_rows();
             unsigned int num_cols = row_set.num_cols();
-            unsigned int extra_cols = 2;
+            unsigned int extra_cols = 4;
 
             // Create the data display table.
 
@@ -215,6 +216,10 @@ void gdw_show_src_info::process_window_events (wxEvent* event)
 
             grid->SetColLabelValue(0, "GenDat Code");
             grid->SetColLabelValue(1, "GenDat Name");
+            grid->SetColLabelValue(2, "Relation");
+            grid->SetColLabelValue(3, "Type");
+
+            gde_source_map test(my_source_list);
 
             for (int i=0; i<my_source_list.num_fields(source); i++)
                 for (unsigned int j=0; j<num_rows; j++)
@@ -226,6 +231,8 @@ void gdw_show_src_info::process_window_events (wxEvent* event)
                     {
                         grid->SetCellValue(j, 0, my_source_list.fld_code(source,i));
                         grid->SetCellValue(j, 1, my_source_list.fld_name(source,i));
+                        grid->SetCellValue(j, 2, test.fam_rel_text(source,i));
+                        grid->SetCellValue(j, 3, test.field_type_text(source,i));
                         break;
                     }
                 }

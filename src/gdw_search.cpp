@@ -16,6 +16,8 @@
 #include "gdw_search.h"
 #include "gdw_field_group.h"
 
+#include "gde_source_map.h"
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
@@ -104,6 +106,8 @@ void gdw_search::process_execute()
     std::string given_name (wx_given_name->GetValue());
     std::string community  (wx_community->GetValue());
     std::string county     (wx_county->GetValue());
+
+    gde_source_map test(my_source_list);
 
     int num_sources = my_source_list.num_sources();
     for (int i=0; i<num_sources; i++)
