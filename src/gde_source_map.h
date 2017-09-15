@@ -7,9 +7,9 @@
 
 #include "db_map.h"
 
-enum gde_relation
+enum class gde_relation
 {
-    INDIVIDUAL = 0,
+    UNKNOWN = 0,
     FATHER,
     MOTHER,
     SPOUSE,
@@ -37,7 +37,10 @@ enum class gde_field_type
     AGE,
     RESI,
     OCCU,
-    NOTE
+    NOTE,
+
+    DATE,
+    PLAC
 };
 
 class gde_source_map
@@ -53,10 +56,12 @@ public:
 
 private:
 
+    std::vector<std::string> split (const std::string& input, const std::string& regex);
+
     struct fld_code_meaning
     {
         gde_relation    relation;
-        gde_field_type  type;
+        gde_field_type  type = gde_field_type::UNKNOWN;
     };
 
     std::vector <std::vector <fld_code_meaning>> field_code_meanings;

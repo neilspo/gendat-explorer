@@ -1,13 +1,64 @@
+///
+/// \class gde_source_map gde_source_map.h
+///
+/// \brief Handles information about GenDat data sources
+///
+
+
 #include <regex>
+#include <unordered_map>
 #include "gde_source_map.h"
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// \brief Load source and field definitions from database
+///
+/// \param[in]  db         database connection, which must currently be open
+/// \param[in]  src_defs   database table with the source definitions
+/// \param[in]  fld_defs   database table with the field definitions
+///
+/// \exception std::runtime_error thrown if the database server reports an error
+///
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 gde_source_map::gde_source_map (const db_map& source_map)
 {
+    // Define the possible GenDat family relation codes.
 
-    int num_sources = source_map.num_sources();
+    std::unordered_map <std::string, gde_relation> rel_map;
+    rel_map["F" ] = gde_relation::FATHER;
+    rel_map["M" ] = gde_relation::MOTHER;
+    rel_map["S" ] = gde_relation::SPOUSE;
+    rel_map["B" ] = gde_relation::BRIDE;
+    rel_map["BF"] = gde_relation::BRIDE_FATHER;
+    rel_map["BM"] = gde_relation::BRIDE_MOTHER;
+    rel_map["G" ] = gde_relation::GROOM;
+    rel_map["GF"] = gde_relation::GROOM_FATHER;
+    rel_map["GM"] = gde_relation::GROOM_MOTHER;
+
+    // Define the possible GenDat primary field types.
+
+    std::unordered_map <std::string, gde_field_type> type_map;
+    type_map["SURN"] = gde_field_type::SURN;
+    type_map["GIVN"] = gde_field_type::GIVN;
+    type_map["NAME"] = gde_field_type::NAME;
+    type_map["BIRT"] = gde_field_type::BIRT;
+    type_map["BAPM"] = gde_field_type::BAPM;
+    type_map["DEAT"] = gde_field_type::DEAT;
+    type_map["BURI"] = gde_field_type::BURI;
+    type_map["MARR"] = gde_field_type::MARR;
+    type_map["SEX" ] = gde_field_type::SEX;
+    type_map["AGE" ] = gde_field_type::AGE;
+    type_map["RESI"] = gde_field_type::RESI;
+    type_map["OCCU"] = gde_field_type::OCCU;
+    type_map["NOTE"] = gde_field_type::NOTE;
 
     // If there are no defined sources, then there is nothing to do.
+
+    int num_sources = source_map.num_sources();
 
     if (num_sources <= 0)
         return;
@@ -29,142 +80,49 @@ gde_source_map::gde_source_map (const db_map& source_map)
         int num_fields = source_map.num_fields(i);
         for (int j=0; j<num_fields; j++)
         {
+            // Get the field code and make sure it's not empty.
+
             std::string fld_code = source_map.fld_code(i,j);
 
-            // Read the family relationship code.
+            if (!fld_code.empty())
+            {
+                // Split apart the separate parts of the field code into a vector of tokens.
 
-            if (std::regex_match(fld_code, std::regex("^F\\_.*")))
-            {
-                field_code_meanings[i][j].relation = FATHER;
-                fld_code.erase(0,2);
-            }
-            else if (std::regex_match(fld_code, std::regex("^M\\_.*")))
-            {
-                field_code_meanings[i][j].relation = MOTHER;
-                fld_code.erase(0,2);
-            }
-            else if (std::regex_match(fld_code, std::regex("^S\\_.*")))
-            {
-                field_code_meanings[i][j].relation = SPOUSE;
-                fld_code.erase(0,2);
-            }
-            else if (std::regex_match(fld_code, std::regex("^B\\_.*")))
-            {
-                field_code_meanings[i][j].relation = BRIDE;
-                fld_code.erase(0,2);
-            }
-            else if (std::regex_match(fld_code, std::regex("^BF\\_.*")))
-            {
-                field_code_meanings[i][j].relation = BRIDE_FATHER;
-                fld_code.erase(0,3);
-            }
-            else if (std::regex_match(fld_code, std::regex("^BM\\_.*")))
-            {
-                field_code_meanings[i][j].relation = BRIDE_MOTHER;
-                fld_code.erase(0,3);
-            }
-            else if (std::regex_match(fld_code, std::regex("^G\\_.*")))
-            {
-                field_code_meanings[i][j].relation = GROOM;
-                fld_code.erase(0,2);
-            }
-            else if (std::regex_match(fld_code, std::regex("^GF\\_.*")))
-            {
-                field_code_meanings[i][j].relation = GROOM_FATHER;
-                fld_code.erase(0,3);
-            }
-            else if (std::regex_match(fld_code, std::regex("^GM\\_.*")))
-            {
-                field_code_meanings[i][j].relation = GROOM_MOTHER;
-                fld_code.erase(0,3);
-            }
-            else
-            {
-                field_code_meanings[i][j].relation = INDIVIDUAL;
-            }
+                std::vector<std::string> tokens = split(fld_code, "\\_");
 
-            // Read the GenDat field types.
+                // Read the GenDat family relationship code, if there is one.
 
-            if (std::regex_match(fld_code, std::regex("^SURN.*")))
-            {
-                field_code_meanings[i][j].type = gde_field_type::SURN;
-                fld_code.erase(0,4);
-            }
-            else if (std::regex_match(fld_code, std::regex("^GIVN.*")))
-            {
-                field_code_meanings[i][j].type = gde_field_type::GIVN;
-                fld_code.erase(0,4);
-            }
-            else if (std::regex_match(fld_code, std::regex("^NAME.*")))
-            {
-                field_code_meanings[i][j].type = gde_field_type::NAME;
-                fld_code.erase(0,4);
-            }
-            else if (std::regex_match(fld_code, std::regex("^BIRT.*")))
-            {
-                field_code_meanings[i][j].type = gde_field_type::BIRT;
-                fld_code.erase(0,4);
-            }
-            else if (std::regex_match(fld_code, std::regex("^BAPM.*")))
-            {
-                field_code_meanings[i][j].type = gde_field_type::BAPM;
-                fld_code.erase(0,4);
-            }
-            else if (std::regex_match(fld_code, std::regex("^DEAT.*")))
-            {
-                field_code_meanings[i][j].type = gde_field_type::DEAT;
-                fld_code.erase(0,4);
-            }
-            else if (std::regex_match(fld_code, std::regex("^BURI.*")))
-            {
-                field_code_meanings[i][j].type = gde_field_type::BURI;
-                fld_code.erase(0,4);
-            }
-            else if (std::regex_match(fld_code, std::regex("^MARR.*")))
-            {
-                field_code_meanings[i][j].type = gde_field_type::MARR;
-                fld_code.erase(0,4);
-            }
-            else if (std::regex_match(fld_code, std::regex("^SEX.*")))
-            {
-                field_code_meanings[i][j].type = gde_field_type::SEX;
-                fld_code.erase(0,3);
-            }
-            else if (std::regex_match(fld_code, std::regex("^AGE.*")))
-            {
-                field_code_meanings[i][j].type = gde_field_type::AGE;
-                fld_code.erase(0,3);
-            }
-            else if (std::regex_match(fld_code, std::regex("^RESI.*")))
-            {
-                field_code_meanings[i][j].type = gde_field_type::RESI;
-                fld_code.erase(0,4);
-            }
-            else if (std::regex_match(fld_code, std::regex("^OCCU.*")))
-            {
-                field_code_meanings[i][j].type = gde_field_type::OCCU;
-                fld_code.erase(0,4);
-            }
-            else if (std::regex_match(fld_code, std::regex("^NOTE.*")))
-            {
-                field_code_meanings[i][j].type = gde_field_type::NOTE;
-                fld_code.erase(0,4);
-            }
-            else
-            {
-                field_code_meanings[i][j].type = gde_field_type::UNKNOWN;
+                auto iter_1 = rel_map.find(tokens[0]);
+                if (iter_1 == rel_map.end())
+                    field_code_meanings[i][j].relation = gde_relation::UNKNOWN;
+                else
+                {
+                    field_code_meanings[i][j].relation = iter_1->second;
+                    tokens.erase(tokens.begin());
+                }
+
+                // Read the GenDat primary field type, if there is one.
+
+                if (!tokens.empty())
+                {
+
+                    auto iter_2 = type_map.find(tokens[0]);
+                    if (iter_2 == type_map.end())
+                        field_code_meanings[i][j].type = gde_field_type::UNKNOWN;
+                    else
+                    {
+                        field_code_meanings[i][j].type = iter_2->second;
+                        tokens.erase(tokens.begin());
+                    }
+
+                    // Read the GenDat field type modifiers, if there are any.
+                    //
+                    // ***** To do. Currently, the only modifiers are PLAC and DATE.
+
+                }
             }
         }
-
-     }
-
-
-
-
-
-
-
-
+    }
 }
 
 
@@ -212,23 +170,23 @@ std::string gde_source_map::fam_rel_text(int source_num, int field_num)
 {
     switch (field_code_meanings[source_num][field_num].relation)
     {
-    case FATHER:
+    case gde_relation::FATHER:
         return "Father";
-    case MOTHER:
+    case gde_relation::MOTHER:
         return "Mother";
-    case SPOUSE:
+    case gde_relation::SPOUSE:
         return "Spouse";
-    case BRIDE:
+    case gde_relation::BRIDE:
         return "Bride";
-    case BRIDE_FATHER:
+    case gde_relation::BRIDE_FATHER:
         return "Bride's Father";
-    case BRIDE_MOTHER:
+    case gde_relation::BRIDE_MOTHER:
         return "Bride's Mother";
-    case GROOM:
+    case gde_relation::GROOM:
         return "Groom";
-    case GROOM_FATHER:
+    case gde_relation::GROOM_FATHER:
         return "Groom's Father";
-    case GROOM_MOTHER:
+    case gde_relation::GROOM_MOTHER:
         return "Groom's Mother";
     default:
         return "";
@@ -272,3 +230,14 @@ std::string gde_source_map::field_type_text(int source_num, int field_num)
     }
 }
 
+
+
+
+std::vector<std::string> gde_source_map::split(const std::string& input, const std::string& regex)
+{
+    std::regex re(regex);
+    std::sregex_token_iterator
+    first{input.begin(), input.end(), re, -1},
+          last;
+    return {first, last};
+}
