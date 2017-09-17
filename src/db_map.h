@@ -22,6 +22,8 @@ public:
 
     std::string      src_name        (int source_num) const;
     std::string      src_description (int source_num) const;
+    std::string      src_version     (int source_num) const;
+    std::string      src_code        (int source_num) const;
     std::string      src_db_table    (int source_num) const;
     int              src_parent      (int source_num) const;
     std::vector<int> src_children    (int source_num) const;
@@ -48,8 +50,8 @@ private:
         std::string   name;
         std::string   description;
         std::string   version;
+        std::string   code;
         std::string   db_table;
-        std::string   repository;
         std::string   derived_from;
         bool          writable;
 

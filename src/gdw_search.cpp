@@ -27,12 +27,12 @@
 ///
 /// \param [in]   parent        pointer to the parent window
 /// \param [in]   db            pointer to database connection object
-/// \param [in]   source_list   object containing the GenDat source definitions
+/// \param [in]   source_map    object containing the GenDat source definitions
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-gdw_search::gdw_search(wxWindow* parent, database* db, const db_map& source_list) :
-    gdw_panel(parent), my_source_list(source_list)
+gdw_search::gdw_search(wxWindow* parent, database* db, const db_map& source_map) :
+    gdw_panel(parent), my_source_map(source_map)
 {
     my_db             = db;
     unsaved_data_flag = false;
@@ -98,25 +98,34 @@ bool gdw_search::has_unsaved_data()
 }
 
 
+
 void gdw_search::process_execute()
 {
-    std::cout << "****** gdw_search::process_execute" << std::endl;
+    // Find out what to search for.
 
     std::string surname    (wx_surname->GetValue());
     std::string given_name (wx_given_name->GetValue());
     std::string community  (wx_community->GetValue());
     std::string county     (wx_county->GetValue());
 
-    gde_source_map test(my_source_list);
+    //*********************************************************************************************
+    // This next line is here for test purposes only.
+    //*********************************************************************************************
 
-    int num_sources = my_source_list.num_sources();
+    gde_source_map test(my_source_map);
+
+    // Find all of the GenDat sources that have a "surname" field.
+
+    int num_sources = my_source_map.num_sources();
     for (int i=0; i<num_sources; i++)
     {
-        std::cout << "Number of fields: " << my_source_list.num_fields(i) << std::endl;
-        int num_fields = my_source_list.num_fields(i);
+        int num_fields = my_source_map.num_fields(i);
         for (int j=0; j<num_fields; j++)
         {
-            std::cout << "Code: " << my_source_list.fld_code(i,j) << std::endl;
+            if (test.field_type(i,j) == gde_data_tag::SURN)
+            {
+                std::cout << my_source_map.src_db_table(i) << ", " << my_source_map.fld_db_name(i,j) << std::endl;
+            }
         }
     }
 

@@ -24,7 +24,7 @@
 class gdw_show_src_info : public gdw_panel
 {
 public:
-    gdw_show_src_info (wxWindow* parent, database* db, db_map source_list);
+    gdw_show_src_info (wxWindow* parent, database* db, db_map source_map);
     ~gdw_show_src_info();
 
 
@@ -39,7 +39,7 @@ private:
     // Private variables.
 
     database*           my_db;
-    db_map  my_source_list;
+    db_map              my_source_map;
     id_manager          id_mgr;
     unsigned int        tree_id;
     wxTreeCtrl         *tree;

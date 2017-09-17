@@ -23,7 +23,7 @@
 class gdw_search : public gdw_panel
 {
 public:
-    gdw_search (wxWindow* parent, database* db, const db_map& source_list);
+    gdw_search (wxWindow* parent, database* db, const db_map& source_map);
     ~gdw_search();
 
 
@@ -35,7 +35,7 @@ private:
     void process_window_events (wxEvent* event);
 
     database*                 my_db;
-    const db_map& my_source_list;
+    const db_map&             my_source_map;
     bool                      unsaved_data_flag;
     id_manager                id_mgr;
     unsigned int              id_text_event;

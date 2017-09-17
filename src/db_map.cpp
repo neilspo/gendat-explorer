@@ -46,7 +46,7 @@ void db_map::load_defs(database &db, std::string src_defs, std::string fld_defs)
 
     // Read the source definitions from the database.
 
-    fields = "id, name, description, version, db_table, repository, derived_from, writable";
+    fields = "id, name, description, version, code, db_table, derived_from, writable";
     query  = "SELECT " + fields + " FROM " + src_defs;
 
     db.execute (query, result_set, num_rows, num_cols);
@@ -62,8 +62,8 @@ void db_map::load_defs(database &db, std::string src_defs, std::string fld_defs)
         source_list[i].name         = result_set[i][1];
         source_list[i].description  = result_set[i][2];
         source_list[i].version      = result_set[i][3];
-        source_list[i].db_table     = result_set[i][4];
-        source_list[i].repository   = result_set[i][5];
+        source_list[i].code         = result_set[i][4];
+        source_list[i].db_table     = result_set[i][5];
         source_list[i].derived_from = result_set[i][6];
 
         if (result_set[i][7] == "yes")
@@ -206,6 +206,45 @@ std::string db_map::src_description (int source_num) const
     return source_list[source_num].description;
 }
 
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// \brief Get the version of a source
+///
+/// \param[in]  source_num   Source number
+///
+/// \return     source description
+///
+/// \exception std::out_of_range thrown if the source number is out of range
+///
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+std::string db_map::src_version (int source_num) const
+{
+    test_input (source_num);
+    return source_list[source_num].version;
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// \brief Get the use code of a source
+///
+/// \param[in]  source_num   Source number
+///
+/// \return     source description
+///
+/// \exception std::out_of_range thrown if the source number is out of range
+///
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+std::string db_map::src_code (int source_num) const
+{
+    test_input (source_num);
+    return source_list[source_num].code;
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

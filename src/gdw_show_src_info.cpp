@@ -29,15 +29,15 @@
 ///
 /// \param [in]   parent        pointer to the parent window
 /// \param [in]   db            pointer to database connection object
-/// \param [in]   source_list   object containing the GenDat source definitions
+/// \param [in]   source_map   object containing the GenDat source definitions
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 gdw_show_src_info::gdw_show_src_info(wxWindow* parent, database* db,
-                                     db_map source_list) : gdw_panel(parent)
+                                     db_map source_map) : gdw_panel(parent)
 {
     my_db          = db;
-    my_source_list = source_list;
+    my_source_map = source_map;
 
     // Get a unique identifier to use when creating the tree control.
 
@@ -140,11 +140,16 @@ void gdw_show_src_info::process_window_events (wxEvent* event)
 
             //-----Display descriptive information about the source---------------------------------
 
+            // ******************* For test purposes **************************
+            gde_source_map test(my_source_map);
+            // ****************************************************************
+
             // Get some descriptive information about the selected GenDat source.
 
-            std::string source_name        = my_source_list.src_name(source);
-            std::string source_description = my_source_list.src_description(source);
-            std::string source_db_table    = my_source_list.src_db_table(source);
+            std::string source_name        = my_source_map.src_name(source);
+            std::string source_description = my_source_map.src_description(source);
+            std::string source_db_table    = my_source_map.src_db_table(source);
+            std::string source_type        = test.src_type_text(source);
 
             // Show the descriptive information in a readonly wxTextCtrl.
 
@@ -152,6 +157,7 @@ void gdw_show_src_info::process_window_events (wxEvent* event)
                                              wxDefaultSize, wxTE_MULTILINE|wxTE_READONLY);
 
             (*txt)<< "Source Name:     " << source_name << "\n\n";
+            (*txt)<< "Source Type:     " << source_type << "\n\n";
             (*txt)<< "Source Description:     " << source_description << "\n";
 
             // Put the text in a sizer and add it to the text panel.
@@ -219,18 +225,16 @@ void gdw_show_src_info::process_window_events (wxEvent* event)
             grid->SetColLabelValue(2, "Relation");
             grid->SetColLabelValue(3, "Type");
 
-            gde_source_map test(my_source_list);
-
-            for (int i=0; i<my_source_list.num_fields(source); i++)
+            for (int i=0; i<my_source_map.num_fields(source); i++)
                 for (unsigned int j=0; j<num_rows; j++)
                 {
                     std::string test_field;
                     row_set.get_data(j, 0, test_field);
 
-                    if (my_source_list.fld_db_name(source,i) == test_field)
+                    if (my_source_map.fld_db_name(source,i) == test_field)
                     {
-                        grid->SetCellValue(j, 0, my_source_list.fld_code(source,i));
-                        grid->SetCellValue(j, 1, my_source_list.fld_name(source,i));
+                        grid->SetCellValue(j, 0, my_source_map.fld_code(source,i));
+                        grid->SetCellValue(j, 1, my_source_map.fld_name(source,i));
                         grid->SetCellValue(j, 2, test.fam_rel_text(source,i));
                         grid->SetCellValue(j, 3, test.field_type_text(source,i));
                         break;
@@ -274,17 +278,17 @@ void gdw_show_src_info::draw_left_panel(wxPanel *parent)
 
     wxTreeItemId root = tree->AddRoot("Sources");
 
-    int num_sources = my_source_list.num_sources();
+    int num_sources = my_source_map.num_sources();
     for (int i=0; i<num_sources; i++)
-        if (my_source_list.src_parent(i) < 0)
+        if (my_source_map.src_parent(i) < 0)
         {
-            std::string source_name = my_source_list.src_name(i);
+            std::string source_name = my_source_map.src_name(i);
             wxTreeItemId r1   = tree->AppendItem(root, source_name, -1, -1, new ItemData(i));
 
-            std::vector<int> source_children = my_source_list.src_children(i);
+            std::vector<int> source_children = my_source_map.src_children(i);
             for (unsigned int j=0; j<source_children.size(); j++)
             {
-                std::string child_name = my_source_list.src_name(source_children[j]);
+                std::string child_name = my_source_map.src_name(source_children[j]);
                 tree->AppendItem(r1, child_name, -1, -1, new ItemData(source_children[j]));
             }
 
