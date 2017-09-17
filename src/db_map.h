@@ -58,7 +58,7 @@ private:
         int              my_parent;
         std::vector<int> my_children;
 
-        // Define fields from this source that can used within GenDat Explorer.
+        // Define fields from this source that will be available to the calling program.
 
         std::vector<field_def> field_list;
     };

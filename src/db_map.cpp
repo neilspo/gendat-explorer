@@ -53,8 +53,10 @@ void db_map::load_defs(database &db, std::string src_defs, std::string fld_defs)
 
     // Set up the source definitions.
 
-    source_list.resize(num_rows);
-    for (unsigned int i=0; i<num_rows; i++)
+    unsigned int num_sources = num_rows;
+
+    source_list.resize(num_sources);
+    for (unsigned int i=0; i<num_sources; i++)
     {
         source_list[i].id           = result_set[i][0];
         source_list[i].name         = result_set[i][1];
@@ -73,13 +75,13 @@ void db_map::load_defs(database &db, std::string src_defs, std::string fld_defs)
     // Find any sources that were derived from another source (the parent), and add
     // them to the list of children for that parent.
 
-    for (unsigned int i=0; i<num_rows; i++)
+    for (unsigned int i=0; i<num_sources; i++)
         if (source_list[i].derived_from.empty())
             source_list[i].my_parent = -1;
         else
         {
             source_list[i].my_parent = i;
-            for (unsigned int j=0; j<num_rows; j++)
+            for (unsigned int j=0; j<num_sources; j++)
                 if (source_list[i].derived_from == source_list[j].id)
                 {
                     source_list[j].my_children.push_back(i);
@@ -98,8 +100,7 @@ void db_map::load_defs(database &db, std::string src_defs, std::string fld_defs)
 
     // Set up the source field definitions.
 
-     unsigned int num_sources    = source_list.size();
-     unsigned int num_field_defs = num_rows;
+    unsigned int num_field_defs = num_rows;
 
     for (unsigned int i=0; i<num_field_defs; i++)
     {
@@ -276,7 +277,7 @@ std::vector<int> db_map::src_children (int source_num) const
 ///
 /// \return     field name
 ///
-/// \exception std::out_of_range thrown if the source number is out of range
+/// \exception std::out_of_range thrown if the source or field number is out of range
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -297,7 +298,7 @@ std::string db_map::fld_name (int source_num, int field_num) const
 ///
 /// \return     field code
 ///
-/// \exception std::out_of_range thrown if the source number is out of range
+/// \exception std::out_of_range thrown if the source or field number is out of range
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -318,7 +319,7 @@ std::string db_map::fld_code (int source_num, int field_num) const
 ///
 /// \return     database field name
 ///
-/// \exception std::out_of_range thrown if the source number is out of range
+/// \exception std::out_of_range thrown if the source or field number is out of range
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -355,7 +356,7 @@ void db_map::test_input (int source_num) const
 /// \param[in]  source_num   Source number
 /// \param[in]  field_num    Field number
 ///
-/// \exception std::out_of_range thrown if the source number is out of range
+/// \exception std::out_of_range thrown the source or field number is out of range
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
