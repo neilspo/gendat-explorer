@@ -122,10 +122,10 @@ void gdw_search::process_execute()
         int num_fields = my_source_map.num_fields(i);
         for (int j=0; j<num_fields; j++)
         {
-            if (test.field_type(i,j) == gde_data_tag::SURN)
-            {
-                std::cout << my_source_map.src_db_table(i) << ", " << my_source_map.fld_db_name(i,j) << std::endl;
-            }
+//            if (test.fact_type(i,j) == gde_data_tag::SURN)
+//            {
+//                std::cout << my_source_map.src_db_table(i) << ", " << my_source_map.fld_db_name(i,j) << std::endl;
+//            }
         }
     }
 

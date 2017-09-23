@@ -91,7 +91,7 @@ void db_map::load_defs(database &db, std::string src_defs, std::string fld_defs)
 
     // Read the field definitions from the database.
 
-    fields = "id, z_sour, code, name, db_field, writable";
+    fields = "id, source, code, name, db_field, writable";
     query  = "SELECT " + fields + " FROM " + fld_defs;
 
     result_set.clear();

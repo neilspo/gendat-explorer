@@ -181,7 +181,7 @@ void gdw_show_src_info::process_window_events (wxEvent* event)
 
             unsigned int num_rows = row_set.num_rows();
             unsigned int num_cols = row_set.num_cols();
-            unsigned int extra_cols = 4;
+            unsigned int extra_cols = 6;
 
             // Create the data display table.
 
@@ -216,14 +216,14 @@ void gdw_show_src_info::process_window_events (wxEvent* event)
                 }
             }
 
-
-
             //-----Display GenDat field definitions for the source----------------------------------
 
             grid->SetColLabelValue(0, "GenDat Code");
             grid->SetColLabelValue(1, "GenDat Name");
-            grid->SetColLabelValue(2, "Relation");
-            grid->SetColLabelValue(3, "Type");
+            grid->SetColLabelValue(2, "Fam. Rel.");
+            grid->SetColLabelValue(3, "Event");
+            grid->SetColLabelValue(4, "Fact");
+            grid->SetColLabelValue(5, "Fact Mod.");
 
             for (int i=0; i<my_source_map.num_fields(source); i++)
                 for (unsigned int j=0; j<num_rows; j++)
@@ -236,7 +236,8 @@ void gdw_show_src_info::process_window_events (wxEvent* event)
                         grid->SetCellValue(j, 0, my_source_map.fld_code(source,i));
                         grid->SetCellValue(j, 1, my_source_map.fld_name(source,i));
                         grid->SetCellValue(j, 2, test.fam_rel_text(source,i));
-                        grid->SetCellValue(j, 3, test.field_type_text(source,i));
+                        grid->SetCellValue(j, 3, data_tag_text(test.event_type(source,i)));
+                        grid->SetCellValue(j, 4, data_tag_text(test.fact_type(source,i)));
                         break;
                     }
                 }

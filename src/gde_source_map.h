@@ -5,11 +5,13 @@
 #ifndef GDE_SOURCE_MAP_H
 #define GDE_SOURCE_MAP_H
 
+#include <vector>
+
 #include "db_map.h"
 
 enum class gde_relation
 {
-    UNKNOWN = 0,
+    UNDEFINED = 0,
     FATHER,
     MOTHER,
     SPOUSE,
@@ -21,61 +23,87 @@ enum class gde_relation
     GROOM_MOTHER
 };
 
+///
+/// \brief Data tags
+///
+/// These are the allowed tags that can be used to signify various kinds
+/// of genealogical data. For the most part, these match the GEDCOM standard tags.
+///
 
 enum class gde_data_tag
 {
-    UNKNOWN = 0,
-    SURN,
-    GIVN,
-    NAME,
-    BIRT,
-    BAPM,
-    DEAT,
-    BURI,
-    MARR,
-    SEX,
-    AGE,
-    RESI,
-    OCCU,
-    NOTE,
-
-    DATE,
-    PLAC
+    UNDEFINED,
+    SURN,       ///< surname
+    GIVN,       ///< given names(s)
+    NAME,       ///< name
+    BIRT,       ///< birth
+    BAPM,       ///< baptism
+    CONF,       ///< confirmation
+    DEAT,       ///< death
+    BURI,       ///< burial
+    MARR,       ///< marriage
+    DIV,        ///< divorce
+    SEX,        ///< sex or gender of the individual
+    AGE,        ///< age
+    RESI,       ///< residence
+    OCCU,       ///< occupation
+    NOTE,       ///< note
+    CENS,       ///< census
+    WILL,       ///< will (legal document)
+    DATE,       ///< date
+    PLAC        ///< place
 };
+
+    std::string data_tag_text (gde_data_tag data_tag);
+
 
 class gde_source_map
 {
 public:
     gde_source_map (const db_map& source_map);
 
-    gde_data_tag    src_type      (int source_num);
-    std::string     src_type_text (int source_num);
+    gde_data_tag    src_type         (int source_num);
+    std::string     src_type_text    (int source_num);
 
     gde_relation    fam_rel          (int source_num, int field_num);
     std::string     fam_rel_text     (int source_num, int field_num);
-    gde_data_tag    field_type       (int source_num, int field_num);
-    std::string     field_type_text  (int source_num, int field_num);
+
+    gde_data_tag    event_type       (int source_num, int field_num);
+    gde_data_tag    fact_type        (int source_num, int field_num);
+    gde_data_tag    fact_type_mod    (int source_num, int field_num);
+
+    void            find_fields      (std::vector<int>& fld_list,
+                                      gde_data_tag src_type,
+                                      gde_relation fld_rel,
+                                      gde_data_tag fld_type_1,
+                                      gde_data_tag fld_type_2,
+                                      gde_data_tag fld_type_3,
+                                      bool         fld_optional=true);
 
 
 
 
 private:
 
-    struct fld_code_meaning
+    struct searchable_field
     {
-        gde_relation  relation;
-        gde_data_tag  type = gde_data_tag::UNKNOWN;
+        int          source_num   = -1;
+        int          field_num    = -1;
+        gde_relation fam_relation = gde_relation::UNDEFINED;
+        gde_data_tag event        = gde_data_tag::UNDEFINED;
+        gde_data_tag fact         = gde_data_tag::UNDEFINED;
+        gde_data_tag fact_1       = gde_data_tag::UNDEFINED;
     };
 
     // Private variables
 
-    std::vector <std::vector <fld_code_meaning>> field_code_meanings;
     std::vector <gde_data_tag>                   source_type;
+    std::vector <searchable_field>               searchable_field_list;
+    std::vector <std::vector <int>>              searchable_field_lookup;
 
     // A couple of private utility functions.
 
     std::vector<std::string> split (const std::string& input, const std::string& regex);
-    std::string data_tag_to_text (gde_data_tag data_tag);
 };
 
 #endif
