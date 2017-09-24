@@ -76,6 +76,21 @@ gde_source_map::gde_source_map (const db_map& source_map)
     fact_type_map["RESI"] = gde_data_tag::RESI;
     fact_type_map["OCCU"] = gde_data_tag::OCCU;
     fact_type_map["NOTE"] = gde_data_tag::NOTE;
+    fact_type_map["XREF"] = gde_data_tag::XREF;
+    fact_type_map["KEY" ] = gde_data_tag::KEY;
+    fact_type_map["STATUS"     ] = gde_data_tag::STATUS;
+    fact_type_map["CEMETERY"   ] = gde_data_tag::CEMETERY;
+    fact_type_map["INSCRIPTION"] = gde_data_tag::INSCRIPTION;
+
+    // Define the possible GenDat fact type modifiers.
+
+    std::unordered_map <std::string, gde_data_tag> fact_type_mod_map;
+    fact_type_mod_map["Y"          ] = gde_data_tag::YEAR;
+    fact_type_mod_map["M"          ] = gde_data_tag::MONTH;
+    fact_type_mod_map["D"          ] = gde_data_tag::DAY;
+    fact_type_mod_map["COMMUNITY"  ] = gde_data_tag::COMMUNITY;
+    fact_type_mod_map["COUNTY"     ] = gde_data_tag::COUNTY;
+    fact_type_mod_map["INDI"       ] = gde_data_tag::INDI;
 
     // If there are no defined sources, then there is nothing to do.
 
@@ -162,6 +177,12 @@ gde_source_map::gde_source_map (const db_map& source_map)
 
                 // Read the GenDat fact type modifier, if the is one.
 
+                auto iter_4 = fact_type_mod_map.find(tokens[0]);
+                if (iter_4 != fact_type_mod_map.end())
+                {
+                    s_field.fact_mod = iter_4->second;
+                    tokens.erase(tokens.begin());
+                }
 
 
 
@@ -308,12 +329,15 @@ gde_data_tag gde_source_map::fact_type(int source_num, int field_num)
 
 
 
-
-//std::string gde_source_map::field_type_text(int source_num, int field_num)
-//{
-//    return data_tag_text(field_type(source_num, field_num));
-//}
-
+gde_data_tag gde_source_map::fact_type_mod(int source_num, int field_num)
+{
+   test_inputs(source_num, field_num);
+    int i = searchable_field_lookup[source_num][field_num];
+    if (i<0)
+        return gde_data_tag::UNDEFINED;
+    else
+        return searchable_field_list[i].fact_mod;
+}
 
 
 
@@ -360,6 +384,28 @@ std::string data_tag_text(gde_data_tag data_tag)
         return "Date";
     case gde_data_tag::PLAC:
         return "Place";
+    case gde_data_tag::XREF:
+        return "Cross Ref.";
+    case gde_data_tag::INDI:
+        return "Individual";
+    case gde_data_tag::KEY:
+        return "Pri. Key";
+    case gde_data_tag::STATUS:
+        return "Marital Status";
+    case gde_data_tag::YEAR:
+        return "Year";
+    case gde_data_tag::MONTH:
+        return "Month";
+    case gde_data_tag::DAY:
+        return "Day";
+    case gde_data_tag::COMMUNITY:
+        return "Community";
+    case gde_data_tag::COUNTY:
+        return "County";
+    case gde_data_tag::CEMETERY:
+        return "Cemetery";
+    case gde_data_tag::INSCRIPTION:
+        return "Inscription";
 
     default:
         return "";

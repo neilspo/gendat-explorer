@@ -43,7 +43,7 @@ enum class gde_data_tag
     BURI,       ///< burial
     MARR,       ///< marriage
     DIV,        ///< divorce
-    SEX,        ///< sex or gender of the individual
+    SEX,        ///< sex
     AGE,        ///< age
     RESI,       ///< residence
     OCCU,       ///< occupation
@@ -51,7 +51,18 @@ enum class gde_data_tag
     CENS,       ///< census
     WILL,       ///< will (legal document)
     DATE,       ///< date
-    PLAC        ///< place
+    PLAC,       ///< place
+    XREF,       ///< GEDCOM cross-reference
+    INDI,       ///< GEDCOM individual
+    KEY,        ///< database primary key
+    STATUS,     ///< marital status
+    YEAR,       ///< year
+    MONTH,      ///< month
+    DAY,        ///< day
+    COMMUNITY,  ///< community
+    COUNTY,     ///< county
+    CEMETERY,   ///< cemetery
+    INSCRIPTION ///< headstone inscription
 };
 
 std::string data_tag_text (gde_data_tag data_tag);
@@ -92,7 +103,7 @@ private:
         gde_relation fam_relation = gde_relation::UNDEFINED;
         gde_data_tag event        = gde_data_tag::UNDEFINED;
         gde_data_tag fact         = gde_data_tag::UNDEFINED;
-        gde_data_tag fact_1       = gde_data_tag::UNDEFINED;
+        gde_data_tag fact_mod     = gde_data_tag::UNDEFINED;
     };
 
     // Private variables

@@ -238,6 +238,7 @@ void gdw_show_src_info::process_window_events (wxEvent* event)
                         grid->SetCellValue(j, 2, test.fam_rel_text(source,i));
                         grid->SetCellValue(j, 3, data_tag_text(test.event_type(source,i)));
                         grid->SetCellValue(j, 4, data_tag_text(test.fact_type(source,i)));
+                        grid->SetCellValue(j, 5, data_tag_text(test.fact_type_mod(source,i)));
                         break;
                     }
                 }
