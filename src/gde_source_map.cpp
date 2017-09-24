@@ -216,7 +216,12 @@ std::string gde_source_map::src_type_text(int source_num)
 
 gde_relation gde_source_map::fam_rel (int source_num, int field_num)
 {
-    return searchable_field_list[searchable_field_lookup[source_num][field_num]].fam_relation;
+   test_inputs(source_num, field_num);
+    int i = searchable_field_lookup[source_num][field_num];
+    if (i<0)
+        return gde_relation::UNDEFINED;
+    else
+        return searchable_field_list[i].fam_relation;
 }
 
 
@@ -282,13 +287,23 @@ std::string gde_source_map::fam_rel_text(int source_num, int field_num)
 
 gde_data_tag gde_source_map::event_type(int source_num, int field_num)
 {
-    return searchable_field_list[searchable_field_lookup[source_num][field_num]].event;
+    test_inputs(source_num, field_num);
+    int i = searchable_field_lookup[source_num][field_num];
+    if (i<0)
+        return gde_data_tag::UNDEFINED;
+    else
+        return searchable_field_list[i].event;
 }
 
 
 gde_data_tag gde_source_map::fact_type(int source_num, int field_num)
 {
-    return searchable_field_list[searchable_field_lookup[source_num][field_num]].fact;
+   test_inputs(source_num, field_num);
+    int i = searchable_field_lookup[source_num][field_num];
+    if (i<0)
+        return gde_data_tag::UNDEFINED;
+    else
+        return searchable_field_list[i].fact;
 }
 
 
@@ -317,12 +332,16 @@ std::string data_tag_text(gde_data_tag data_tag)
         return "Birth";
     case gde_data_tag::BAPM:
         return "Baptism";
+    case gde_data_tag::CONF:
+        return "Confirmation";
     case gde_data_tag::DEAT:
         return "Death";
     case gde_data_tag::BURI:
         return "Burial";
     case gde_data_tag::MARR:
         return "Marriage";
+    case gde_data_tag::DIV:
+        return "Divorce";
     case gde_data_tag::SEX:
         return "Sex";
     case gde_data_tag::AGE:
@@ -367,4 +386,24 @@ std::vector<std::string> gde_source_map::split(const std::string& input, const s
     first{input.begin(), input.end(), re, -1},
           last;
     return {first, last};
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// \brief Make sure the source and field numbers are valid
+///
+/// \param[in]  source_num   Source number
+/// \param[in]  field_num    Field number
+///
+/// \exception std::out_of_range thrown the source or field number is out of range
+///
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void gde_source_map::test_inputs (int source_num, int field_num) const
+{
+    if (source_num < 0 || source_num >= (int)searchable_field_lookup.size() ||
+            (field_num < 0 || field_num >= (int)searchable_field_lookup[source_num].size()))
+        throw std::out_of_range("Source or field number in gde_source_map:: is out of range");
 }

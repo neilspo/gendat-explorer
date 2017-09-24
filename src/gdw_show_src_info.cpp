@@ -218,8 +218,8 @@ void gdw_show_src_info::process_window_events (wxEvent* event)
 
             //-----Display GenDat field definitions for the source----------------------------------
 
-            grid->SetColLabelValue(0, "GenDat Code");
-            grid->SetColLabelValue(1, "GenDat Name");
+            grid->SetColLabelValue(0, "Code");
+            grid->SetColLabelValue(1, "Name");
             grid->SetColLabelValue(2, "Fam. Rel.");
             grid->SetColLabelValue(3, "Event");
             grid->SetColLabelValue(4, "Fact");

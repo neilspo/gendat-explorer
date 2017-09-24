@@ -54,7 +54,7 @@ enum class gde_data_tag
     PLAC        ///< place
 };
 
-    std::string data_tag_text (gde_data_tag data_tag);
+std::string data_tag_text (gde_data_tag data_tag);
 
 
 class gde_source_map
@@ -104,6 +104,7 @@ private:
     // A couple of private utility functions.
 
     std::vector<std::string> split (const std::string& input, const std::string& regex);
+    void test_inputs (int source_num, int field_num) const;
 };
 
 #endif
