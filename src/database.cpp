@@ -6,7 +6,7 @@
 /// This class handles all low-level communications to and from the actual MySQL database server.
 /// Any errors received from the server will generate a C++ exception, which will contain a message
 /// that describes the problem.
-/// 
+///
 
 
 #include <string>
@@ -98,7 +98,7 @@ void database::disconnect()
 /// This member function transfers one STL query to the database server for execution and obtains
 /// the result set (if one was produced).
 ///
-/// If the query returned no results, then `num_cols` is set to zero. 
+/// If the query returned no results, then `num_cols` is set to zero.
 /// Non-SELECT queries that alter the database (such as INSERT, UPDATE, or DELETE) never
 /// produce a result set. For these types of queries, `num_rows` is set to the number of rows
 /// that were changed (affected) in the database.
@@ -160,7 +160,7 @@ void database::execute(std::string query, db_row_set& row_set)
 	// Prepare the base class for the database query.
 
 	row_set.clear();
-	
+
 	// Prepare a child class for the query.
 
 	row_set.setup_child_phase_1();
@@ -212,7 +212,7 @@ void database::execute(std::string query, db_row_set& row_set)
 		// Determine if this column auto-increments
 
 		row_set.col_desc_list[i].my_auto_inc = (0 != (mysql_fields[i].flags & AUTO_INCREMENT_FLAG));
-		
+
 		// Data type
 
 		switch (mysql_fields[i].type)
@@ -339,7 +339,7 @@ void database::execute(std::string query, db_row_set& row_set)
 unsigned int database::execute(std::string query)
 {
 	// Allocate results_set, in case this member function is incorrectly called with a query that
-	// will return results.  
+	// will return results.
 
 	std::vector <std::vector <std::string>> result_set;
 	unsigned int num_rows;
@@ -383,7 +383,7 @@ std::string database::escape_str(std::string str)
 	char* esc_str = new char[strlen(str.c_str()) * 2 + 1];
 	unsigned int length = mysql_real_escape_string(db_connection, esc_str, str.c_str(), str.length());
 	std::string result(esc_str, length);
-	delete esc_str;
+	delete[] esc_str;
 	return result;
 }
 
@@ -453,13 +453,13 @@ void database::execute_1(
 
 			row = mysql_fetch_row(result);
 			if (row == NULL)
-				throw std::runtime_error(mysql_error(db_connection));			
+				throw std::runtime_error(mysql_error(db_connection));
 
 			// Resize the data arrays to hold the correct number of columns.
 
 			if (null_fields_ptr != nullptr) (*null_fields_ptr)[i].resize(num_cols);
 			result_set[i].resize(num_cols);
-			
+
 			// Copy the data to the final location.
 
 			for (unsigned int j = 0; j < num_cols; j++)
