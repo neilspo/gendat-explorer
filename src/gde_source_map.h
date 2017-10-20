@@ -74,7 +74,6 @@ public:
     gde_source_map (const db_map& source_map);
 
     gde_data_tag    src_type         (int source_num);
-    std::string     src_type_text    (int source_num);
 
     gde_relation    fam_rel          (int source_num, int field_num);
     std::string     fam_rel_text     (int source_num, int field_num);

@@ -149,7 +149,7 @@ void gdw_show_src_info::process_window_events (wxEvent* event)
             std::string source_name        = my_source_map.src_name(source);
             std::string source_description = my_source_map.src_description(source);
             std::string source_db_table    = my_source_map.src_db_table(source);
-            std::string source_type        = test.src_type_text(source);
+            std::string source_type        = data_tag_text(test.src_type(source));
 
             // Show the descriptive information in a readonly wxTextCtrl.
 

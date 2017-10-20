@@ -133,8 +133,7 @@ gde_source_map::gde_source_map (const db_map& source_map)
 
     for (int i=0; i<num_sources; i++)
     {
-        int num_fields = source_map.num_fields(i);
-        for (int j=0; j<num_fields; j++)
+        for (int j=0; j<source_map.num_fields(i); j++)
         {
             std::string fld_code = source_map.fld_code(i,j);
             if (!fld_code.empty())
@@ -184,13 +183,46 @@ gde_source_map::gde_source_map (const db_map& source_map)
                     tokens.erase(tokens.begin());
                 }
 
+                // Now do some basic sanity tests on the field code.
 
+                bool valid_field_code = true;
+
+                //-----The field must describe some fact about something.
+
+                if (s_field.fact == gde_data_tag::UNDEFINED)
+                    valid_field_code = false;
+
+                //-----There should be no unread tokens left.
+
+                if (!tokens.empty())
+                    valid_field_code = false;
+
+                //-----Only marriages should have brides and grooms.
+
+                if (source_type[i] != gde_data_tag::MARR)
+                {
+                    switch (s_field.fam_relation)
+                    {
+                    case gde_relation::BRIDE:
+                    case gde_relation::BRIDE_FATHER:
+                    case gde_relation::BRIDE_MOTHER:
+                    case gde_relation::GROOM:
+                    case gde_relation::GROOM_FATHER:
+                    case gde_relation::GROOM_MOTHER:
+                        valid_field_code = false;
+                    default:
+                        break;
+                    }
+                }
 
                 // If this field code is a valid, then save it in the list of
                 // searchable fields.
 
-                searchable_field_lookup[i][j] = searchable_field_list.size();
-                searchable_field_list.push_back(s_field);
+                if (valid_field_code)
+                {
+                    searchable_field_lookup[i][j] = searchable_field_list.size();
+                    searchable_field_list.push_back(s_field);
+                }
             }
         }
     }
@@ -201,6 +233,19 @@ gde_source_map::gde_source_map (const db_map& source_map)
 
 
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// \brief Get source type
+///
+/// This member function returns the data type tag of the specified GenDat source.
+///
+/// \param[in]  source_num   source number
+///
+/// \return     source type
+///
+/// \exception std::out_of_range thrown if the source number is out of range
+///
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 gde_data_tag gde_source_map::src_type (int source_num)
 {
@@ -208,14 +253,6 @@ gde_data_tag gde_source_map::src_type (int source_num)
         throw std::out_of_range("Source number in gde_source_map::src_type is out of range");
     return source_type[source_num];
 }
-
-
-
-std::string gde_source_map::src_type_text(int source_num)
-{
-    return data_tag_text(src_type(source_num));
-}
-
 
 
 
@@ -231,7 +268,7 @@ std::string gde_source_map::src_type_text(int source_num)
 ///
 /// \return     relationship
 ///
-/// \exception std::out_of_range thrown if the source number is out of range
+/// \exception std::out_of_range thrown the source or field number is out of range
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -258,7 +295,7 @@ gde_relation gde_source_map::fam_rel (int source_num, int field_num)
 ///
 /// \return     text description of the relationship
 ///
-/// \exception std::out_of_range thrown if the source number is out of range
+/// \exception std::out_of_range thrown the source or field number is out of range
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -295,14 +332,18 @@ std::string gde_source_map::fam_rel_text(int source_num, int field_num)
 ///
 /// \brief Get GenDat event type
 ///
-/// This member function returns the primary field type of the specified field.
+/// This member function returns the GenDat event type of the specified field.
+///
+/// These events are milestones in a person's life, which occur at a specific time and place.
+/// The currently defined GenDat events are: birth, baptism, confirmation, death, burial,
+/// marriage and divorce.
 ///
 /// \param[in]  source_num   Source number
 /// \param[in]  field_num    Field number
 ///
 /// \return     event type
 ///
-/// \exception std::out_of_range thrown if the source number is out of range
+/// \exception std::out_of_range thrown the source or field number is out of range
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -317,6 +358,27 @@ gde_data_tag gde_source_map::event_type(int source_num, int field_num)
 }
 
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// \brief Get GenDat fact type
+///
+/// This member function returns the GenDat fact type of the specified field.
+///
+/// These fact types refer to some attribute of an event or person.
+/// The currently defined fact types are: surname, given names(s), name, sex, age, date,
+/// place, residence, occupation, note, XREF (cross-reference), database key, marital status,
+/// cemetery and inscription.
+///
+/// \param[in]  source_num   Source number
+/// \param[in]  field_num    Field number
+///
+/// \return     fact type
+///
+/// \exception std::out_of_range thrown the source or field number is out of range
+///
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 gde_data_tag gde_source_map::fact_type(int source_num, int field_num)
 {
    test_inputs(source_num, field_num);
@@ -328,6 +390,24 @@ gde_data_tag gde_source_map::fact_type(int source_num, int field_num)
 }
 
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// \brief Get GenDat fact type modifier
+///
+/// This member function returns the GenDat fact type modifier of the specified field.
+///
+/// The currently defined fact type modifiers are: year, month, day, community, county and
+/// INDI (a type of cross-reference).
+///
+/// \param[in]  source_num   Source number
+/// \param[in]  field_num    Field number
+///
+/// \return     fact type modifier
+///
+/// \exception std::out_of_range thrown the source or field number is out of range
+///
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 gde_data_tag gde_source_map::fact_type_mod(int source_num, int field_num)
 {
@@ -341,6 +421,17 @@ gde_data_tag gde_source_map::fact_type_mod(int source_num, int field_num)
 
 
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// \brief Get text description of a GenDat data tag
+///
+/// \param[in]  data_tag     GenDat data tag
+///
+/// \return     text description of the data tag
+///
+/// \exception std::out_of_range thrown the source or field number is out of range
+///
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 std::string data_tag_text(gde_data_tag data_tag)
 {
