@@ -157,30 +157,39 @@ gde_source_map::gde_source_map (const db_map& source_map)
 
                 // Read the GenDat event type, if there is one.
 
-                auto iter_2 = event_type_map.find(tokens[0]);
-                if (iter_2 != event_type_map.end())
+                if (!tokens.empty())
                 {
-                    s_field.event = iter_2->second;
-                    tokens.erase(tokens.begin());
+                    auto iter_2 = event_type_map.find(tokens[0]);
+                    if (iter_2 != event_type_map.end())
+                    {
+                        s_field.event = iter_2->second;
+                        tokens.erase(tokens.begin());
+                    }
                 }
 
                 // Read the GenDat fact type. This is the only mandatory part of
                 // a GenDat field code.
 
-                auto iter_3 = fact_type_map.find(tokens[0]);
-                if (iter_3 != fact_type_map.end())
+                if (!tokens.empty())
                 {
-                    s_field.fact = iter_3->second;
-                    tokens.erase(tokens.begin());
+                    auto iter_3 = fact_type_map.find(tokens[0]);
+                    if (iter_3 != fact_type_map.end())
+                    {
+                        s_field.fact = iter_3->second;
+                        tokens.erase(tokens.begin());
+                    }
                 }
 
                 // Read the GenDat fact type modifier, if the is one.
 
-                auto iter_4 = fact_type_mod_map.find(tokens[0]);
-                if (iter_4 != fact_type_mod_map.end())
+                if (!tokens.empty())
                 {
-                    s_field.fact_mod = iter_4->second;
-                    tokens.erase(tokens.begin());
+                    auto iter_4 = fact_type_mod_map.find(tokens[0]);
+                    if (iter_4 != fact_type_mod_map.end())
+                    {
+                        s_field.fact_mod = iter_4->second;
+                        tokens.erase(tokens.begin());
+                    }
                 }
 
                 // Now do some basic sanity tests on the field code.
@@ -274,7 +283,7 @@ gde_data_tag gde_source_map::src_type (int source_num)
 
 gde_relation gde_source_map::fam_rel (int source_num, int field_num)
 {
-   test_inputs(source_num, field_num);
+    test_inputs(source_num, field_num);
     int i = searchable_field_lookup[source_num][field_num];
     if (i<0)
         return gde_relation::UNDEFINED;
@@ -381,7 +390,7 @@ gde_data_tag gde_source_map::event_type(int source_num, int field_num)
 
 gde_data_tag gde_source_map::fact_type(int source_num, int field_num)
 {
-   test_inputs(source_num, field_num);
+    test_inputs(source_num, field_num);
     int i = searchable_field_lookup[source_num][field_num];
     if (i<0)
         return gde_data_tag::UNDEFINED;
@@ -411,7 +420,7 @@ gde_data_tag gde_source_map::fact_type(int source_num, int field_num)
 
 gde_data_tag gde_source_map::fact_type_mod(int source_num, int field_num)
 {
-   test_inputs(source_num, field_num);
+    test_inputs(source_num, field_num);
     int i = searchable_field_lookup[source_num][field_num];
     if (i<0)
         return gde_data_tag::UNDEFINED;
