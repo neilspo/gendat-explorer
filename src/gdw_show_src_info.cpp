@@ -34,7 +34,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 gdw_show_src_info::gdw_show_src_info(wxWindow* parent, database* db,
-                                     db_map source_map) : gdw_panel(parent)
+                                     gde_source_map source_map) : gdw_panel(parent)
 {
     my_db          = db;
     my_source_map = source_map;
@@ -140,16 +140,12 @@ void gdw_show_src_info::process_window_events (wxEvent* event)
 
             //-----Display descriptive information about the source---------------------------------
 
-            // ******************* For test purposes **************************
-            gde_source_map test(my_source_map);
-            // ****************************************************************
-
             // Get some descriptive information about the selected GenDat source.
 
             std::string source_name        = my_source_map.src_name(source);
             std::string source_description = my_source_map.src_description(source);
             std::string source_db_table    = my_source_map.src_db_table(source);
-            std::string source_type        = data_tag_text(test.src_type(source));
+            std::string source_type        = data_tag_text(my_source_map.src_type(source));
 
             // Show the descriptive information in a readonly wxTextCtrl.
 
@@ -235,10 +231,10 @@ void gdw_show_src_info::process_window_events (wxEvent* event)
                     {
                         grid->SetCellValue(j, 0, my_source_map.fld_code(source,i));
                         grid->SetCellValue(j, 1, my_source_map.fld_name(source,i));
-                        grid->SetCellValue(j, 2, test.fam_rel_text(source,i));
-                        grid->SetCellValue(j, 3, data_tag_text(test.event_type(source,i)));
-                        grid->SetCellValue(j, 4, data_tag_text(test.fact_type(source,i)));
-                        grid->SetCellValue(j, 5, data_tag_text(test.fact_type_mod(source,i)));
+                        grid->SetCellValue(j, 2, my_source_map.fam_rel_text(source,i));
+                        grid->SetCellValue(j, 3, data_tag_text(my_source_map.event_type(source,i)));
+                        grid->SetCellValue(j, 4, data_tag_text(my_source_map.fact_type(source,i)));
+                        grid->SetCellValue(j, 5, data_tag_text(my_source_map.fact_type_mod(source,i)));
                         break;
                     }
                 }

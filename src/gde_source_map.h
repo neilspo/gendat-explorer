@@ -68,10 +68,10 @@ enum class gde_data_tag
 std::string data_tag_text (gde_data_tag data_tag);
 
 
-class gde_source_map
+class gde_source_map : public db_map
 {
 public:
-    gde_source_map (const db_map& source_map);
+    void            load_defs        (database &db, std::string src_defs, std::string fld_defs);
 
     gde_data_tag    src_type         (int source_num);
 
@@ -79,7 +79,7 @@ public:
     std::string     fam_rel_text     (int source_num, int field_num);
 
     gde_data_tag    event_type       (int source_num, int field_num);
-    gde_data_tag    fact_type        (int source_num, int field_num);
+    gde_data_tag    fact_type        (int source_num, int field_num) const;
     gde_data_tag    fact_type_mod    (int source_num, int field_num);
 
     void            find_fields      (std::vector<int>& fld_list,

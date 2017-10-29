@@ -15,15 +15,22 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
-/// \brief Constructor
+/// \brief Load source and field definitions from database
 ///
-/// \param[in]  source_map   database map object
+/// \param[in]  db         database connection, which must currently be open
+/// \param[in]  src_defs   database table with the source definitions
+/// \param[in]  fld_defs   database table with the field definitions
+///
+/// \exception std::runtime_error thrown if the database server reports an error
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-gde_source_map::gde_source_map (const db_map& source_map)
+void gde_source_map::load_defs(database &db, std::string src_defs, std::string fld_defs)
 {
+    // Run the overloaded version of this function from the base class.
+
+    db_map::load_defs (db, src_defs, fld_defs);
+
     // Define the possible GenDAT source types.
 
     std::unordered_map <std::string, gde_data_tag> source_type_map;
@@ -94,19 +101,16 @@ gde_source_map::gde_source_map (const db_map& source_map)
 
     // If there are no defined sources, then there is nothing to do.
 
-    int num_sources = source_map.num_sources();
-
-    if (num_sources <= 0)
+    if (num_sources() <= 0)
         return;
 
     // Initialize the searchable field lookup table.
 
-    searchable_field_lookup.resize(num_sources);
-    for (int i=0; i<num_sources; i++)
+    searchable_field_lookup.resize(num_sources());
+    for (int i=0; i<num_sources(); i++)
     {
-        int num_fields = source_map.num_fields(i);
-        searchable_field_lookup[i].resize(num_fields);
-        for (int j=0; j<num_fields; j++)
+        searchable_field_lookup[i].resize(num_fields(i));
+        for (int j=0; j<num_fields(i); j++)
         {
             searchable_field_lookup[i][j] = -1;
         }
@@ -116,10 +120,10 @@ gde_source_map::gde_source_map (const db_map& source_map)
     // Interpret the meanings of the type codes for all of the sources.
     //-------------------------------------------------------------------------
 
-    source_type.resize(num_sources);
-    for (int i=0; i<num_sources; i++)
+    source_type.resize(num_sources());
+    for (int i=0; i<num_sources(); i++)
     {
-        auto iter = source_type_map.find(source_map.src_code(i));
+        auto iter = source_type_map.find(src_code(i));
         if (iter == source_type_map.end())
             source_type[i]  = gde_data_tag::UNDEFINED;
         else
@@ -131,12 +135,12 @@ gde_source_map::gde_source_map (const db_map& source_map)
     // source and field code combinations.
     //-------------------------------------------------------------------------
 
-    for (int i=0; i<num_sources; i++)
+    for (int i=0; i<num_sources(); i++)
     {
-        for (int j=0; j<source_map.num_fields(i); j++)
+        for (int j=0; j<num_fields(i); j++)
         {
-            std::string fld_code = source_map.fld_code(i,j);
-            if (!fld_code.empty())
+            std::string my_fld_code = fld_code(i,j);
+            if (!my_fld_code.empty())
             {
                 searchable_field s_field;
                 s_field.source_num = i;
@@ -144,7 +148,7 @@ gde_source_map::gde_source_map (const db_map& source_map)
 
                 // Split apart the separate parts of the field code into a vector of tokens.
 
-                std::vector<std::string> tokens = split(fld_code, "\\_");
+                std::vector<std::string> tokens = split(my_fld_code, "\\_");
 
                 // Read the family relationship part of the field code, if there is one.
 
@@ -235,9 +239,6 @@ gde_source_map::gde_source_map (const db_map& source_map)
             }
         }
     }
-
-
-
 }
 
 
@@ -388,7 +389,7 @@ gde_data_tag gde_source_map::event_type(int source_num, int field_num)
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-gde_data_tag gde_source_map::fact_type(int source_num, int field_num)
+gde_data_tag gde_source_map::fact_type(int source_num, int field_num) const
 {
     test_inputs(source_num, field_num);
     int i = searchable_field_lookup[source_num][field_num];

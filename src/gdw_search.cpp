@@ -31,7 +31,7 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-gdw_search::gdw_search(wxWindow* parent, database* db, const db_map& source_map) :
+gdw_search::gdw_search(wxWindow* parent, database* db, const gde_source_map& source_map) :
     gdw_panel(parent), my_source_map(source_map)
 {
     my_db             = db;
@@ -115,12 +115,6 @@ void gdw_search::process_execute()
     std::string community  (wx_community->GetValue());
     std::string county     (wx_county->GetValue());
 
-    //*********************************************************************************************
-    // This next line is here for test purposes only.
-    //*********************************************************************************************
-
-    gde_source_map test(my_source_map);
-
     // Find all of the GenDat sources that have a "surname" field.
 
     int num_sources = my_source_map.num_sources();
@@ -128,7 +122,7 @@ void gdw_search::process_execute()
     {
         for (int j=0; j<my_source_map.num_fields(i); j++)
         {
-            if (test.fact_type(i,j) == gde_data_tag::SURN)
+            if (my_source_map.fact_type(i,j) == gde_data_tag::SURN)
             {
                 std::cout << my_source_map.src_db_table(i) << ", " << my_source_map.fld_db_name(i,j) << std::endl;
             }

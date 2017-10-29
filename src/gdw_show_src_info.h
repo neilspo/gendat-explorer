@@ -17,14 +17,14 @@
 #include <wx/treectrl.h>
 
 #include "database.h"
-#include "db_map.h"
+#include "gde_source_map.h"
 #include "gdw_panel.h"
 #include "id_manager.h"
 
 class gdw_show_src_info : public gdw_panel
 {
 public:
-    gdw_show_src_info (wxWindow* parent, database* db, db_map source_map);
+    gdw_show_src_info (wxWindow* parent, database* db, gde_source_map source_map);
     ~gdw_show_src_info();
 
 
@@ -39,7 +39,7 @@ private:
     // Private variables.
 
     database*           my_db;
-    db_map              my_source_map;
+    gde_source_map      my_source_map;
     id_manager          id_mgr;
     unsigned int        tree_id;
     wxTreeCtrl         *tree;
