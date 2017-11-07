@@ -115,6 +115,32 @@ void gdw_search::process_execute()
     std::string community  (wx_community->GetValue());
     std::string county     (wx_county->GetValue());
 
+    gde_searchable_fields searchable_fields(my_source_map);
+
+    searchable_fields.req_field(gde_data_tag::UNDEFINED,
+                                gde_relation::UNDEFINED,
+                                gde_data_tag::UNDEFINED,
+                                gde_data_tag::SURN,
+                                gde_data_tag::UNDEFINED);
+
+    searchable_fields.opt_field(gde_data_tag::UNDEFINED,
+                                gde_relation::UNDEFINED,
+                                gde_data_tag::UNDEFINED,
+                                gde_data_tag::GIVN,
+                                gde_data_tag::UNDEFINED);
+
+    searchable_fields.opt_field(gde_data_tag::UNDEFINED,
+                                gde_relation::UNDEFINED,
+                                gde_data_tag::UNDEFINED,
+                                gde_data_tag::PLAC,
+                                gde_data_tag::COMMUNITY);
+
+    searchable_fields.opt_field(gde_data_tag::UNDEFINED,
+                                gde_relation::UNDEFINED,
+                                gde_data_tag::UNDEFINED,
+                                gde_data_tag::PLAC,
+                                gde_data_tag::COUNTY);
+
     // Find all of the GenDat sources that have a "surname" field.
 
     int num_sources = my_source_map.num_sources();

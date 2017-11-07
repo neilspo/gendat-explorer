@@ -5,6 +5,13 @@
 ///
 
 
+///
+/// \class gde_searchable_fields gde_source_map.h
+///
+/// \brief Handles a set of searchable GenDat database fields
+///
+
+
 #include <regex>
 #include <unordered_map>
 #include <stdexcept>
@@ -553,4 +560,43 @@ void gde_source_map::test_inputs (int source_num, int field_num) const
     if (source_num < 0 || source_num >= (int)searchable_field_lookup.size() ||
             (field_num < 0 || field_num >= (int)searchable_field_lookup[source_num].size()))
         throw std::out_of_range("Source or field number in gde_source_map:: is out of range");
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// \brief Constructor
+///
+/// \param[in]  source_map   object containing the GenDat source definitions
+///
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+gde_searchable_fields::gde_searchable_fields(const gde_source_map& source_map) :
+    my_source_map(source_map)
+{
+
+}
+
+
+
+
+void gde_searchable_fields::req_field (gde_data_tag src_type,
+                                       gde_relation fld_fam_rel,
+                                       gde_data_tag fld_event,
+                                       gde_data_tag fld_fact,
+                                       gde_data_tag fld_fact_mod)
+{
+
+}
+
+
+
+void gde_searchable_fields::opt_field (gde_data_tag src_type,
+                                       gde_relation fld_fam_rel,
+                                       gde_data_tag fld_event,
+                                       gde_data_tag fld_fact,
+                                       gde_data_tag fld_fact_mod)
+{
+
 }
