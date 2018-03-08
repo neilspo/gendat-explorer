@@ -23,7 +23,8 @@ Constructor
 
 database::database()
 {
-	db_connected = false;
+	db_connected  = false;
+	db_connection = nullptr;
 }
 
 

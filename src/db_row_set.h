@@ -76,12 +76,12 @@ private:
 	std::string  my_name;
 	std::string  my_name_in_db;
 	std::string  my_table;
-	db_data_type my_type;
-	unsigned int my_length;
-	unsigned int my_decimals;
-	bool         my_null_ok;
-	bool         my_pri_key;
-	bool         my_auto_inc;
+	db_data_type my_type     = DB_UNKNOWN_TYPE;
+	unsigned int my_length   = 0;
+	unsigned int my_decimals = 0;
+	bool         my_null_ok  = false;
+	bool         my_pri_key  = false;
+	bool         my_auto_inc = false;
 
 	friend class database;
 };
