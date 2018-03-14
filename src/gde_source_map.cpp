@@ -15,6 +15,7 @@
 #include <regex>
 #include <unordered_map>
 #include <stdexcept>
+#include <iostream>
 
 #include "gde_source_map.h"
 
@@ -586,7 +587,23 @@ void gde_searchable_fields::req_field (gde_data_tag src_type,
                                        gde_data_tag fld_event,
                                        gde_data_tag fld_fact,
                                        gde_data_tag fld_fact_mod)
+
 {
+    // Find all of the GenDat sources that have a "surname" field.
+
+    int num_fields = my_source_map.searchable_field_list.size();
+
+    for (int i=0; i<num_fields; i++)
+    {
+        if (my_source_map.searchable_field_list[i].fact == fld_fact)
+        {
+            int src = my_source_map.searchable_field_list[i].source_num;
+            int fld = my_source_map.searchable_field_list[i].field_num;
+
+            std::cout << my_source_map.src_db_table(src) << ", " << my_source_map.fld_db_name(src,fld) << std::endl;
+        }
+    }
+
 
 }
 

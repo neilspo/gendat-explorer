@@ -131,6 +131,8 @@ public:
                     gde_data_tag fld_fact,
                     gde_data_tag fld_fact_mod);
 
+    bool get_field (int index, int& source, std::vector<int>& field);
+
 private:
     const gde_source_map&     my_source_map;
 };

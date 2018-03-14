@@ -141,19 +141,6 @@ void gdw_search::process_execute()
                                 gde_data_tag::PLAC,
                                 gde_data_tag::COUNTY);
 
-    // Find all of the GenDat sources that have a "surname" field.
-
-    int num_sources = my_source_map.num_sources();
-    for (int i=0; i<num_sources; i++)
-    {
-        for (int j=0; j<my_source_map.num_fields(i); j++)
-        {
-            if (my_source_map.fact_type(i,j) == gde_data_tag::SURN)
-            {
-                std::cout << my_source_map.src_db_table(i) << ", " << my_source_map.fld_db_name(i,j) << std::endl;
-            }
-        }
-    }
 
 
 

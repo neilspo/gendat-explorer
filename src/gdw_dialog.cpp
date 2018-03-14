@@ -6,6 +6,7 @@
 /// This class handles ...
 ///
 
+
 #include <wx/wxprec.h>
 
 #ifndef WX_PRECOMP
@@ -48,7 +49,7 @@ gdw_db_connect::gdw_db_connect(database* db) : wxDialog(NULL, wxID_ANY, "Databas
 
   gdw_field_group field_group(panel, vbox, wxID_ANY, 100, -1);
 
-  wx_hostname = field_group.add_field ("Host Name", "apollo");
+  wx_hostname = field_group.add_field ("Host Name", "localhost");
   wx_username = field_group.add_field ("User Name", "test_RO");
   wx_password = field_group.add_field ("Password",  "");
 
