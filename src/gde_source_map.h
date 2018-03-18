@@ -74,7 +74,7 @@ std::string data_tag_text (gde_data_tag data_tag);
 
 class gde_source_map : public db_map
 {
-    friend class gde_searchable_fields;
+    friend class gde_search_map;
 
 public:
     void            load_defs        (database &db, std::string src_defs, std::string fld_defs);
@@ -114,10 +114,10 @@ private:
 
 
 
-class gde_searchable_fields
+class gde_search_map
 {
 public:
-    gde_searchable_fields(const gde_source_map& source_map);
+    gde_search_map(const gde_source_map& source_map);
 
     void req_field (gde_data_tag src_type,
                     gde_relation fld_fam_rel,

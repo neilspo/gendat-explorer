@@ -115,27 +115,27 @@ void gdw_search::process_execute()
     std::string community  (wx_community->GetValue());
     std::string county     (wx_county->GetValue());
 
-    gde_searchable_fields searchable_fields(my_source_map);
+    gde_search_map my_search_map(my_source_map);
 
-    searchable_fields.req_field(gde_data_tag::UNDEFINED,
+    my_search_map.req_field(gde_data_tag::UNDEFINED,
                                 gde_relation::UNDEFINED,
                                 gde_data_tag::UNDEFINED,
                                 gde_data_tag::SURN,
                                 gde_data_tag::UNDEFINED);
 
-    searchable_fields.opt_field(gde_data_tag::UNDEFINED,
+    my_search_map.opt_field(gde_data_tag::UNDEFINED,
                                 gde_relation::UNDEFINED,
                                 gde_data_tag::UNDEFINED,
                                 gde_data_tag::GIVN,
                                 gde_data_tag::UNDEFINED);
 
-    searchable_fields.opt_field(gde_data_tag::UNDEFINED,
+    my_search_map.opt_field(gde_data_tag::UNDEFINED,
                                 gde_relation::UNDEFINED,
                                 gde_data_tag::UNDEFINED,
                                 gde_data_tag::PLAC,
                                 gde_data_tag::COMMUNITY);
 
-    searchable_fields.opt_field(gde_data_tag::UNDEFINED,
+    my_search_map.opt_field(gde_data_tag::UNDEFINED,
                                 gde_relation::UNDEFINED,
                                 gde_data_tag::UNDEFINED,
                                 gde_data_tag::PLAC,

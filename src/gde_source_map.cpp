@@ -3,12 +3,11 @@
 ///
 /// \brief Handles information about GenDat data sources
 ///
-
-
+/// This class extends the `db_map` class by defining a set of <em>use codes</em>, which
+/// describe the various types of GenDat data sources and the meanings of the data fields
+/// in those sources.
 ///
-/// \class gde_searchable_fields gde_source_map.h
-///
-/// \brief Handles a set of searchable GenDat database fields
+/// The
 ///
 
 
@@ -256,6 +255,9 @@ void gde_source_map::load_defs(database &db, std::string src_defs, std::string f
 /// \brief Get source type
 ///
 /// This member function returns the data type tag of the specified GenDat source.
+///
+/// The currently defined GenDat source types are: birth, baptism, confirmation, death, burial,
+/// marriage, divorce, census and will records.
 ///
 /// \param[in]  source_num   source number
 ///
@@ -565,6 +567,20 @@ void gde_source_map::test_inputs (int source_num, int field_num) const
 
 
 
+
+
+//--------------------------------------------------------------------------------------------------
+
+///
+/// \class gde_search_map gde_source_map.h
+///
+/// \brief Handles a GenDat search map
+///
+/// This class ...
+///
+
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
 /// \brief Constructor
@@ -573,7 +589,7 @@ void gde_source_map::test_inputs (int source_num, int field_num) const
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-gde_searchable_fields::gde_searchable_fields(const gde_source_map& source_map) :
+gde_search_map::gde_search_map(const gde_source_map& source_map) :
     my_source_map(source_map)
 {
 
@@ -582,7 +598,19 @@ gde_searchable_fields::gde_searchable_fields(const gde_source_map& source_map) :
 
 
 
-void gde_searchable_fields::req_field (gde_data_tag src_type,
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// \brief Add GenDat sources with a required field
+///
+/// This member function ...
+///
+/// \param[in]  src_type     Source type
+/// \param[in]  fld_fam_rel  Field - family relationship
+///
+///
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void gde_search_map::req_field (gde_data_tag src_type,
                                        gde_relation fld_fam_rel,
                                        gde_data_tag fld_event,
                                        gde_data_tag fld_fact,
@@ -609,7 +637,7 @@ void gde_searchable_fields::req_field (gde_data_tag src_type,
 
 
 
-void gde_searchable_fields::opt_field (gde_data_tag src_type,
+void gde_search_map::opt_field (gde_data_tag src_type,
                                        gde_relation fld_fam_rel,
                                        gde_data_tag fld_event,
                                        gde_data_tag fld_fact,
