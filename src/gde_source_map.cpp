@@ -3,11 +3,23 @@
 ///
 /// \brief Handles information about GenDat data sources
 ///
-/// This class extends the `db_map` class by defining a set of <em>use codes</em>, which
-/// describe the various types of GenDat data sources and the meanings of the data fields
-/// in those sources.
+/// This class extends the `db_map` class by defining a set of source and field codes
+/// that describe the types of data in the GenDat database.
 ///
-/// The
+/// Here, the term <em>GenDat source</em> will refer to any database table that
+/// holds a set of data records that were all extracted from one particular type
+/// of genealogical source. Examples would be data transcribed from official birth
+/// records for some province, from the marriage records from some church, or
+/// from an official census. See `gde_source_map::src_type()` for the possible
+/// GenDat source types.
+///
+/// The GenDat field codes describe the meanings of the database fields. These
+/// field codes are composed of the following some or all of the following components:
+///
+/// - family relationship type (see `gde_source_map::fam_rel()`)
+/// - event type (see `gde_source_map::event_type()`)
+/// - fact type (see `gde_source_map::fact_type()`)
+/// - fact type modifier (see `gde_source_map::fact_type_mod()`)
 ///
 
 
