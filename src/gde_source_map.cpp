@@ -14,7 +14,7 @@
 /// GenDat source types.
 ///
 /// The GenDat field codes describe the meanings of the database fields. These
-/// field codes are composed of the following some or all of the following components:
+/// field codes are composed of some or all of the following components:
 ///
 /// - family relationship type (see `gde_source_map::fam_rel()`)
 /// - event type (see `gde_source_map::event_type()`)
@@ -607,6 +607,26 @@ gde_search_map::gde_search_map(const gde_source_map& source_map) :
 
 }
 
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// \brief Add GenDat sources of a particular type to the search list
+///
+/// This member function adds all GenDat sources of the given type to the search. It can be called
+/// multiple times to include more that one type of source.
+///
+/// If this member function is never called, then all sources will be included in the search.
+///
+/// \param[in]  src_type     Source type
+///
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+void gde_search_map::add_source (gde_data_tag src_type)
+{
+
+}
 
 
 

@@ -117,6 +117,13 @@ void gdw_search::process_execute()
 
     gde_search_map my_search_map(my_source_map);
 
+    // Include birth and marriage records in the search.
+
+    my_search_map.add_source (gde_data_tag::BIRT);
+    my_search_map.add_source (gde_data_tag::MARR);
+
+    // Now select the fields that will be included in the search.
+
     my_search_map.req_field(gde_data_tag::UNDEFINED,
                                 gde_relation::UNDEFINED,
                                 gde_data_tag::UNDEFINED,
