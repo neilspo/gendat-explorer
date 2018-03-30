@@ -604,76 +604,98 @@ void gde_source_map::test_inputs (int source_num, int field_num) const
 gde_search_map::gde_search_map(const gde_source_map& source_map) :
     my_source_map(source_map)
 {
+    unsigned int num_src = my_source_map.num_sources();
 
+    src_selected.resize(num_src, false);
+    fld_selected.resize(num_src);
+    for (unsigned int src=0; src<num_src; src++)
+        fld_selected[src].resize(my_source_map.num_fields(src), false);
 }
 
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
-/// \brief Add GenDat sources of a particular type to the search list
+/// \brief Add GenDat sources of a particular type
 ///
 /// This member function adds all GenDat sources of the given type to the search. It can be called
 /// multiple times to include more that one type of source.
 ///
-/// If this member function is never called, then all sources will be included in the search.
-///
 /// \param[in]  src_type     Source type
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 void gde_search_map::add_source (gde_data_tag src_type)
 {
-
+    for (unsigned int i=0; i<src_selected.size(); i++)
+        if (my_source_map.source_type[i] == src_type)
+            src_selected[i] = true;
 }
 
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
-/// \brief Add GenDat sources with a required field
+/// \brief Add required fields to database search
 ///
 /// This member function ...
 ///
-/// \param[in]  src_type     Source type
-/// \param[in]  fld_fam_rel  Field - family relationship
-///
+/// \param[in]  fld_fam_rel    Family relationship type
+/// \param[in]  fld_event      Event type
+/// \param[in]  fld_fact       Fact type
+/// \param[in]  fld_fact_mod   Fact type modifier
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void gde_search_map::req_field (gde_data_tag src_type,
-                                       gde_relation fld_fam_rel,
-                                       gde_data_tag fld_event,
-                                       gde_data_tag fld_fact,
-                                       gde_data_tag fld_fact_mod)
+void gde_search_map::req_field (gde_relation fld_fam_rel,
+                                gde_data_tag fld_event,
+                                gde_data_tag fld_fact,
+                                gde_data_tag fld_fact_mod)
 
 {
-    // Find all of the GenDat sources that have a "surname" field.
+    // Find all of the searchable fields that ...
 
-    int num_fields = my_source_map.searchable_field_list.size();
+    int num_searchable_fields = my_source_map.searchable_field_list.size();
 
-    for (int i=0; i<num_fields; i++)
+    for (int i=0; i<num_searchable_fields; i++)
     {
-        if (my_source_map.searchable_field_list[i].fact == fld_fact)
-        {
-            int src = my_source_map.searchable_field_list[i].source_num;
-            int fld = my_source_map.searchable_field_list[i].field_num;
+        int src = my_source_map.searchable_field_list[i].source_num;
 
-            std::cout << my_source_map.src_db_table(src) << ", " << my_source_map.fld_db_name(src,fld) << std::endl;
+        if (src_selected[src])
+        {
+
+
+
+
+            if (my_source_map.searchable_field_list[i].fact == fld_fact)
+            {
+                int fld = my_source_map.searchable_field_list[i].field_num;
+                std::cout << my_source_map.src_db_table(src) << ", " << my_source_map.fld_db_name(src,fld) << std::endl;
+            }
         }
     }
-
 
 }
 
 
 
-void gde_search_map::opt_field (gde_data_tag src_type,
-                                       gde_relation fld_fam_rel,
-                                       gde_data_tag fld_event,
-                                       gde_data_tag fld_fact,
-                                       gde_data_tag fld_fact_mod)
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// \brief Add optional fields to database search
+///
+/// This member function ...
+///
+/// \param[in]  fld_fam_rel    Family relationship type
+/// \param[in]  fld_event      Event type
+/// \param[in]  fld_fact       Fact type
+/// \param[in]  fld_fact_mod   Fact type modifier
+///
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void gde_search_map::opt_field (gde_relation fld_fam_rel,
+                                gde_data_tag fld_event,
+                                gde_data_tag fld_fact,
+                                gde_data_tag fld_fact_mod)
 {
 
 }

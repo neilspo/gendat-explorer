@@ -121,14 +121,12 @@ public:
 
     void add_source (gde_data_tag src_type);
 
-    void req_field  (gde_data_tag src_type,
-                     gde_relation fld_fam_rel,
+    void req_field  (gde_relation fld_fam_rel,
                      gde_data_tag fld_event,
                      gde_data_tag fld_fact,
                      gde_data_tag fld_fact_mod);
 
-    void opt_field  (gde_data_tag src_type,
-                     gde_relation fld_fam_rel,
+    void opt_field  (gde_relation fld_fam_rel,
                      gde_data_tag fld_event,
                      gde_data_tag fld_fact,
                      gde_data_tag fld_fact_mod);
@@ -137,6 +135,9 @@ public:
 
 private:
     const gde_source_map&     my_source_map;
+
+    std::vector<bool>              src_selected;
+    std::vector<std::vector<bool>> fld_selected;
 };
 
 #endif
