@@ -121,32 +121,27 @@ void gde_source_map::load_defs(database &db, std::string src_defs, std::string f
     // If there are no defined sources, then there is nothing to do.
 
     if (num_sources() <= 0)
-        return;
+    return;
 
-    // Initialize the searchable field lookup table.
+    // Initialize the source and field lists.
 
-    searchable_field_lookup.resize(num_sources());
+    gde_source_list.resize(num_sources());
     for (int i=0; i<num_sources(); i++)
-    {
-        searchable_field_lookup[i].resize(num_fields(i));
-        for (int j=0; j<num_fields(i); j++)
-        {
-            searchable_field_lookup[i][j] = -1;
-        }
-    }
+        gde_source_list[i].gde_field_list.resize(num_fields(i));
+
 
     //-------------------------------------------------------------------------
     // Interpret the meanings of the type codes for all of the sources.
     //-------------------------------------------------------------------------
 
-    source_type.resize(num_sources());
     for (int i=0; i<num_sources(); i++)
     {
         auto iter = source_type_map.find(src_code(i));
-        if (iter == source_type_map.end())
-            source_type[i]  = gde_data_tag::UNDEFINED;
-        else
-            source_type[i] = iter->second;
+        if (iter != source_type_map.end())
+        {
+            gde_source_list[i].source_code_ok = true;
+            gde_source_list[i].source_type    = iter->second;
+        }
     }
 
     //-------------------------------------------------------------------------
@@ -161,9 +156,7 @@ void gde_source_map::load_defs(database &db, std::string src_defs, std::string f
             std::string my_fld_code = fld_code(i,j);
             if (!my_fld_code.empty())
             {
-                searchable_field s_field;
-                s_field.source_num = i;
-                s_field.field_num  = j;
+                gde_field_def s_field;
 
                 // Split apart the separate parts of the field code into a vector of tokens.
 
@@ -231,7 +224,7 @@ void gde_source_map::load_defs(database &db, std::string src_defs, std::string f
 
                 //-----Only marriages should have brides and grooms.
 
-                if (source_type[i] != gde_data_tag::MARR)
+                if (gde_source_list[i].source_type!= gde_data_tag::MARR)
                 {
                     switch (s_field.fam_relation)
                     {
@@ -252,8 +245,7 @@ void gde_source_map::load_defs(database &db, std::string src_defs, std::string f
 
                 if (valid_field_code)
                 {
-                    searchable_field_lookup[i][j] = searchable_field_list.size();
-                    searchable_field_list.push_back(s_field);
+                    gde_source_list[i].gde_field_list[j] = s_field;
                 }
             }
         }
@@ -279,11 +271,11 @@ void gde_source_map::load_defs(database &db, std::string src_defs, std::string f
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-gde_data_tag gde_source_map::src_type (int source_num)
+gde_data_tag gde_source_map::src_type (int source_num) const
 {
-    if (source_num < 0 || source_num >= (int)source_type.size())
+    if (source_num < 0 || source_num >= num_sources())
         throw std::out_of_range("Source number in gde_source_map::src_type is out of range");
-    return source_type[source_num];
+    return gde_source_list[source_num].source_type;
 }
 
 
@@ -304,14 +296,10 @@ gde_data_tag gde_source_map::src_type (int source_num)
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-gde_relation gde_source_map::fam_rel (int source_num, int field_num)
+gde_relation gde_source_map::fam_rel (int source_num, int field_num) const
 {
     test_inputs(source_num, field_num);
-    int i = searchable_field_lookup[source_num][field_num];
-    if (i<0)
-        return gde_relation::UNDEFINED;
-    else
-        return searchable_field_list[i].fam_relation;
+    return gde_source_list[source_num].gde_field_list[field_num].fam_relation;
 }
 
 
@@ -331,7 +319,7 @@ gde_relation gde_source_map::fam_rel (int source_num, int field_num)
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-std::string gde_source_map::fam_rel_text(int source_num, int field_num)
+std::string gde_source_map::fam_rel_text(int source_num, int field_num) const
 {
     switch (fam_rel(source_num, field_num))
     {
@@ -379,14 +367,10 @@ std::string gde_source_map::fam_rel_text(int source_num, int field_num)
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-gde_data_tag gde_source_map::event_type(int source_num, int field_num)
+gde_data_tag gde_source_map::event_type(int source_num, int field_num) const
 {
     test_inputs(source_num, field_num);
-    int i = searchable_field_lookup[source_num][field_num];
-    if (i<0)
-        return gde_data_tag::UNDEFINED;
-    else
-        return searchable_field_list[i].event;
+    return gde_source_list[source_num].gde_field_list[field_num].event;
 }
 
 
@@ -414,11 +398,7 @@ gde_data_tag gde_source_map::event_type(int source_num, int field_num)
 gde_data_tag gde_source_map::fact_type(int source_num, int field_num) const
 {
     test_inputs(source_num, field_num);
-    int i = searchable_field_lookup[source_num][field_num];
-    if (i<0)
-        return gde_data_tag::UNDEFINED;
-    else
-        return searchable_field_list[i].fact;
+    return gde_source_list[source_num].gde_field_list[field_num].fact;
 }
 
 
@@ -441,14 +421,10 @@ gde_data_tag gde_source_map::fact_type(int source_num, int field_num) const
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-gde_data_tag gde_source_map::fact_type_mod(int source_num, int field_num)
+gde_data_tag gde_source_map::fact_type_mod(int source_num, int field_num) const
 {
     test_inputs(source_num, field_num);
-    int i = searchable_field_lookup[source_num][field_num];
-    if (i<0)
-        return gde_data_tag::UNDEFINED;
-    else
-        return searchable_field_list[i].fact_mod;
+    return gde_source_list[source_num].gde_field_list[field_num].fact_mod;
 }
 
 
@@ -572,8 +548,8 @@ std::vector<std::string> gde_source_map::split(const std::string& input, const s
 
 void gde_source_map::test_inputs (int source_num, int field_num) const
 {
-    if (source_num < 0 || source_num >= (int)searchable_field_lookup.size() ||
-            (field_num < 0 || field_num >= (int)searchable_field_lookup[source_num].size()))
+    if (source_num < 0 || source_num >= num_sources() ||
+            (field_num < 0 || field_num >= num_fields(source_num)))
         throw std::out_of_range("Source or field number in gde_source_map:: is out of range");
 }
 
@@ -627,8 +603,8 @@ gde_search_map::gde_search_map(const gde_source_map& source_map) :
 
 void gde_search_map::add_source (gde_data_tag src_type)
 {
-    for (unsigned int i=0; i<src_selected.size(); i++)
-        if (my_source_map.source_type[i] == src_type)
+    for (int i=0; i<my_source_map.num_sources(); i++)
+        if (my_source_map.src_type(i) == src_type)
             src_selected[i] = true;
 }
 
@@ -653,28 +629,15 @@ void gde_search_map::req_field (gde_relation fld_fam_rel,
                                 gde_data_tag fld_fact_mod)
 
 {
-    // Find all of the searchable fields that ...
+    // For all of the selected sources,
 
-    int num_searchable_fields = my_source_map.searchable_field_list.size();
-
-    for (int i=0; i<num_searchable_fields; i++)
-    {
-        int src = my_source_map.searchable_field_list[i].source_num;
-
-        if (src_selected[src])
-        {
-
-
-
-
-            if (my_source_map.searchable_field_list[i].fact == fld_fact)
-            {
-                int fld = my_source_map.searchable_field_list[i].field_num;
-                std::cout << my_source_map.src_db_table(src) << ", " << my_source_map.fld_db_name(src,fld) << std::endl;
-            }
-        }
-    }
-
+    for (int i=0; i<my_source_map.num_sources(); i++)
+        if (src_selected[i])
+            for (int j=0; j<my_source_map.num_fields(i); j++)
+                if(my_source_map.fact_type(i,j) == fld_fact)
+                {
+                    std::cout << my_source_map.src_db_table(i) << ", " << my_source_map.fld_db_name(i,j) << std::endl;
+                }
 }
 
 

@@ -74,37 +74,36 @@ std::string data_tag_text (gde_data_tag data_tag);
 
 class gde_source_map : public db_map
 {
-    friend class gde_search_map;
-
 public:
     void            load_defs        (database &db, std::string src_defs, std::string fld_defs);
 
-    gde_data_tag    src_type         (int source_num);
+    gde_data_tag    src_type         (int source_num) const;
 
-    gde_relation    fam_rel          (int source_num, int field_num);
-    std::string     fam_rel_text     (int source_num, int field_num);
-
-    gde_data_tag    event_type       (int source_num, int field_num);
+    gde_relation    fam_rel          (int source_num, int field_num) const;
+    std::string     fam_rel_text     (int source_num, int field_num) const;
+    gde_data_tag    event_type       (int source_num, int field_num) const;
     gde_data_tag    fact_type        (int source_num, int field_num) const;
-    gde_data_tag    fact_type_mod    (int source_num, int field_num);
+    gde_data_tag    fact_type_mod    (int source_num, int field_num) const;
 
 private:
 
-    struct searchable_field
+    struct gde_field_def
     {
-        int          source_num   = -1;
-        int          field_num    = -1;
-        gde_relation fam_relation = gde_relation::UNDEFINED;
-        gde_data_tag event        = gde_data_tag::UNDEFINED;
-        gde_data_tag fact         = gde_data_tag::UNDEFINED;
-        gde_data_tag fact_mod     = gde_data_tag::UNDEFINED;
+        bool           field_code_ok  = false;
+        gde_relation   fam_relation   = gde_relation::UNDEFINED;
+        gde_data_tag   event          = gde_data_tag::UNDEFINED;
+        gde_data_tag   fact           = gde_data_tag::UNDEFINED;
+        gde_data_tag   fact_mod       = gde_data_tag::UNDEFINED;
     };
 
-    // Private variables
+    struct gde_source_def
+    {
+        bool                        source_code_ok = false;
+        gde_data_tag                source_type    = gde_data_tag::UNDEFINED;
+        std::vector<gde_field_def>  gde_field_list;
+    };
 
-    std::vector <gde_data_tag>                   source_type;
-    std::vector <searchable_field>               searchable_field_list;
-    std::vector <std::vector <int>>              searchable_field_lookup;
+    std::vector<gde_source_def>     gde_source_list;
 
     // A couple of private utility functions.
 

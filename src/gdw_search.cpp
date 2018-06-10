@@ -12,6 +12,8 @@
 #include <wx/wx.h>
 #endif
 
+#include <wx/splitter.h>
+
 #include <string>
 #include "gdw_search.h"
 #include "gdw_field_group.h"
@@ -58,22 +60,59 @@ void gdw_search::process_window_draw()
 {
     std::cout << "****** gdw_search::process_window_draw" << std::endl;
 
-    // Use a vertical box sizer to layout the parts of the dialog.
+    // Create a new box sizer to hold everything.
 
-    wxBoxSizer *vbox = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer *sizermain = new wxBoxSizer(wxVERTICAL);
 
-    // Add the user input fields.
+        // Create the splitter window and add it to the sizer.
 
-    gdw_field_group field_group(this, vbox, id_text_event, 150, 300);
-    wx_surname    = field_group.add_field ("Surname",        "");
-    wx_given_name = field_group.add_field ("Given Names(s)", "");
-    wx_community  = field_group.add_field ("Community",      "");
-    wx_county     = field_group.add_field ("County",         "");
+    wxSplitterWindow *splittermain = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_BORDER);
+    splittermain->SetSize(GetClientSize());
+    splittermain->SetSashGravity(0.5);
 
-    // Now display everything.
 
-    this->SetSizer(vbox);
-    SetClientSize(this->GetBestSize());
+
+    splittermain->SetMinimumPaneSize(200);
+    sizermain->Add(splittermain, 1, wxEXPAND, 0);
+
+    std::cout << "GetSashSize " << splittermain->GetSashSize() << std::endl;
+
+    // Left side
+
+    wxPanel *left_side = new wxPanel(splittermain, wxID_ANY);
+
+    wxTextCtrl *txt = new wxTextCtrl(left_side, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_READONLY);
+    (*txt)<< "Left Side" << "\n\n";
+    wxBoxSizer *sizer1 = new wxBoxSizer(wxVERTICAL);
+    sizer1->Add(txt, 1, wxEXPAND, 10);
+    left_side->SetSizer(sizer1);
+
+    //Right side
+
+    wxScrolledWindow *right_side = new wxScrolledWindow(splittermain, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_RAISED);
+
+    draw_search_form(right_side);
+
+    right_side->FitInside(); // ask the sizer about the needed size
+    right_side->SetScrollRate(5, 5);
+
+
+
+
+
+    splittermain->SplitVertically(left_side, right_side);
+
+    this->SetSizerAndFit(sizermain);
+    sizermain->SetSizeHints(this);
+    //SetClientSize(this->GetBestSize());
+
+
+
+
+
+
+
+
 
     // Indicate that there is currently no unsaved user input data.
 
@@ -120,7 +159,7 @@ void gdw_search::process_execute()
     // Include birth and marriage records in the search.
 
     my_search_map.add_source (gde_data_tag::BIRT);
-    //my_search_map.add_source (gde_data_tag::MARR);
+    my_search_map.add_source (gde_data_tag::MARR);
 
     // Now select the fields that will be included in the search.
 
@@ -148,4 +187,23 @@ void gdw_search::process_execute()
 
 
 
+}
+
+
+void::gdw_search::draw_search_form(wxPanel *parent)
+{
+    // Use a vertical box sizer to layout the parts of the dialog.
+
+    wxBoxSizer *vbox = new wxBoxSizer(wxVERTICAL);
+
+    // Add the user input fields.
+
+    gdw_field_group field_group(parent, vbox, id_text_event, 150, 300);
+    wx_surname    = field_group.add_field ("Surname",        "");
+    wx_given_name = field_group.add_field ("Given Names(s)", "");
+    wx_community  = field_group.add_field ("Community",      "");
+    wx_county     = field_group.add_field ("County",         "");
+
+    parent->SetSizer(vbox);
+    vbox->SetSizeHints(parent);
 }

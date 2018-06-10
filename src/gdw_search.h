@@ -14,11 +14,12 @@
 #endif
 
 #include <wx/grid.h>
+#include <wx/treectrl.h>
 
 #include "database.h"
+#include "gde_source_map.h"
 #include "gdw_panel.h"
 #include "id_manager.h"
-#include "gde_source_map.h"
 
 class gdw_search : public gdw_panel
 {
@@ -33,6 +34,8 @@ private:
     bool has_unsaved_data    ();
 
     void process_window_events (wxEvent* event);
+
+    void draw_search_form      (wxPanel*);
 
     database*                 my_db;
     const gde_source_map&     my_source_map;
