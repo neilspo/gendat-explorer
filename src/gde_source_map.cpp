@@ -10,16 +10,25 @@
 /// holds a set of data records that were all extracted from one particular type
 /// of genealogical source. Examples would be data transcribed from official birth
 /// records for some province, from the marriage records from some church, or
-/// from an official census. See `gde_source_map::src_type()` for the possible
-/// GenDat source types.
+/// perhaps from an official census. See `gde_source_map::src_type()` for the
+/// possible GenDat source types.
 ///
-/// The GenDat field codes describe the meanings of the database fields. These
-/// field codes are composed of some or all of the following components:
+/// The term <em>GenDat field</em> will refer to any one of the data fields of
+/// a GenDat source. Every GenDat field will have an associated GenDat field code
+/// that describes the genealogical meaning of that field.
+/// These field codes are composed of some or all of the following components:
 ///
-/// - family relationship type (see `gde_source_map::fam_rel()`)
-/// - event type (see `gde_source_map::event_type()`)
-/// - fact type (see `gde_source_map::fact_type()`)
-/// - fact type modifier (see `gde_source_map::fact_type_mod()`)
+/// - family relationship type
+/// - event type
+/// - fact type
+/// - fact type modifier
+///
+/// Every GenDat field describes some fact about a particular person or about an
+/// event that involved that person. The family relationship types allow
+///
+/// These tags describe who a particular piece of genealogical data is about.
+///
+/// The primary source individual (yuck)
 ///
 
 
@@ -629,7 +638,7 @@ void gde_search_map::req_field (gde_relation fld_fam_rel,
                                 gde_data_tag fld_fact_mod)
 
 {
-    // For all of the selected sources,
+    // For all of the selected sources, ...
 
     for (int i=0; i<my_source_map.num_sources(); i++)
         if (src_selected[i])

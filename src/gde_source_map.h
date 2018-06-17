@@ -10,13 +10,13 @@
 #include "db_map.h"
 
 ///
-/// \brief Family relation codes.
+/// \brief Family relation tags
 ///
 
 enum class gde_relation
 {
-    UNDEFINED = 0,
-    FATHER,
+    UNDEFINED,
+    FATHER,            ///< father of the primary ???
     MOTHER,
     SPOUSE,
     BRIDE,
@@ -24,7 +24,9 @@ enum class gde_relation
     BRIDE_MOTHER,
     GROOM,
     GROOM_FATHER,
-    GROOM_MOTHER
+    GROOM_MOTHER,
+    MATCH_ANY,
+    MATCH_ANY_PRIMARY
 };
 
 ///
