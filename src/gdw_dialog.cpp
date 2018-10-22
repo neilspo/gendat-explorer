@@ -33,47 +33,49 @@
 
 gdw_db_connect::gdw_db_connect(database* db) : wxDialog(NULL, wxID_ANY, "Database Connect")
 {
-  // Keep a pointer to the database object.
+    wxLogMessage("gdw_db_connect Constructor Start");
 
-  my_db = db;
+    // Keep a pointer to the database object.
 
-  // Put everything in a panel.
+    my_db = db;
 
-  wxPanel *panel = new wxPanel(this, wxID_ANY);
+    // Put everything in a panel.
 
-  // Use a vertical box sizer to layout the parts of the dialog.
+    wxPanel *panel = new wxPanel(this, wxID_ANY);
 
-  wxBoxSizer *vbox = new wxBoxSizer(wxVERTICAL);
+    // Use a vertical box sizer to layout the parts of the dialog.
 
-  // Add the user input fields.
+    wxBoxSizer *vbox = new wxBoxSizer(wxVERTICAL);
 
-  gdw_field_group field_group(panel, vbox, wxID_ANY, 100, -1);
+    // Add the user input fields.
 
-  wx_hostname = field_group.add_field ("Host Name", "localhost");
-  wx_username = field_group.add_field ("User Name", "test_RO");
-  wx_password = field_group.add_field ("Password",  "");
+    gdw_field_group field_group(panel, vbox, wxID_ANY, 100, -1);
 
-  // Add "Cancel" and "Apply" buttons.
+    wx_hostname = field_group.add_field ("Host Name", "localhost");
+    wx_username = field_group.add_field ("User Name", "test_RO");
+    wx_password = field_group.add_field ("Password",  "");
 
-  wxBoxSizer *hbox = new wxBoxSizer(wxHORIZONTAL);
-  hbox->Add(new wxButton(panel, wxID_CANCEL));
-  hbox->Add(new wxButton(panel, wxID_APPLY));
-  vbox->Add(hbox, 0, wxALIGN_RIGHT | wxTOP | wxRIGHT | wxBOTTOM, 10);
+    // Add "Cancel" and "Apply" buttons.
 
-  // Bind the event handler, which will only execute after the "Apply" button is pressed.
+    wxBoxSizer *hbox = new wxBoxSizer(wxHORIZONTAL);
+    hbox->Add(new wxButton(panel, wxID_CANCEL));
+    hbox->Add(new wxButton(panel, wxID_APPLY));
+    vbox->Add(hbox, 0, wxALIGN_RIGHT | wxTOP | wxRIGHT | wxBOTTOM, 10);
 
-  Bind(wxEVT_BUTTON, &gdw_db_connect::event_handler, this, wxID_APPLY);
+    // Bind the event handler, which will only execute after the "Apply" button is pressed.
 
-  // Now display everything.
+    Bind(wxEVT_BUTTON, &gdw_db_connect::event_handler, this, wxID_APPLY);
 
-  panel->SetSizer(vbox);
-  Centre();
+    // Now display everything.
+
+    panel->SetSizer(vbox);
+    Centre();
 }
 
 
 gdw_db_connect::~gdw_db_connect()
 {
-  std::cout << "gdw_db_connect Destructor Start" << std::endl;
+    wxLogMessage("gdw_db_connect Destructor Start");
 }
 
 
@@ -85,26 +87,27 @@ gdw_db_connect::~gdw_db_connect()
 ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 void gdw_db_connect::event_handler (wxCommandEvent& event)
 {
-  std::cout << "db_connect::event_handler: Start" << std::endl;
+    wxLogMessage("db_connect::event_handler: Start");
 
-  std::string host   (wx_hostname->GetValue());
-  std::string user   (wx_username->GetValue());
-  std::string passwd (wx_password->GetValue());
-  std::string db_name("zzz");
+    std::string host   (wx_hostname->GetValue());
+    std::string user   (wx_username->GetValue());
+    std::string passwd (wx_password->GetValue());
+    std::string db_name("zzz");
 
-  // Try to connect to the database. If it worked, then kill the dialog window.
-  // Otherwise, report the error and leave the dialog window open.
+    // Try to connect to the database. If it worked, then kill the dialog window.
+    // Otherwise, report the error and leave the dialog window open.
 
-  try
+    try
     {
-      my_db->connect(host, user, passwd, db_name);
-      EndModal(1);
+        my_db->connect(host, user, passwd, db_name);
+        EndModal(1);
     }
-  catch (std::runtime_error& exception)
+    catch (std::runtime_error& exception)
     {
-      wxLogMessage(exception.what());
+        wxString error_msg = exception.what();
+        wxMessageDialog* msg_dia = new wxMessageDialog(NULL, error_msg, "Runtime Error");
+        msg_dia->ShowModal();
     }
 }

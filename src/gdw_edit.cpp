@@ -41,18 +41,18 @@ gdw_edit::gdw_edit(wxWindow* parent, database* db) : gdw_panel(parent)
 
         Bind (wxEVT_GRID_CELL_CHANGED, &gdw_edit::event_handler, this , id_grid_event);
 
-        std::cout << "gdw_edit Constructor: " << id_mgr.first_id() << ":" << id_mgr.last_id() << std::endl;
+        wxLogMessage("gdw_edit Constructor: %d:%d", id_mgr.first_id(), id_mgr.last_id());
 }
 
 gdw_edit::~gdw_edit()
 {
-        std::cout << "gdw_edit Destructor: Start" << std::endl;
+        wxLogMessage("gdw_edit Destructor: Start");
 
 }
 
 void gdw_edit::process_window_draw()
 {
-        std::cout << "****** edit::process_window_draw" << std::endl;
+        wxLogMessage("****** edit::process_window_draw");
 
         unsigned int num_rows;
         unsigned int num_cols;
@@ -119,7 +119,7 @@ void gdw_edit::process_window_events (wxEvent* event)
 {
         unsigned int event_id = event->GetId();
 
-        std::cout << "process_window_events: " << event_id << std::endl;
+        wxLogMessage("process_window_events: %d", event_id);
 
 
         if (event_id == id_grid_event)
@@ -147,7 +147,7 @@ void gdw_edit::process_window_events (wxEvent* event)
         }
         else if (event_id == id_save_event)
         {
-                std::cout << "save event" << std::endl;
+                wxLogMessage("save event");
         }
 
 

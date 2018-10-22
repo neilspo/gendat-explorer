@@ -56,7 +56,7 @@ gdw_show_src_info::gdw_show_src_info(wxWindow* parent, database* db,
 
 gdw_show_src_info::~gdw_show_src_info()
 {
-    std::cout << "gdw_show_src_info Destructor: Start" << std::endl;
+    wxLogMessage("gdw_show_src_info Destructor: Start");
 
 }
 
@@ -64,7 +64,7 @@ gdw_show_src_info::~gdw_show_src_info()
 
 void gdw_show_src_info::process_window_draw()
 {
-    std::cout << "****** gdw_show_src_info::process_window_draw" << std::endl;
+    wxLogMessage("****** gdw_show_src_info::process_window_draw");
 
     // Create a new box sizer to hold the splitter window.
 
@@ -255,7 +255,7 @@ void gdw_show_src_info::process_window_events (wxEvent* event)
 
 void gdw_show_src_info::process_execute()
 {
-    std::cout << "****** gdw_show_src_info::process_execute" << std::endl;
+    wxLogMessage("****** gdw_show_src_info::process_execute");
 }
 
 

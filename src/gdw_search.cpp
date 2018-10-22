@@ -50,7 +50,7 @@ gdw_search::gdw_search(wxWindow* parent, database* db, const gde_source_map& sou
 
 gdw_search::~gdw_search()
 {
-    std::cout << "gdw_search Destructor: Start" << std::endl;
+    wxLogMessage("gdw_search Destructor: Start");
 
 }
 
@@ -58,7 +58,7 @@ gdw_search::~gdw_search()
 
 void gdw_search::process_window_draw()
 {
-    std::cout << "****** gdw_search::process_window_draw" << std::endl;
+    wxLogMessage("****** gdw_search::process_window_draw");
 
     // Create a new box sizer to hold everything.
 
@@ -75,7 +75,7 @@ void gdw_search::process_window_draw()
     splittermain->SetMinimumPaneSize(200);
     sizermain->Add(splittermain, 1, wxEXPAND, 0);
 
-    std::cout << "GetSashSize " << splittermain->GetSashSize() << std::endl;
+    wxLogMessage("GetSashSize %d", splittermain->GetSashSize());
 
     // Left side
 

@@ -42,6 +42,10 @@
 TopFrame::TopFrame(const wxString& title, const wxPoint& pos, const wxSize& size) : wxFrame(NULL, wxID_ANY, title, pos, size)
 {
 
+    // Start off not showing routine messages.
+
+    wxLog::SetLogLevel(wxLOG_Warning);
+
   //****************************************************************************
   // Bind the event handler to the IDs used in this class.
   //****************************************************************************
@@ -141,7 +145,7 @@ TopFrame::TopFrame(const wxString& title, const wxPoint& pos, const wxSize& size
 
 void TopFrame::event_handler (wxCommandEvent& event)
 {
-  std::cout << "TopFrame::event_handler: Start" << std::endl;
+  wxLogMessage("TopFrame::event_handler: Start");
 
   int event_id = event.GetId();
 
@@ -209,10 +213,11 @@ void TopFrame::event_handler (wxCommandEvent& event)
 
     case ID_ShowLogWin:
 
-      // Show log messages in a separate window.
+        // Show log messages in a separate window.
 
-      new wxLogWindow(this, wxS("Log messages"), true, false);
-      break;
+        wxLog::SetLogLevel(wxLOG_Message);
+        new wxLogWindow(this, wxS("Log messages"), true, false);
+        break;
 
     case wxID_ABOUT:
 
