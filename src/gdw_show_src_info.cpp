@@ -93,6 +93,7 @@ void gdw_show_src_info::process_window_draw()
 
     this->SetSizer(sizermain);
     sizermain->SetSizeHints(this);
+    GetGrandParent()->Layout();
 }
 
 

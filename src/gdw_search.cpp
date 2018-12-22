@@ -104,7 +104,7 @@ void gdw_search::process_window_draw()
 
     this->SetSizerAndFit(sizermain);
     sizermain->SetSizeHints(this);
-    //SetClientSize(this->GetBestSize());
+    GetGrandParent()->Layout();
 
 
 
