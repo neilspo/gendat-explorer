@@ -18,7 +18,7 @@
 #include "gdw_search.h"
 #include "gdw_field_group.h"
 
-#include "gde_source_map.h"
+#include "gde_search_map.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -64,7 +64,7 @@ void gdw_search::process_window_draw()
 
     wxBoxSizer *sizermain = new wxBoxSizer(wxVERTICAL);
 
-        // Create the splitter window and add it to the sizer.
+    // Create the splitter window and add it to the sizer.
 
     wxSplitterWindow *splittermain = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_BORDER);
     splittermain->SetSize(GetClientSize());
