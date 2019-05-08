@@ -5,7 +5,7 @@
 *
 * @brief Connect to a PhpGedView database.
 *
-* @date 13 October 2016
+* @date 8 May 2019
 *
 */
 
@@ -237,7 +237,7 @@ class pgv_ind
 		}
 		else
 		{
-			$i_gedcom = null;
+			return;
 		}
 		
 		// Load birth and death information.
