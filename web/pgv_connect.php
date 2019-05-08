@@ -113,6 +113,73 @@ function pgv_get_name($db, $n_id)
 	}
 }
 
+
+
+/**
+*
+* @brief Parse a GEDCOM record.
+*
+* @param[in]      $gedcom     GEDCOM record for one individual
+* @param[in]      $level_1    Level 1 GEDCOM tag
+* @param[in]      $level_2    Level 2 GEDCOM tag (optional)
+*
+* @returns    This function returns the parsed GEDCOM result, if successful.
+*             Otherwise it returns null.
+*
+*/
+
+function parse_gedcom ($gedcom, $level_1, $level_2 = null)
+{
+	if ($level_2 == null)
+	{
+		$pattern_1 = '/^1 ' . $level_1 . '\s(.*?)$/m';
+		if (preg_match ($pattern_1, $gedcom, $match_1))
+			$return_val = $match_1[1];
+		else
+			$return_val = null;
+	}
+	else
+	{
+		$pattern_1 = '/\n1 ' . $level_1 . '\s(.*?)(?:\n1|$)/s';
+		$pattern_2 = '/^2 ' . $level_2 . '\s(.*?)$/m';
+		if (preg_match ($pattern_1, $gedcom, $match_1))
+			if (preg_match ($pattern_2, $match_1[1], $match_2))
+				$return_val = $match_2[1];
+			else
+				$return_val = null;
+		else
+			$return_val = null;
+	}
+	
+	return $return_val;
+}
+
+
+
+/**
+*
+* @brief Parse a GEDCOM XREF.
+*
+* @param[in]      $gedcom     GEDCOM record for one individual
+* @param[in]      $level_1    Level 1 GEDCOM tag
+*
+* @returns    This function returns the GEDCOM XREF, if successful. Otherwise it returns null.
+*
+*/
+
+function parse_gedcom_xref ($gedcom, $level_1)
+{
+	$pattern_1 = '/^1 ' . $level_1 . '\s@(.*?)@/m';
+	if (preg_match ($pattern_1, $gedcom, $match_1))
+		$return_val = $match_1[1];
+	else
+		$return_val = null;
+	
+	return $return_val;
+}
+
+
+
 /**
 *
 * @brief Handle the information about a PhpGedView individual.
@@ -160,86 +227,59 @@ class pgv_ind
 			return;
 		}
 		
-		// Load the date of birth.
+		//Load the GEDCOM record.
 		
-		$query = "SELECT DoB FROM {$pgv_prefix}births_1 WHERE i_id='$n_id'";
+		$query = "SELECT i_gedcom FROM {$pgv_prefix}pgv_individuals WHERE i_id='$n_id'";
 		if (!($result=$db->query($query))) die($db->error);
 		if ($data = $result->fetch_object())
 		{
-			$this->birth_date = $data->DoB;
+			$i_gedcom = $data->i_gedcom;
 		}
 		else
 		{
-			$this->birth_date = null;
+			$i_gedcom = null;
 		}
 		
-		// Load the place of birth.
+		// Load birth and death information.
 		
-		$query = "SELECT PoB FROM {$pgv_prefix}births_2 WHERE i_id='$n_id'";
-		if (!($result=$db->query($query))) die($db->error);
-		if ($data = $result->fetch_object())
-		{
-			$this->birth_place = $data->PoB;
-		}
-		else
-		{
-			$this->birth_place = null;
-		}
-		
-		// Load the date of death.
-		
-		$query = "SELECT DoD FROM {$pgv_prefix}deaths_1 WHERE i_id='$n_id'";
-		if (!($result=$db->query($query))) die($db->error);
-		if ($data = $result->fetch_object())
-		{
-			$this->death_date = $data->DoD;
-		}
-		else
-		{
-			$this->death_date = null;
-		}
-		
-		// Load the place of death.
-		
-		$query = "SELECT PoD FROM {$pgv_prefix}deaths_2 WHERE i_id='$n_id'";
-		if (!($result=$db->query($query))) die($db->error);
-		if ($data = $result->fetch_object())
-		{
-			$this->death_place = $data->PoD;
-		}
-		else
-		{
-			$this->death_place = null;
-		}
-		
+		$this->birth_date  = parse_gedcom ($i_gedcom, 'BIRT', 'DATE');
+		$this->birth_place = parse_gedcom ($i_gedcom, 'BIRT', 'PLAC');
+		$this->death_date  = parse_gedcom ($i_gedcom, 'DEAT', 'DATE');
+		$this->death_place = parse_gedcom ($i_gedcom, 'DEAT', 'PLAC');
+
 		// Load information about the parents.
 		
-		$query = "SELECT * FROM {$pgv_prefix}parents WHERE i_id='$n_id'";
-		if (!($result=$db->query($query))) die($db->error);
-		if ($data = $result->fetch_object())
+		$f_id = parse_gedcom_xref ($i_gedcom, 'FAMC');
+		
+		if ($f_id != null)
 		{
-			// Father
-			
-			$this->father_id = $data->father;
-			if (($this->father_name = pgv_get_name($db, $this->father_id)) != null)
+			$query = "SELECT f_husb, f_wife FROM {$pgv_prefix}pgv_families WHERE f_id='$f_id'";
+			if (!($result=$db->query($query))) die($db->error);
+			if ($row = $result->fetch_object())
 			{
-				$this->father_link = html_link ($this->father_name, pgv_indi_url($this->father_id));
-			}
-			else
-			{
-				$this->father_link = $this->father_id;
-			}
-			
-			// Mother
-			
-			$this->mother_id = $data->mother;
-			if (($this->mother_name = pgv_get_name($db, $this->mother_id)) != null)
-			{
-				$this->mother_link = html_link ($this->mother_name, pgv_indi_url($this->mother_id));
-			}
-			else
-			{
-				$this->mother_link = $this->mother_id;
+				// Father
+				
+				$this->father_id = $row->f_husb;
+				if (($this->father_name = pgv_get_name($db, $this->father_id)) != null)
+				{
+					$this->father_link = html_link ($this->father_name, pgv_indi_url($this->father_id));
+				}
+				else
+				{
+					$this->father_link = $this->father_id;
+				}
+				
+				// Mother
+				
+				$this->mother_id = $row->f_wife;
+				if (($this->mother_name = pgv_get_name($db, $this->mother_id)) != null)
+				{
+					$this->mother_link = html_link ($this->mother_name, pgv_indi_url($this->mother_id));
+				}
+				else
+				{
+					$this->mother_link = $this->mother_id;
+				}
 			}
 		}
 	}
