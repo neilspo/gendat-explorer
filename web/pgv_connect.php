@@ -259,27 +259,13 @@ class pgv_ind
 			{
 				// Father
 				
-				$this->father_id = $row->f_husb;
-				if (($this->father_name = pgv_get_name($db, $this->father_id)) != null)
-				{
-					$this->father_link = html_link ($this->father_name, pgv_indi_url($this->father_id));
-				}
-				else
-				{
-					$this->father_link = $this->father_id;
-				}
+				$this->father_id   = $row->f_husb;
+				$this->father_link = pgv_indi_name_link($db, $this->father_id);
 				
 				// Mother
 				
-				$this->mother_id = $row->f_wife;
-				if (($this->mother_name = pgv_get_name($db, $this->mother_id)) != null)
-				{
-					$this->mother_link = html_link ($this->mother_name, pgv_indi_url($this->mother_id));
-				}
-				else
-				{
-					$this->mother_link = $this->mother_id;
-				}
+				$this->mother_id   = $row->f_wife;
+				$this->mother_link = pgv_indi_name_link($db, $this->mother_id);
 			}
 		}
 	}
