@@ -5,7 +5,7 @@
 *
 * @brief Connect to a PhpGedView database.
 *
-* @date 8 May 2019
+* @date 9 May 2019
 *
 */
 
@@ -122,35 +122,56 @@ function pgv_get_name($db, $n_id)
 * @param[in]      $gedcom     GEDCOM record for one individual
 * @param[in]      $level_1    Level 1 GEDCOM tag
 * @param[in]      $level_2    Level 2 GEDCOM tag (optional)
+* @param[in]      $level_3    Level 3 GEDCOM tag (optional)
+
 *
-* @returns    This function returns the parsed GEDCOM result, if successful.
+* @returns    This function returns the data string, if the requested GEDCOM tags were found.
 *             Otherwise it returns null.
 *
 */
 
-function parse_gedcom ($gedcom, $level_1, $level_2 = null)
+function parse_gedcom ($gedcom, $level_1, $level_2 = null, $level_3 = null)
 {
-	if ($level_2 == null)
+	$pattern_1 = '/\n1 ' . $level_1 . '(.*?)(?:\n1|$)/s';
+	if (preg_match ($pattern_1, $gedcom, $match_1))
 	{
-		$pattern_1 = '/^1 ' . $level_1 . '\s(.*?)$/m';
-		if (preg_match ($pattern_1, $gedcom, $match_1))
-			$return_val = $match_1[1];
+		if ($level_2 == null)
+		{
+			$return_val = trim($match_1[1]);
+		}
 		else
-			$return_val = null;
+		{
+			$pattern_2 = '/\n2 ' . $level_2 . '(.*?)(?:\n2|\n1|$)/s';
+			if (preg_match ($pattern_2, $match_1[1], $match_2))
+			{
+				if ($level_3 == null)
+				{
+					$return_val = trim($match_2[1]);
+				}
+				else
+				{
+					$pattern_3 = '/\n3 ' . $level_3 . '(.*?)(?:\n3|\n2|\n1|$)/s';
+					if (preg_match ($pattern_3, $match_2[1], $match_3))
+					{
+						$return_val = trim($match_3[1]);
+					}
+					else
+					{
+						$return_val = null;
+					}
+				}
+			}
+			else
+			{
+				$return_val = null;
+			}
+		}
 	}
 	else
 	{
-		$pattern_1 = '/\n1 ' . $level_1 . '\s(.*?)(?:\n1|$)/s';
-		$pattern_2 = '/^2 ' . $level_2 . '\s(.*?)$/m';
-		if (preg_match ($pattern_1, $gedcom, $match_1))
-			if (preg_match ($pattern_2, $match_1[1], $match_2))
-				$return_val = $match_2[1];
-			else
-				$return_val = null;
-		else
-			$return_val = null;
+		$return_val = null;
 	}
-	
+
 	return $return_val;
 }
 
@@ -162,18 +183,32 @@ function parse_gedcom ($gedcom, $level_1, $level_2 = null)
 *
 * @param[in]      $gedcom     GEDCOM record for one individual
 * @param[in]      $level_1    Level 1 GEDCOM tag
+* @param[in]      $level_2    Level 2 GEDCOM tag (optional)
+* @param[in]      $level_3    Level 3 GEDCOM tag (optional)
 *
-* @returns    This function returns the GEDCOM XREF, if successful. Otherwise it returns null.
+* @returns    This function returns the GEDCOM XREF, if the requested GEDCOM tags were found.
+*             Otherwise it returns null.
 *
 */
 
-function parse_gedcom_xref ($gedcom, $level_1)
+function parse_gedcom_xref ($gedcom, $level_1, $level_2 = null, $level_3 = null)
 {
-	$pattern_1 = '/^1 ' . $level_1 . '\s@(.*?)@/m';
-	if (preg_match ($pattern_1, $gedcom, $match_1))
-		$return_val = $match_1[1];
+	$test_string = parse_gedcom ($gedcom, $level_1, $level_2, $level_3);
+	if ($test_string != null)
+	{
+		// A valid GEDCOM XREF must be delimited by '@' characters. Find the actual XREF
+		// and strip anything else off.
+		
+		$pattern = '/@(.*?)@/';
+		if (preg_match ($pattern, $test_string, $match_1))
+			$return_val = $match_1[1];
+		else
+			$return_val = null;
+	}
 	else
+	{
 		$return_val = null;
+	}
 	
 	return $return_val;
 }
