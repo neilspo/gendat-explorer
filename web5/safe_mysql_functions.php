@@ -8,9 +8,9 @@
 * The following functions perform various database operations, using prepared SQL statements.
 * This protects against the possibility of SQL injection of malicious code.
 *
-* Note that some of these functions use the '...' operator, which only works for PHP version 5.6 and highter.
+* Note that some of these functions use the '...' operator, which only works for PHP version 5.6 and higher.
 *
-* @date 18 May 2019
+* @date 29 May 2019
 *
 */
 
@@ -235,7 +235,7 @@ function safe_db_select ($db, $query, $param_values)
 /**
 * @brief Run a query with no results.
 *
-* This function should be used to safely run INSERT, UPDATE, or DELETE queries.
+* This function will safely run one INSERT, UPDATE, or DELETE query.
 * These types of queries modify the database, but do not produce a result set.
 *
 * @param[in,out] $db            MySQLi database object
