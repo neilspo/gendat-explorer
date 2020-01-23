@@ -25,6 +25,7 @@
 #include "gdw_search.h"
 #include "gdw_dialog.h"
 #include "gdw_show_src_info.h"
+#include "gdw_db_ops.h"
 
 
 
@@ -81,6 +82,7 @@ TopFrame::TopFrame(const wxString& title, const wxPoint& pos, const wxSize& size
   menuTools->Append(ID_Edit, "&Edit");
   menuTools->Append(ID_ShowSourceInfo, "Show Source Info");
   menuTools->Append(ID_Search, "Search");
+  menuTools->Append(ID_DatabaseOps, "Database Operations");
 
   // Help Menu
 
@@ -210,6 +212,11 @@ void TopFrame::event_handler (wxCommandEvent& event)
     case ID_Search:
         notebook->AddPage(new gdw_search(notebook, &gendat_db, gendat_sources), L"Search", true);
         break;
+
+    case ID_DatabaseOps:
+        notebook->AddPage(new gdw_db_ops(notebook, &gendat_db), L"Database Ops", true);
+        break;
+
 
     case ID_ShowLogWin:
 

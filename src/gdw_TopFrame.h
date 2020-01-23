@@ -35,6 +35,7 @@ private:
       ID_ReloadPage,
       ID_Execute,
       ID_ShowSourceInfo,
+      ID_DatabaseOps,
       ID_Edit,
       ID_Search,
       ID_first = ID_Connect,
