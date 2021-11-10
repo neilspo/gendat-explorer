@@ -5,7 +5,7 @@
 *
 * @brief Connect to a PhpGedView database.
 *
-* @date 9 May 2019
+* @date 10 November 2021
 *
 */
 
@@ -101,16 +101,50 @@ function pgv_get_name($db, $n_id)
 	{
 		$name = $data->n_list;
 		
-		// PGV uses the string '@N.N.' to represent an unknown name.  Replace that string
+		// PGV uses the string '@N.N.' or '@P.N.' to represent an unknown name.  Replace that string
 		// with '(unknown)'. Return NULL if the individual cannot be found in the database.
 		
 		$name = str_replace ('@N.N.', '(unknown)', $name);
+		$name = str_replace ('@P.N.', '(unknown)', $name);
 		return $name;
 	}
 	else
 	{
 		return null;
 	}
+}
+
+/**
+*
+* @brief Find all of a person's children.
+*
+* @param[in,out]  $db     MySQLi database object
+* @param[in]      $n_id   PhpGedView ID for the person
+*
+* @returns   This function returns an array containing the PhpGedView IDs for the children.
+*
+*/
+function pgv_get_children ($db, $n_id)
+{
+$query = <<<EOQ
+SELECT i_id
+FROM phpgedview.pgv_individuals AS i
+JOIN (
+    SELECT CONCAT("%1 FAMC @", f_id, "@%") famc
+    FROM phpgedview.pgv_families
+    WHERE f_husb='$n_id' OR f_wife='$n_id') AS f
+WHERE i.i_gedcom LIKE f.famc
+EOQ;
+	
+	if (!($result=$db->query($query))) die($db->error);
+	
+	$children = array();
+	while ($data = $result->fetch_object())
+	{
+		$children[] = $data->i_id;
+	}
+	
+	return $children;
 }
 
 
