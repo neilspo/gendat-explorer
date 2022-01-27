@@ -4,6 +4,8 @@
 *
 * Produce a summary listing of the database table "ns_marriages_data".
 *
+* 27 January 2022
+*
 */
 
 include_once ('misc_functions.php');
@@ -23,10 +25,15 @@ if($db->connect_errno > 0){
 
 // Issue an SQL query.
 
+// WHERE (a.GroomLastName like 'Him%' OR a.BrideLastName like 'Him%') AND a.County = 'lunenburg'
+
+// ORDER BY a.GroomLastName, a.Year, a.BrideLastName, a.MarriageID
+
 $query = <<<EOT
-SELECT a.*, b.groom, b.bride, b.n_id_g, b.n_id_b
+SELECT a.*, b.groom, b.bride, b.n_id_g, b.n_id_b, c.f_id
 FROM ns_marriages a
 JOIN ns_marriages_data b USING (MarriageID)
+LEFT JOIN phpgedview.pgv_families c ON  b.n_id_g = c.f_husb AND b.n_id_b = c.f_wife
 ORDER BY a.GroomLastName, a.Year, a.BrideLastName, a.MarriageID
 EOT;
 
@@ -48,13 +55,14 @@ $cell[5] = 'Groom';
 $cell[6] = null;
 $cell[7] = 'Bride';
 $cell[8] = null;
+$cell[9] = null;
 table_row_header($cell);
 
 // Output the data records.
 
 while ($row = $result->fetch_object())
 {
-	$url = 'https://www.novascotiagenealogy.com/ItemView.aspx?ImageFile=' . $row->RegBook . '-' . $row->RegPage . '&Event=marriage&ID=' . $row->MarriageID;
+	$url = 'https://archives.novascotia.ca/vital-statistics/marriage/?ID=' . $row->MarriageID;
 
 	$cell[0] = html_link($row->MarriageID, "edit_ns_marriages_data.php?id=$row->MarriageID");
 	$cell[1] = html_link('Source', $url);
@@ -65,6 +73,7 @@ while ($row = $result->fetch_object())
 	$cell[6] = pgv_indi_link($row->n_id_g);
 	$cell[7] = $row->bride;
 	$cell[8] = pgv_indi_link($row->n_id_b);
+	$cell[9] = $row->f_id;
 	table_row($cell);
 }
 table_end();
