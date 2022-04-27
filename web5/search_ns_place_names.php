@@ -3,7 +3,7 @@
 *
 * Search Nova Scotia place names
 *
-* 12 January 2017
+* 19 June 2019
 *
 * This PHP script produces a HTML form that allows users to search for place names
 * in the official Nova Scotia geoNAMES database.
@@ -11,6 +11,7 @@
 */
 
 include_once ('config.php');
+include_once ('w_search.php');
 
 $county[ 0] = 'Any County';
 $county[ 1] = 'Annapolis';
@@ -41,13 +42,26 @@ if(isset($_POST['submit']))
 	$do_search   = true;
 	$PlaceName   = $_POST['PlaceName'];
 	$CountyIndex = $_POST['County'];
+	$DataSet     = $_POST['DataSet'];
 	$selected[$CountyIndex] = 'selected';
+	if ($DataSet == 'curr')
+	{
+		$curr_selected = 'checked';
+		$hist_selected = null;
+	}
+	else
+	{
+		$curr_selected = null;
+		$hist_selected = 'checked';
+	}
 }
 else
 {
-	$do_search   = false;
-	$PlaceName   = null;
-	$selected[0] = 'selected';
+	$do_search     = false;
+	$PlaceName     = null;
+	$selected[0]   = 'selected';
+	$curr_selected = 'checked';
+	$hist_selected = null;
 }
 
 // Produce the form
@@ -101,6 +115,15 @@ echo <<<EOT
 				<option $selected[18] value="18"> $county[18]</option>
 			</select>
 		</div>
+		<div class="field">
+			<label>Data Set</label>
+			<div class="radio-button-set">
+				<input type="radio" name="DataSet" id="curr" value="curr" $curr_selected>
+				<label for="curr">Current Approved Names</label><br>
+				<input type="radio" name="DataSet" id="hist" value="hist" $hist_selected>
+				<label for="hist">Historical Names</label>
+			</div>
+		</div>
 		<div class="button">
 			<input type="submit" name="submit" value="Submit" >
 			<input type="submit" formnovalidate name="reset"  value="Reset"  >
@@ -133,22 +156,6 @@ if (!$do_search)
 
 $max_rows = 20;
 
-// Create the template SQL statement.
-
-$query = 'SELECT SQL_CALC_FOUND_ROWS OBJECTID, GEONAME, LOCN_NARR, COUNTY, GENERIC_TM FROM ns_geonames WHERE GEONAME';
-if (preg_match ('/[*%]/', $PlaceName))
-{
-	$query .= ' LIKE ?';
-	$PlaceName = str_replace ('*', '%', $PlaceName);
-}
-else
-{
-	$query .= '=?';
-}
-if ($CountyIndex > 0)
-	$query .= " AND COUNTY LIKE '%" . $county[$CountyIndex] . "%'";
-$query .= ' LIMIT ' . $max_rows;
-
 // Connect to the database
 
 $db = new mysqli($db_host, $db_user, $db_pass, $db_name);
@@ -159,46 +166,70 @@ if($db->connect_errno > 0)
 
 if (!($db->set_charset("utf8"))) die($db->error);
 
-// Have the MySQL server prepare the statement.
+// Decide what to do, depending on the data-set selected.
 
-if (!($stmt=$db->prepare($query))) die($db->error);
-	
-// Bind the search parameter.
-
-if (!($stmt->bind_param('s', $PlaceName))) die($db->error);
-
-// Execute the prepared statement.
-
-if (!($stmt->execute())) die($db->error);
-
-// Get the number of rows returned by the SQL query.
-// Note: The call to store_result() is only needed here to get the correct number of rows.
-
-$stmt->store_result();
-$num_rows = $stmt->num_rows;
-
-// If the database query returned nothing, then report that and quit.
-
-if ($num_rows == 0)
+$search = new w_search();
+if ($DataSet == 'curr')
 {
-	echo '<p>No matches found</p>' . PHP_EOL;
-	echo '</body>' . PHP_EOL . '</html>' . PHP_EOL;
-	exit();
+	$search->add_field ('GEONAME', $PlaceName);
+	
+	if ($CountyIndex > 0)
+	{
+		$CountyField = '%' . $county[$CountyIndex] . '%';
+		$search->add_field ('COUNTY', $CountyField);
+	}
+	
+	$base_query = 'SELECT SQL_CALC_FOUND_ROWS OBJECTID, GEONAME, LOCN_NARR, COUNTY, GENERIC_TM FROM ns_geonames';
 }
+else
+{
+	$search->add_field ('hist_name', $PlaceName);
+	
+	if ($CountyIndex > 0)
+	{
+		$CountyField = '%' . $county[$CountyIndex] . '%';
+		$search->add_field ('county', $CountyField);
+	}
+	
+	// Query fields: hist_name, county, hist_cgndb_id, ns_hist_name_id, curr_name
+	//      sub-select 1: find all of the unused GeoNAMES place names with valid current names
+	//      sub-select 2: find all of the other unused GeoNAMES place names
+	//      sub-select 3: find historic names that are not included in GeoNAMES
+	
+	$base_query  = 'SELECT SQL_CALC_FOUND_ROWS * FROM (';
+	$base_query .= '  SELECT a.hist_name, b.COUNTY AS county, a.hist_cgndb_id, NULL AS ns_hist_name_id,';
+	$base_query .= '         b.GEONAME AS curr_name';
+	$base_query .= '    FROM ns_geonames_hist a';
+	$base_query .= '    JOIN ns_geonames b ON a.curr_cgndb_id = b.CGNDB_KEY';
+	$base_query .= '  UNION';
+	$base_query .= '  SELECT hist_name, location, hist_cgndb_id, NULL, NULL';
+	$base_query .= '    FROM ns_geonames_hist';
+	$base_query .= '    WHERE hist_cgndb_id NOT IN (';
+	$base_query .= '      SELECT a.hist_cgndb_id';
+	$base_query .= '      FROM ns_geonames_hist a';
+	$base_query .= '      JOIN ns_geonames b ON a.curr_cgndb_id = b.CGNDB_KEY)';
+	$base_query .= '  UNION';
+	$base_query .= '  SELECT hist_name, hist_county, NULL, id, NULL';
+	$base_query .= '    FROM ns_hist_name';
+	$base_query .= '    WHERE curr_name IS NULL OR hist_name != curr_name) AS tbl';
+	}
+
+// Execute the database query.
+
+$search->execute_search($db, $base_query, $max_rows);
+
+// If the database query returned nothing, then produce a warning message.
+
+$num_rows = $search->num_rows();
+if ($num_rows == 0)
+	echo '<p>No matches found</p>' . PHP_EOL;
 
 // If the database query returned the maximum allowed number of rows, then find the total (unlimited)
-// number of matches and produce a warning message if needed.
+// number of matches. If the total number of matches exceeded the limit, then report that.
 
 if ($num_rows == $max_rows)
 {
-	// Ask the MySQL server for total number of matches.
-	
-	if (!($result = $db->query("SELECT FOUND_ROWS()"))) die($db->error);
-	$temp_array  = $result->fetch_row();
-	$num_matches = $temp_array[0];
-	
-	// If the total number of matches exceeded the limit, then report that.
-	
+	$num_matches = $search->num_matches();
 	if ($num_matches > $max_rows)
 	{
 		echo '<p>Your search matched ' . $num_matches . ' records, but only ' . $max_rows . ' are shown here.';
@@ -206,28 +237,51 @@ if ($num_rows == $max_rows)
 	}
 }
 
-// Bind the result variables.
-
-$stmt->bind_result($objectid, $geoname, $locn_narr, $county_name, $generic_tm);
-
 // Print out the results.
 
-while ($stmt->fetch())
-{
-	$url = 'ns_place_name.php?id=' . $objectid;
-	$link = '<a href="' . htmlspecialchars($url) . '">' . $geoname . '</a>';
-	echo <<<EOT
-	$link
-	<ul>
-		<li>$generic_tm &mdash; $locn_narr</li>
-		<li>County(s) &mdash; $county_name </li>
-	</ul>
-EOT;
+if ($DataSet == 'curr')
+	{
+	while ($row = $search->fetch_row())
+	{
+		$url = 'ns_place_name.php?id=' . $row['OBJECTID'];
+		$link = '<a href="' . htmlspecialchars($url) . '">' . $row['GEONAME'] . '</a>';
+		echo $link . PHP_EOL;
+		echo "<ul>" . PHP_EOL;
+		echo "	<li>$row[GENERIC_TM] &mdash; $row[LOCN_NARR]</li>" . PHP_EOL;
+		echo "	<li>County(s) &mdash; $row[COUNTY] </li>" . PHP_EOL;
+		echo "</ul>" . PHP_EOL;
+	}
 }
-
-// --- Release the prepared statement.
-
-$stmt->close();
+else
+{
+	while ($row = $search->fetch_row())
+	{
+		if (!empty($row['hist_cgndb_id']))
+		{
+			$url = 'ns_place_name_resc.php?id=' . $row['hist_cgndb_id'];
+			$link = '<a href="' . htmlspecialchars($url) . '">' . $row['hist_name'] . '</a>';
+			
+			$message = 'Rescinded name';
+			echo $link . PHP_EOL;
+		}
+		else
+		{
+			$url = 'ns_place_name_hist.php?id=' . $row['ns_hist_name_id'];
+			$link = '<a href="' . htmlspecialchars($url) . '">' . $row['hist_name'] . '</a>';
+			$message = 'Historical name';
+			echo $link . PHP_EOL;
+		}
+		
+		if (!empty($row['curr_name']))
+			$message = $message . ', currently called &mdash; ' . $row['curr_name'];
+		
+		
+		echo "<ul>" . PHP_EOL;
+		echo "<li>$message</li>" . PHP_EOL;
+		echo "	<li>County(s) &mdash; " . $row['county'] . "</li>" . PHP_EOL;
+		echo "</ul>" . PHP_EOL;
+	}
+}
 
 // Close out the HTML page.
 
