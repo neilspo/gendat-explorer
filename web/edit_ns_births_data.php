@@ -3,7 +3,7 @@
 *
 * Edit one NS birth record
 *
-* 9 March 2016
+* 29 April 2022
 *
 * This page produces an HTML form that allows users to view and edit
 * data transcribed from one Nova Scotia birth record.
@@ -53,7 +53,7 @@ if ($row = $result->fetch_object())
 {
 	// Create the URL of this record at Nova Scotia Historical Vital Statistics
 	
-	$url = 'https://www.novascotiagenealogy.com/ItemView.aspx?ImageFile=' . $row->RegBook . '-' . $row->RegPage . '&Event=birth&ID=' . $row->BirthID;
+	$url = 'https://archives.novascotia.ca/vital-statistics/birth/?ID=' . $row->BirthID;
 	
 	// Some dates have month and day set, others don't.
 	
